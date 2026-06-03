@@ -38,7 +38,36 @@
       ]
     },
     "notion": {
-      "url": "https://mcp.notion.com/mcp"
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.notion.com/mcp"
+      ],
+      "disabled": false,
+      "autoApprove": [
+        "notion-search",
+        "notion-fetch",
+        "notion-get-comments"
+      ]
+    },
+    "engram": {
+      "command": "engram",
+      "args": ["mcp"],
+      "disabled": false,
+      "autoApprove": [
+        "mem_search",
+        "mem_context",
+        "mem_get_observation",
+        "mem_current_project",
+        "mem_save",
+        "mem_save_prompt",
+        "mem_session_start",
+        "mem_session_summary",
+        "mem_session_end",
+        "mem_suggest_topic_key",
+        "mem_judge"
+      ]
     }
   }
 }

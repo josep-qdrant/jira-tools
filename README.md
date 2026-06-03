@@ -26,11 +26,31 @@ Skills are instruction sets loaded by agents. Each agent loads the relevant skil
 | `ticket-triage` | Triages inbound support tickets (P1–P4 priority, routing) |
 | `atlassian-mcp` | Reference for Jira/Confluence MCP tool usage and authentication |
 
+## Persistent memory (engram)
+
+The toolkit uses **[engram](https://github.com/Gentleman-Programming/engram)** for persistent memory that survives session resets and context compaction. A backlog audit can span days; engram lets the agent recall what was already established instead of re-deriving it.
+
+What gets remembered across sessions:
+
+- Verified **scope** and JQL (team/board, project, backlog definition, key list + counts)
+- The custom-field map (`customfield_XXXXX` → readable label) and the verified **scoring formula**
+- Decisions, per-ticket gotchas, design-link locations, and DoR verdict rationale
+
+> **Local memory only.** engram writes to a local SQLite DB (`~/.engram/engram.db`) — it **never** writes to Jira. The strictly-read-only rule for Jira is unaffected.
+
+engram is wired into the repo through the `engram` server in `.mcp.json`, so any MCP-capable agent that opens this repo picks it up. Install the binary first:
+
+```bash
+brew install gentleman-programming/tap/engram
+```
+
+In Claude Code you can alternatively install it as a plugin (`claude plugin marketplace add Gentleman-Programming/engram && claude plugin install engram`); for other agents see engram's [AGENT-SETUP](https://github.com/Gentleman-Programming/engram) docs.
+
 ## Repository layout
 
 ```
 AGENTS.md             ← master instructions (golden rules, workflow, output format)
-mcp.json              ← MCP server configuration (Atlassian, Codegraph, etc.)
+.mcp.json             ← MCP server configuration (Atlassian, Figma, Notion, engram memory)
 skills-lock.json      ← pinned skill versions
 .agents/agents/       ← autonomous subagent definitions (model, tools, boundaries)
 .agents/skills/       ← skill instruction sets loaded by agents at runtime

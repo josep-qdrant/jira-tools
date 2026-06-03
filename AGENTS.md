@@ -27,6 +27,21 @@ Related skills:
 - `atlassian-mcp` — Jira / Confluence MCP mechanics.
 - `sprint-planning` — sprint plan after an audit.
 
+## Memory (engram)
+
+Persistent memory via the `engram` MCP server (`mem_*` tools). An audit spans
+sessions; use memory so scope and decisions survive resets and compaction.
+
+- **Local only.** engram writes to a local DB (`~/.engram/engram.db`), never to
+  Jira. The read-only rule above is unaffected.
+- **Search first.** At session start, `mem_search` for prior scope, field map,
+  and scoring formula before re-deriving them.
+- **Save proactively** (don't wait to be asked): verified scope + JQL, the
+  custom-field map, the scoring formula, decisions, per-ticket gotchas,
+  design-link locations, and DoR verdict rationale.
+- **Close** with `mem_session_summary` (goal, discoveries, accomplished, next
+  steps, relevant files).
+
 ## Output format — Obsidian vault
 
 Deliverables go into the working folder as Obsidian-native markdown.
