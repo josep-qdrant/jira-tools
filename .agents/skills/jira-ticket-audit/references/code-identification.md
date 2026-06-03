@@ -35,11 +35,10 @@ timing out on giant searches.
 
 ## Worked example — Qdrant Cloud repo map
 
-> **Canonical, live map:** the project's `AGENTS.md` (section *"Code association —
-> where the repos live"*) holds the authoritative, full repo map with real paths
-> and the "duplicates to ignore" list. The table below is a **worked-example
-> snapshot** for portability — when working in this repo, defer to `AGENTS.md` and
-> don't maintain a second authoritative copy here.
+> **Canonical, live map:** `qdrant-cloud-repos.md` holds the authoritative repo
+> map with real paths and the "duplicates to ignore" list. The table below is a
+> worked-example snapshot for portability; when working in this repo, defer to
+> that reference and don't maintain a second authoritative copy here.
 
 The repos in the Qdrant Cloud platform and what each owns (verify per audit;
 names and ownership drift):
