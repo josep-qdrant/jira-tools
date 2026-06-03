@@ -6,9 +6,20 @@ This document explains how to use `jira-tools` with an AI agent: what agents are
 
 ## How it works
 
-This repo ships with **agent instructions** (`AGENTS.md`) and a set of **skills** (`.agents/skills/`). When you open the repo as a workspace in an AI coding assistant (VS Code Copilot, Claude, Cursor…), the agent picks up those files automatically and knows how to run each workflow.
+This repo ships with three layers:
 
-You talk to the agent in natural language. The agent reads the right skill for the task, calls the Jira MCP tools in read-only mode, writes all output as markdown to disk, and never touches Jira.
+| Layer | Location | Purpose |
+|---|---|---|
+| **Master instructions** | `AGENTS.md` | Golden rules, output format, and workflow overview picked up by any AI assistant |
+| **Agents** | `.agents/agents/` | Autonomous subagents with a fixed model, tool set, and scope boundary |
+| **Skills** | `.agents/skills/` | Detailed instruction sets that agents load at runtime for each phase |
+
+When you open the repo as a workspace, the AI assistant reads `AGENTS.md` automatically. You can then either ask the main agent to run a workflow (it will call the right skills), or invoke a dedicated subagent directly for more autonomous execution.
+
+### Agents vs. skills — when to use which
+
+- **Talk to the main agent** when you want a conversational experience, need to iterate, or are running a partial workflow (e.g. just a DoR check on one ticket).
+- **Invoke a subagent** (`jira-backlog-scoper`, `jira-ticket-auditor`, `jira-backlog-synthesizer`) when you want a phase to run fully autonomously end-to-end, without interruptions. Each subagent has a fixed model optimised for its task (`jira-ticket-auditor` runs on Opus for deeper reasoning; the others on Sonnet for speed).
 
 **Prerequisites:**
 - An AI coding assistant with agent/MCP support (VS Code + GitHub Copilot agent mode, Claude Code, Cursor, etc.)
@@ -111,6 +122,32 @@ Use the jira-backlog-scoping → jira-ticket-audit → jira-backlog-synthesis pi
 Save all output as Obsidian markdown in a new folder called refinement-[date].
 ```
 
+#### Using the dedicated subagents (autonomous mode)
+
+For fully autonomous execution, invoke each subagent directly instead of the main agent. The subagents run independently, each with a model tuned for their task.
+
+**In Claude Code:**
+```
+# Phase 1
+/agent jira-backlog-scoper
+Scope the backlog for board [ID], team "[team name]". Save to [output folder].
+
+# Phase 2 (after phase 1 completes)
+/agent jira-ticket-auditor
+Audit all tickets from the scope in [output folder]. Save cards to [output folder]/tickets/.
+
+# Phase 3 (after phase 2 completes)
+/agent jira-backlog-synthesizer
+Synthesize the audit cards in [output folder]/tickets/ into the full planning package.
+```
+
+**In VS Code Copilot agent mode**, select the agent from the agent picker or reference it by name in your prompt:
+```
+@jira-backlog-scoper Scope board [ID] for team "[team name]"
+```
+
+> **Note:** Each subagent hands off to the next via files on disk — the output folder is the interface between phases. Make sure each phase completes and writes its files before starting the next.
+
 ---
 
 ### 2. Sprint planning (`sprint-planning`)
@@ -209,14 +246,24 @@ QDRANT_REPOS_ROOT=/absolute/path/to/your/repos
 
 ---
 
-## Skill reference
+## Reference
 
-| Skill | Part of pipeline | Writes to Jira? |
+### Agents
+
+| Agent | Model | Pipeline step | Writes to Jira? |
+|---|---|---|---|
+| `jira-backlog-scoper` | Sonnet | Step 1 of 3 | Never |
+| `jira-ticket-auditor` | Opus | Step 2 of 3 | Never |
+| `jira-backlog-synthesizer` | Sonnet | Step 3 of 3 | Never |
+
+### Skills
+
+| Skill | Used by | Writes to Jira? |
 |---|---|---|
-| `jira-backlog-scoping` | Step 1 of 3 | Never |
-| `jira-ticket-audit` | Step 2 of 3 | Never |
-| `jira-backlog-synthesis` | Step 3 of 3 | Never |
-| `definition-of-ready` | Shared rubric (used by audit + planning) | Never |
-| `sprint-planning` | Standalone | Never |
-| `ticket-triage` | Standalone | Never |
+| `jira-backlog-scoping` | `jira-backlog-scoper` | Never |
+| `jira-ticket-audit` | `jira-ticket-auditor` | Never |
+| `jira-backlog-synthesis` | `jira-backlog-synthesizer` | Never |
+| `definition-of-ready` | `jira-ticket-auditor`, `sprint-planning`, main agent | Never |
+| `sprint-planning` | Main agent (standalone) | Never |
+| `ticket-triage` | Main agent (standalone) | Never |
 | `atlassian-mcp` | Reference / setup | — |
