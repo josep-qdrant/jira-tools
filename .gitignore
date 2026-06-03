@@ -1,1 +1,3 @@
 *.local.md
+.obsidian/
+.DS_Store
