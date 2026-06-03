@@ -117,13 +117,25 @@ arithmetic verification result, and limitations (which mappings were inferred,
 what lives in Notion and wasn't opened).
 
 **Design (06) & Code (07) reviews.** Report Figma coverage as a fraction
-(e.g. "0/11 UI tickets have a Figma link") and immediately reframe it with the
-code reality ("but only 3/11 need new design"). Alongside it, report **Notion
-coverage** from the cards' `## Notion context` sections (built by the
-`jira-notion-context` skill): how many tickets link a Notion doc, how many docs
-were actually read vs *linked but not readable*, and any **bold** Notion↔Jira
-discrepancies — unopened docs go to the methodology limitations. The code review cites the actual
-component/file paths found, and notes they should be confirmed by the owning team.
+(e.g. "0/11 UI tickets have a Figma link") and immediately reframe with the
+code reality ("but only 3/11 need new design"). Use the `design_source` field
+from each card to break down **where** designs were found — `jira_remote_link`,
+`notion_doc`, `linked_ticket`, `slack`, `github` — this shows the team which
+sources are worth checking first in future audits, and flags any design found
+"one hop away" in a linked ticket (parent ticket itself has no direct link).
+
+Report **external-context coverage** using the four frontmatter fields:
+- **Notion** (`notion:`): X/N tickets with `read`, Y/N `unreadable`, Z/N `none`.
+  Unreadable docs → methodology limitations.
+- **Slack** (`slack_context:`): X/N tickets had a thread found; Y/N were read.
+- **GitHub** (`github_context:`): X/N tickets had a PR/issue found; Y/N were read.
+- **Linked tickets** (`child_context:`): X/N tickets had linked/child issues;
+  Y/N fully hunted, Z/N partial (cap or access error). Summarise how many designs,
+  Notion docs, Slack threads, and GitHub PRs were found via linked tickets only —
+  this is the "one hop away" signal worth tracking.
+
+Any bold Notion↔Jira discrepancies from cards → call them out. The code review
+cites the actual component/file paths found, confirmed by the owning team.
 
 **Tickets-by-project (08).** A matrix (★ leader · ● involved · ○ minor/possible)
 across repos, per-repo ticket counts, and an explicit list of tickets whose scope

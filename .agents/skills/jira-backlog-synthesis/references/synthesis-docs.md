@@ -34,14 +34,24 @@ or a re-verified count.
 
 - Header: # issues, ordering (Score desc), date, the formula + mappings.
 - The table. Columns: `# | Issue | Title | Bucket | Status | Size | Imp | Conf |
-  **Score** | I×C×T ✓ | UI | Design/AC in Jira | Readiness`. The **Issue** cell is
-  a **wikilink** to the card (`[[PM-207-self-service-cluster-suspension|PM-207]]`).
+  **Score** | I×C×T ✓ | UI | Design | Notion | Linked | DoR`. The **Issue** cell
+  is a **wikilink** to the card (`[[PM-207-self-service-cluster-suspension|PM-207]]`).
+  - **Design** — `design_linked` + `design_source` abbreviated: "✓ remote",
+    "✓ notion", "✓ linked", "✓ slack", "✓ gh", "✗".
+  - **Notion** — `notion` field value: "read", "unread.", "—".
+  - **Linked** — `child_context` value + count: "full (3)", "partial (2/5)", "—".
+  - **DoR** — `dor` field value: 🟢 / 🟡 / 🔴.
 - A ⚠ note under the table for any rank that hinges on an optimistic size.
 - **Quick stats:** by bucket; by status (table); by size; scoring completeness
-  (X/N complete, Y/N at Score 0); documentation/design coverage (design fields,
-  Figma on UI tickets, attachments, AC, draft requirements); assignment;
-  cross-quarter carryover.
-- Optional: a compact Figma-coverage table (issue · requires UI? · Figma?).
+  (X/N complete, Y/N at Score 0); design coverage (design fields, Figma on UI
+  tickets, `design_source` breakdown, attachments, AC, draft requirements);
+  assignment; cross-quarter carryover.
+- **External-context coverage block:**
+  - Notion: X/N read · Y/N unreadable · Z/N none
+  - Slack: X/N found · Y/N read
+  - GitHub: X/N found · Y/N read
+  - Linked tickets: X/N had subtasks/links · Y/N fully hunted · Z/N partial
+  - Designs found via linked tickets only (parent has no direct link): list keys
 
 ## 03_CROSS_CUTTING_FINDINGS.md
 
@@ -58,6 +68,13 @@ or a re-verified count.
   - **H7 Bucket vs. score mismatch** — items mis-bucketed relative to Score.
   - **H8 Ownership & carryover** — unassigned top items; items dragged across
     quarters.
+  - **H9 Scope hidden in linked tickets** — tickets whose subtasks or linked
+    issues (`subtasks`, `linked_issues` frontmatter) reveal hidden scope: the
+    parent appears small but the child tickets add up. Table: parent · size ·
+    subtask count · subtask titles. Also flag any ticket where a key signal
+    (design, Notion doc, spec) was found only via a linked ticket
+    (`design_source: linked_ticket`) — these "one hop away" assets should be
+    linked directly on the parent.
 - Each section ends with **Action:**.
 
 ## 04_PLAN_RECOMMENDATION.md
@@ -89,12 +106,24 @@ or a re-verified count.
 - The question ("do UI tickets have a linked design?") and the short answer
   (coverage as a fraction, e.g. 0/11).
 - **Where I looked** — the five places, with the result of each.
-- **Per UI ticket** table: issue · Score · Figma link? · design extrapolable
-  from code? (Extrapolable / Partial / New design).
-- **Non-UI tickets** (no Figma expected) table.
-- **Design-effort summary** — the 5/3/3 style split.
-- **Recommendation** — don't block extrapolable ones; reserve design for
-  new-design; the UI Definition of Ready rule.
+- **Design-source breakdown** — a small table: where were the designs actually
+  found? Aggregate `design_source` across all UI tickets:
+  `jira_remote_link N | notion_doc N | linked_ticket N | slack N | github N | none N`.
+  This tells the team which source is most productive to check first.
+- **"One hop away" callout** — if any design was found only via a linked ticket
+  (`design_source: linked_ticket`), name those tickets and note that the parent
+  ticket itself had no direct design link. These are candidates for having the
+  design link added to the parent.
+- **Per UI ticket** table: Issue · Score · `design_linked` · `design_source` ·
+  `design_reuse` (Extrapolable / Partial / New design).
+- **Non-UI tickets** (`requires_ui: false`) — brief list confirming N/A.
+- **External-context coverage:**
+  - Notion: X/N read (list unreadable) · Slack: X/N read · GitHub: X/N read.
+  - Linked tickets: X/N hunted; signals found via linked tickets only.
+  - Notion↔Jira discrepancies (from cards' `## Notion context`) — list any bold alerts.
+- **Design-effort summary** — the Extrapolable/Partial/New-design split.
+- **Recommendation** — don't block extrapolable ones; reserve design effort for
+  new-design tickets; the UI Definition of Ready rule.
 
 ## 07_CODE_REVIEW.md
 

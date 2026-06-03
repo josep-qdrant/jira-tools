@@ -2,6 +2,13 @@
 
 This document explains how to use `jira-tools` with an AI agent: what agents are available, when to use each one, how to talk to them effectively, and the full workflows you can run.
 
+## Quick links
+
+- [AGENTS.md](AGENTS.md) — master instructions (golden rules, workflow, output format)
+- [README.md](README.md) — repo summary, required tools and MCP servers
+- [docs/WORKFLOW_OVERVIEW.md](docs/WORKFLOW_OVERVIEW.md) — concise consolidated overview and quick runbook
+- [.agents/skills/](.agents/skills/) — skills instruction sets (open specific SKILL.md files)
+
 ---
 
 ## How it works

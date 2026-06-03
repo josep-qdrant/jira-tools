@@ -53,7 +53,10 @@ before extracting.
 3. **Audit on the four axes**, recompute the Score with a realistic size, and put
    incoherences in **bold**. Hunt the design/Figma in all five places
    (design fields, attachments, description/AC, issue links, and especially
-   **remote links** — use `getJiraIssueRemoteIssueLinks`).
+   **remote links** — use `getJiraIssueRemoteIssueLinks`). Set `design_linked`,
+   `design_source`, `slack_context`, and `github_context` in frontmatter as you
+   work — upgrade `slack_context`/`github_context` from `found` to `read` after
+   actually fetching the content.
 4. **Associate to code.** Characterize each repo (README + real language) before
    searching. Prefer `codegraph_*` MCP tools when available for structural
    questions; otherwise scoped `rg` sweeps (one repo, few terms) via Bash. Don't
@@ -63,28 +66,37 @@ before extracting.
    design, analogous code, a derivable requirement), log it under "Deductions to
    verify", and keep the verdict conditional until confirmed.
 6. **Don't invent.** "Not stated" beats a fabricated value.
-7. **Obsidian-native cards.** Each card opens with the frontmatter schema (from the
+7. **Complete frontmatter — no field left blank.** Every card must have all fields
+   from the schema in `assets/audit-card-template.md`, including the six new
+   fields: `design_source`, `notion`, `slack_context`, `github_context`,
+   `subtasks`, `linked_issues`, and `child_context`. Use controlled vocabulary
+   exactly as documented. These fields make the audit queryable in Dataview and
+   feed the synthesis coverage stats.
+8. **Obsidian-native cards.** Each card opens with the frontmatter schema (from the
    skill), references other tickets with **wikilinks** (`[[PM-285-…|PM-285]]`),
    keeps Jira/Figma/Notion as markdown URLs, and renders the estimate alert and the
    DoR verdict as callouts (`> [!warning]` / `> [!success]`/`[!warning]`/`[!danger]`).
+   Show `subtasks` and `linked_issues` keys as wikilinks in the card header.
    See *Output format — Obsidian vault* in `AGENTS.md`.
-8. **Open the linked Notion docs (read-only).** Whenever a ticket carries a
+9. **Open the linked Notion docs (read-only).** Whenever a ticket carries a
    `notion.so` link (the AC field is frequently just a Notion link), fetch it
    with `mcp__notion__notion-fetch` and extract requirements/AC, recorded
    decisions, open questions, embedded Figma links and freshness; register every
    link in the Notion coverage registry and add the `## Notion context` section
-   to the card. Externalized AC counts as ✅ **only if read**; an unreadable link
-   is ⚠️ *externalized, unverified*. Never create/update/move Notion pages —
-   your tool scope only includes Notion reads.
-9. **Chase linked and child tickets (Step 3c — one hop).** Collect all subtasks,
-   issue-link targets, and Jira-pointing remote links. For each (up to ~8), fetch
-   the ticket and run the same five-place design hunt. Follow any `slack.com`
-   thread URLs with `mcp__slack__slack_read_thread` (see `slack-mcp` skill).
-   Follow `github.com` PR/issue URLs via Bash using the `gh` CLI (see `gh-cli`
-   skill — requires `gh auth login`). Summarise findings in a
-   `## Linked-ticket context` table in the card. A design or Figma link found in
-   a linked ticket counts as found — update the parent card's frontmatter
-   accordingly. Do not recurse beyond one hop.
+   to the card. Set `notion: read | unreadable | none` in frontmatter. Externalized
+   AC counts as ✅ **only if read**; an unreadable link is ⚠️ *externalized,
+   unverified*. Never create/update/move Notion pages.
+10. **Chase linked and child tickets (Step 3c — one hop).** Collect all subtasks,
+    issue-link targets, and Jira-pointing remote links. Populate `subtasks:` and
+    `linked_issues:` in frontmatter immediately. For each linked ticket (up to ~8),
+    fetch it and run the same five-place design hunt. Follow any `slack.com`
+    thread URLs with `mcp__slack__slack_read_thread` (see `slack-mcp` skill).
+    Follow `github.com` PR/issue URLs via Bash using the `gh` CLI (see `gh-cli`
+    skill — requires `gh auth login`). Summarise findings in the
+    `## Linked-ticket context` table. Set `child_context: full | partial | none`.
+    A Figma, Notion, Slack, or GitHub link found in a linked ticket counts as
+    found — update the parent card's frontmatter accordingly. Do not recurse
+    beyond one hop.
 
 ## What you return
 

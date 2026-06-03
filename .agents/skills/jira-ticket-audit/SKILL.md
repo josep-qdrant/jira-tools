@@ -96,6 +96,16 @@ several places. Check all five and record where you looked:
 Record per ticket: requires UI? (yes/probable/no), design linked? (yes/no + where
 found), and the missing-asset checklist. See `references/design-link-hunt.md`.
 
+**Frontmatter to set from this step:**
+- `design_linked: true | false` — was a Figma/design found at all.
+- `design_source:` — which of the five places (or `none`): `jira_design_field`,
+  `jira_remote_link`, `description`, `notion_doc`, `linked_ticket`, `github`,
+  `slack`. Set to `none` when `design_linked: false`.
+- `slack_context: found` when a `slack.com` URL is found (upgrade to `read` after
+  fetching). `none` if no Slack links appear anywhere in the ticket.
+- `github_context: found` when a `github.com` URL is found (upgrade to `read`
+  after fetching with `gh`). `none` if no GitHub links appear.
+
 When the hunt surfaces a `slack.com` URL (thread or channel link), fetch the
 thread with `mcp__slack__slack_read_thread` and note the relevant content (see
 `slack-mcp` skill). When it surfaces a `github.com` URL, fetch the PR or issue
@@ -113,6 +123,13 @@ boundaries and freshness, and add the **`## Notion context`** section to the car
 DoR criterion 2: AC externalized to Notion only counts as ✅ **if the doc was
 read**; an unreadable link is ⚠️ *externalized, unverified*. Flag in **bold** any
 discrepancy between the Notion doc and the Jira ticket.
+
+**Frontmatter to set from this step:**
+- `notion: read` — fetched successfully and content extracted.
+- `notion: unreadable` — link found but page not accessible (no access / not found).
+- `notion: none` — no `notion.so` link found anywhere in the ticket.
+- If the Notion doc contains a Figma link: set `design_linked: true` and
+  `design_source: notion_doc`.
 
 ## Step 3c — Recursive linked-ticket context
 
@@ -133,6 +150,13 @@ Gather all Jira keys referenced by the parent from three sources:
 
 Deduplicate, skip the parent itself, and cap at **~8 linked tickets** (record
 the rest as "not followed — cap reached").
+
+**Frontmatter to set immediately (before fetching):**
+- `subtasks:` — list of Jira keys from source 1, e.g. `[PM-208, PM-209]`. Empty
+  list `[]` if none.
+- `linked_issues:` — list of Jira keys from sources 2 and 3, e.g. `[PM-111]`.
+  Empty list `[]` if none.
+- These are **keys only** — titles and relationship types go in the body table.
 
 ### 3c-2 Fetch and hunt each linked ticket
 
@@ -171,24 +195,31 @@ Apply the same external-link rules as for the parent:
 
 ### 3c-4 Record findings in the parent card
 
-Add a **`## Linked-ticket context`** section after `## Notion context` (or after
-the design hunt section if there is no Notion context). Format:
+Add a **`## Linked-ticket context`** section before `## Notion context` (or
+before `## Definition of Ready` when there is no Notion context). The section
+is already scaffolded in the card template — fill its table.
 
 ```markdown
 ## Linked-ticket context
 
-| Key | Relationship | Summary | Figma | Notion | Slack | GitHub |
-|-----|-------------|---------|-------|--------|-------|--------|
-| PM-208 | subtask | "Suspension API endpoint" | None | [Spec](https://…) | None | [PR #42](https://…) |
-| PM-209 | blocks | "Billing freeze on suspend" | None | None | [#billing thread](https://…) | None |
+| Key | Relationship | Title | Figma | Notion | Slack | GitHub | Notes |
+|-----|-------------|-------|-------|--------|-------|--------|-------|
+| [[PM-208-slug\|PM-208]] | subtask | "Suspension API endpoint" | None | [Spec](https://…) | None | [PR #42](https://…) | API contract already exists |
+| [[PM-209-slug\|PM-209]] | blocks | "Billing freeze on suspend" | None | None | [#billing](https://…) | None | No additional signals |
 ```
 
-- If a linked ticket yielded a Figma → update `design_linked: true` in the
-  parent card's frontmatter and note *"Found via linked ticket PM-xxx"*.
-- If a linked ticket's Notion doc was read, register it in the same Notion
-  coverage registry as Step 2 of the jira-notion-context skill.
+**Frontmatter to update after completing Step 3c:**
+- `child_context: full` — all linked tickets fetched and hunted.
+- `child_context: partial` — cap reached or some fetch failed.
+- `child_context: none` — `subtasks` and `linked_issues` are both empty.
+- If a Figma was found in a linked ticket: `design_linked: true`,
+  `design_source: linked_ticket`, note *"Found via [[PM-xxx|PM-xxx]]"*.
+- If a Slack thread was found and read in a linked ticket: `slack_context: read`.
+- If a GitHub PR was found and read in a linked ticket: `github_context: read`.
+- If a Notion doc in a linked ticket was read: register it in the Notion coverage
+  registry (same registry as Step 3b) and note it in the body.
 - If nothing extra was found in a linked ticket, still record the row with
-  "No additional signals" — absence of findings is a finding.
+  "No additional signals" — absence is a finding.
 
 ## Step 4 — Identify the implicated project(s) and code
 
@@ -222,8 +253,9 @@ Cards are **Obsidian-native markdown** (see *Output format — Obsidian vault* i
 **wikilinks**, and render verdicts/alerts as **callouts**. Use the structure in
 `assets/audit-card-template.md`. Each card is:
 
-- **Frontmatter** — the Dataview-queryable schema (fill every field from the
-  ticket; use the value vocabulary in the template):
+- **Frontmatter** — the Dataview-queryable schema (fill every field; use the
+  vocabulary in the template). Fields are set progressively across Steps 3–3c
+  — never leave any field blank. Full schema with per-step ownership:
 
   ```yaml
   ---
@@ -244,12 +276,19 @@ Cards are **Obsidian-native markdown** (see *Output format — Obsidian vault* i
   confidence: 6
   score: 216
   scoring_complete: true          # false when a factor is missing (Score 0)
-  requires_ui: true               # true | probable | false
-  design_linked: false
-  design_reuse: PARTIAL           # FULL | PARTIAL | NONE | N/A
-  code_reuse: PARTIAL             # FULL | PARTIAL | NONE
+  requires_ui: true               # true | probable | false ← Step 3
+  design_linked: false            # true | false ← Step 3 (or 3c if found in linked ticket)
+  design_source: none             # ← Step 3/3b/3c: none|jira_design_field|jira_remote_link|description|notion_doc|linked_ticket|github|slack
+  design_reuse: PARTIAL           # FULL | PARTIAL | NONE | N/A ← Step 4
+  code_reuse: PARTIAL             # FULL | PARTIAL | NONE ← Step 4
   repos: [qdrant-cloud-cluster-api, operator, qdrant-cloud-public-api, qdrant-cloud-ui]
-  dor: almost-ready               # ready | almost-ready | not-ready
+  notion: read                    # none | read | unreadable ← Step 3b
+  slack_context: none             # none | found | read ← Steps 3/3c
+  github_context: none            # none | found | read ← Steps 3/3c
+  subtasks: []                    # Jira keys of direct child/subtask issues ← Step 3c
+  linked_issues: [PM-111]         # Jira keys of issue-link targets ← Step 3c
+  child_context: full             # none | partial | full ← Step 3c
+  dor: almost-ready               # ready | almost-ready | not-ready ← Step 5
   jira: https://qdrant.atlassian.net/browse/PM-207
   tags: [backlog-audit, ticket, PM, readiness/almost-ready]
   ---
@@ -268,6 +307,12 @@ Cards are **Obsidian-native markdown** (see *Output format — Obsidian vault* i
   alert** in axis 3 is a `> [!warning]` callout.
 - **Code reuse** — what already exists vs. what's new, with a verdict
   (FULL / PARTIAL / NONE) and suggested approach.
+- **`## Linked-ticket context`** — the table from Step 3c (one row per linked
+  ticket, keys as wikilinks). If none: "No linked tickets — child_context: none."
+  Place before `## Notion context`. Also show `subtasks:` and `linked_issues:`
+  keys in the card header for at-a-glance visibility.
+- **`## Notion context`** — from the `jira-notion-context` skill (Step 3b).
+  If none: "No Notion links found — notion: none."
 - **Definition of Ready (DoR)** — **end every card with the DoR block** from the
   `definition-of-ready` skill (don't use a freeform readiness line): the verdict
   as a callout (`> [!success]` 🟢 / `> [!warning]` 🟡 / `> [!danger]` 🔴), the

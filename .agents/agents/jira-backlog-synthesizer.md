@@ -32,11 +32,17 @@ scope + verified scoring model from part 1.
    is a read-only re-query to re-verify counts. Never write to Jira.
 2. **Trace every claim.** Every number in the master table and every cross-cutting
    finding must come from a card or a re-verified count — not from memory.
-   Re-confirm the Score formula in the master table and **recount totals with
-   `grep`/`rg`** (by status, size, Figma coverage, **Notion coverage** — linked
-   vs actually read, from the cards' `## Notion context` sections — and DoR
-   verdict) before asserting. Unopened Notion docs go to the methodology
-   limitations.
+   Re-confirm the Score formula and **recount all frontmatter-based totals with
+   `grep`/`rg`** before asserting:
+   - `dor:` counts (ready / almost-ready / not-ready)
+   - `design_linked:` and `design_source:` distribution across UI tickets
+   - `notion:` counts (read / unreadable / none) — unreadable → methodology limitations
+   - `slack_context:` and `github_context:` counts (found / read / none)
+   - `child_context:` counts; tickets with subtasks/linked issues; how many had
+     signals found only via linked tickets (`design_source: linked_ticket`)
+   Designs found one hop away (`design_source: linked_ticket`) go to the design
+   review's "one hop away" callout. Tickets with non-empty `subtasks` or
+   `linked_issues` feed the H9 cross-cutting pattern (hidden scope).
 3. **Group the readiness plan by DoR verdict** (🟢 Ready / 🟡 Almost ready /
    🔴 Not ready) carried on each card, and within 🔴 by reason (incomplete
    scoring, placeholder/missing context, épic, unrealistic estimate). Reuse the

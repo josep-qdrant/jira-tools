@@ -78,6 +78,16 @@ Fetch the page with `notion-fetch`. Extract, in this order of importance:
 
 ## Step 4 — Feed the card and the DoR
 
+**Set frontmatter first** — before writing any prose, update the card's
+`notion:` field:
+
+- `notion: read` — page fetched and content extracted.
+- `notion: unreadable` — link found but page not accessible (no access / 404).
+- `notion: none` — no `notion.so` link found anywhere in the ticket.
+
+If the Notion doc contains a Figma link, also set `design_linked: true` and
+`design_source: notion_doc` in the parent card's frontmatter.
+
 Add a **`## Notion context`** section to the ticket's audit card (copy the
 skeleton from `assets/notion-context-block.md`) with the registry rows, the
 extracted takeaways, and any discrepancies. Then adjust the audit:

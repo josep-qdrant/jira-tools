@@ -18,9 +18,16 @@ score: <n | 0>
 scoring_complete: <true | false>
 requires_ui: <true | probable | false>
 design_linked: <true | false>
+design_source: <none | jira_design_field | jira_remote_link | description | notion_doc | linked_ticket | github | slack>
 design_reuse: <FULL | PARTIAL | NONE | N/A>
 code_reuse: <FULL | PARTIAL | NONE>
 repos: [<repo>, <repo>]
+notion: <none | read | unreadable>
+slack_context: <none | found | read>
+github_context: <none | found | read>
+subtasks: []
+linked_issues: []
+child_context: <none | partial | full>
 dor: <ready | almost-ready | not-ready>
 jira: https://<site>/browse/<KEY>
 tags: [backlog-audit, ticket, <PROJECT>, readiness/<ready|almost-ready|not-ready>]
@@ -30,7 +37,9 @@ tags: [backlog-audit, ticket, <PROJECT>, readiness/<ready|almost-ready|not-ready
 
 **Type:** <issue type> · **Sprint:** <sprint> (note carryover, e.g. "was in 2025-Q3, closed without completing") · **Status:** <status> · **Objective Class:** <Standard/Big Rock> · **Owner:** <name or "unassigned"> · **Priority:** <priority>
 **Link:** [<KEY>](https://<site>/browse/<KEY>) · **Reporter:** <name> · **Domain:** <domain> · **Created/Updated:** <date> / <date>
-**Related:** <wikilink any ticket referenced, e.g. same theme as [[PM-285-unify-ui-text-fields|PM-285]] (Done); synergy with [[PM-296-backup-in-update-version-dialog|PM-296]]>
+**Subtasks:** <comma-separated wikilinks, e.g. [[PM-208-slug|PM-208]], [[PM-209-slug|PM-209]] — or "none">
+**Linked issues:** <comma-separated wikilinks with relation, e.g. [[PM-111-slug|PM-111]] (blocks), [[PM-285-slug|PM-285]] (relates-to) — or "none">
+**Related:** <wikilink any ticket referenced for theme/synergy, e.g. same theme as [[PM-285-unify-ui-text-fields|PM-285]] (Done); synergy with [[PM-296-backup-in-update-version-dialog|PM-296]]>
 
 ---
 
@@ -111,6 +120,23 @@ re-estimated? bold any incoherence>.
 
 **Suggested approach:** <reuse X; design only the new sub-part Y>.
 
+## Linked-ticket context
+
+> **Step 3c output.** Fill when subtasks or linked issues were fetched. One row per
+> linked ticket; include the key as a **wikilink** if the card exists
+> (`[[PM-208-slug|PM-208]]`). Record `child_context:` in frontmatter as `full`
+> (all fetched), `partial` (cap hit or access error), or `none` (no linked tickets).
+> If no linked tickets exist, write "No linked tickets — child_context: none."
+
+| Key | Relationship | Title | Figma | Notion | Slack | GitHub | Notes |
+|-----|-------------|-------|-------|--------|-------|--------|-------|
+| [[<KEY>-slug\|<KEY>]] | subtask / blocks / relates-to | "<title>" | None / [link]() | None / read / unreadable | None / read | None / [PR #n]() | <signal or "No additional signals"> |
+
+> **Design credit rule:** if a linked ticket's hunt surfaces a Figma link, set
+> `design_linked: true` and `design_source: linked_ticket` in this card's
+> frontmatter and note it here. Same for a Figma found inside a Slack thread
+> (`design_source: slack`) or GitHub PR body (`design_source: github`).
+
 ## Notion context
 
 > **Single source of truth — don't duplicate the block here.** If the ticket has
@@ -118,6 +144,8 @@ re-estimated? bold any incoherence>.
 > `jira-notion-context/assets/notion-context-block.md` (registry row, takeaways,
 > freshness, discrepancies, effect on DoR). If there are no Notion links, state
 > "No Notion links found" — absence is also a recorded result.
+> Set `notion:` in frontmatter: `read` (fetched successfully), `unreadable`
+> (linked but access failed or not found), `none` (no Notion links anywhere).
 
 ## Definition of Ready (DoR)
 
