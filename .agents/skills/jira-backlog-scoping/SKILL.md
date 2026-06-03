@@ -146,6 +146,11 @@ for the methodology document that `jira-backlog-synthesis` produces — so be
 precise about what you observed vs. inferred (e.g. note if a mapping like XL was
 inferred because no issue in the set used it).
 
+> If you write this note into the working folder (not just a scratchpad), follow
+> the Obsidian conventions in `AGENTS.md` (*Output format — Obsidian vault*):
+> frontmatter, wikilinks for any ticket/doc references, `> [!info]` for the
+> read-only note.
+
 ## Reference files
 
 - `references/scoring-model.md` — the RICE model in depth: value mappings, the

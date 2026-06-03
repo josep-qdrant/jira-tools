@@ -1,6 +1,9 @@
 ## Definition of Ready (DoR)
 
-> **Verdict: <🟢 READY TO START | 🟡 ALMOST READY | 🔴 NOT READY>** — <one-line justification>
+> [!success] Verdict: 🟢 READY TO START — <one-line justification>
+
+<!-- Callout type follows the verdict: 🟢 → [!success] · 🟡 → [!warning] · 🔴 → [!danger].
+     Keep the frontmatter `dor:` (ready | almost-ready | not-ready) in sync with it. -->
 
 | DoR criterion | Status |
 |---|---|

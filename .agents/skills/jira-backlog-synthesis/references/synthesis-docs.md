@@ -4,12 +4,21 @@ Section-by-section structure for the 10 deliverables. Adapt headings to the
 team/quarter; keep the substance. Every figure must trace to a per-ticket card
 or a re-verified count.
 
+> [!note] Obsidian conventions (apply to every doc below)
+> Each file opens with the synthesis frontmatter (see the `jira-backlog-synthesis`
+> skill). Links to sibling docs and to ticket cards are **wikilinks**
+> (`[[02-master-table|…]]`, `[[PM-207-…|PM-207]]`); ticket keys in prose are
+> wikilinks too. The "read-only, nothing modified in Jira" line is a `> [!info]`
+> callout. External URLs (Jira/Figma/Notion) stay markdown links. See *Output
+> format — Obsidian vault* in `AGENTS.md`.
+
 ## 00_README_index.md
 
 - Title + one-paragraph framing (team, board, scope, # issues, the axes audited).
-- "Read-only, nothing modified in Jira. Generated <date>."
-- **Suggested reading order** — a numbered list pointing at 01–08.
-- **Cards by bucket** — a small table listing the issue keys per sprint/bucket.
+- A `> [!info]` callout: "Read-only, nothing modified in Jira. Generated <date>."
+- **Suggested reading order** — a numbered list pointing at 01–08 as **wikilinks**.
+- **Cards by bucket** — a small table listing the issue keys per sprint/bucket,
+  each key a **wikilink** to its card (`[[PM-207-…|PM-207]]`).
 - **One-line scoring recap** — the formula + value mappings.
 - **Top 3 immediate actions.**
 
@@ -25,7 +34,8 @@ or a re-verified count.
 
 - Header: # issues, ordering (Score desc), date, the formula + mappings.
 - The table. Columns: `# | Issue | Title | Bucket | Status | Size | Imp | Conf |
-  **Score** | I×C×T ✓ | UI | Design/AC in Jira | Readiness`.
+  **Score** | I×C×T ✓ | UI | Design/AC in Jira | Readiness`. The **Issue** cell is
+  a **wikilink** to the card (`[[PM-207-self-service-cluster-suspension|PM-207]]`).
 - A ⚠ note under the table for any rank that hinges on an optimistic size.
 - **Quick stats:** by bucket; by status (table); by size; scoring completeness
   (X/N complete, Y/N at Score 0); documentation/design coverage (design fields,

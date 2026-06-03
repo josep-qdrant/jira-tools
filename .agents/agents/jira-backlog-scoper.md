@@ -38,6 +38,9 @@ your boundaries and hand-off.
    the arithmetic on several issues**. If a Score is 0 with a size set, a factor
    is missing → flag "incomplete scoring", not a formula error.
 4. **Don't invent.** Missing data is "not recorded", never a guess.
+5. **Obsidian-native notes.** If you write the hand-off note into the working
+   folder (not just a scratchpad), give it frontmatter and use wikilinks for any
+   ticket/doc references — see *Output format — Obsidian vault* in `AGENTS.md`.
 
 ## What you return
 

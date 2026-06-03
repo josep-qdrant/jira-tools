@@ -54,9 +54,15 @@ before extracting.
    design, analogous code, a derivable requirement), log it under "Deductions to
    verify", and keep the verdict conditional until confirmed.
 6. **Don't invent.** "Not stated" beats a fabricated value.
+7. **Obsidian-native cards.** Each card opens with the frontmatter schema (from the
+   skill), references other tickets with **wikilinks** (`[[PM-285-…|PM-285]]`),
+   keeps Jira/Figma/Notion as markdown URLs, and renders the estimate alert and the
+   DoR verdict as callouts (`> [!warning]` / `> [!success]`/`[!warning]`/`[!danger]`).
+   See *Output format — Obsidian vault* in `AGENTS.md`.
 
 ## What you return
 
-One file per ticket (`<KEY>_<slug>.md`) in the destination folder, plus a short
-summary of how many cards you wrote and the headline readiness split. Don't
+One file per ticket (`<KEY>-<kebab-slug>.md`, a unique basename for clean
+wikilinks) in the destination folder, plus a short summary of how many cards you
+wrote and the headline readiness split. Don't
 produce cross-cutting synthesis docs — that is the synthesizer's job.

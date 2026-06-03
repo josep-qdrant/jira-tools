@@ -40,6 +40,11 @@ trace back to a card or a verified count.
    before asserting them. "Looks right" is not evidence.
 4. **Surgical.** Produce exactly the documents below; don't add speculative
    sections.
+5. **Obsidian-native output.** Every doc opens with YAML frontmatter, links to
+   sibling docs and to tickets with **wikilinks** (`[[02-master-table|…]]`,
+   `[[PM-207-…|PM-207]]`), and renders the read-only note as a `> [!info]`
+   callout. External URLs stay markdown links. See *Output format — Obsidian
+   vault* in `AGENTS.md`; the frontmatter schema is below.
 
 ## The deliverable set
 
@@ -62,11 +67,28 @@ The exact structure of each document is in `references/synthesis-docs.md` — re
 it before writing. `assets/` holds copyable skeletons for the index and the
 actions-audit report.
 
+**Frontmatter (open every synthesis doc with it):**
+
+```yaml
+---
+title: "Master table"
+doc: master-table          # index | executive-summary | master-table | cross-cutting | plan | methodology | design-review | code-review | tickets-by-project | actions-audit
+team: "<team>"
+board: <NNN>
+project: <KEY>
+scope: "<sprints/filter>"
+generated: <YYYY-MM-DD>
+readonly: true
+tags: [backlog-audit, synthesis]
+---
+```
+
 ## Key construction notes
 
-**Master table (02).** Order by Score descending. Include a column that shows
-`Impact × Confidence × Size ✓` (the explicit reconciliation), so a reader can see
-the formula holds and which rows are "scoring incomplete". Add quick stats: by
+**Master table (02).** Order by Score descending. Each issue cell is a **wikilink**
+to its card (`[[PM-207-self-service-cluster-suspension|PM-207]]`). Include a column
+that shows `Impact × Confidence × Size ✓` (the explicit reconciliation), so a
+reader can see the formula holds and which rows are "scoring incomplete". Add quick stats: by
 sprint, by status, by size, scoring completeness, documentation/design coverage,
 assignment, and cross-quarter carryover. Put a ⚠ on any row whose top rank
 depends on an optimistic size.
@@ -114,6 +136,10 @@ proof that the board, issues, and fields are exactly as before. See
 - **Recount** every aggregate with `grep`/`rg` against the cards (counts by
   status/size, Figma coverage, scoring-incomplete count). Fix any mismatch.
 - **Re-check** the master-table arithmetic column.
+- **Obsidian check:** every doc opens with frontmatter; internal references are
+  wikilinks (`rg '\]\([0-9].*\.md\)|\]\(tickets/' *.md` should return nothing —
+  those are markdown links to deliverables that should be wikilinks); external
+  URLs remain markdown links.
 - If you worked in a scratchpad, **copy everything into the working folder** and
   confirm it's there. Remember host vs. mount paths: file tools use host paths
   (`/Users/...`), `bash` uses the mount (`/sessions/<id>/mnt/...`); copy with

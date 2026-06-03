@@ -2,7 +2,7 @@
 
 Instructions for **Jira backlog audit** tasks aimed at quarter planning (or similar): read a set of tickets, audit them across several axes, review the design and code involved, and produce synthesis documentation.
 
-> Philosophy: **read-only on Jira** · **all output as markdown** in the working folder · **always verify** data and arithmetic · **never invent**.
+> Philosophy: **read-only on Jira** · **all output as Obsidian-native markdown** in the working folder · **always verify** data and arithmetic · **never invent**.
 
 ---
 
@@ -33,6 +33,63 @@ The full step-by-step procedure lives in three dedicated skills. Invoke them in 
 | 3 | **`jira-backlog-synthesis`** | Roll up the cards into the full synthesis package (executive summary, master table, cross-cutting findings, readiness plan, methodology, design/code reviews, tickets-by-project matrix, actions audit report). |
 
 Do not duplicate the detailed procedures here; load the relevant skill when needed.
+
+---
+
+## Output format — Obsidian vault
+
+The working folder is an **Obsidian vault** (this repo has an `.obsidian/`). Every
+deliverable — ticket cards and synthesis docs — must be **Obsidian-native
+markdown**. Four conventions, applied to **deliverables only** (skill/agent
+scaffolding under `.agents/` keeps ordinary relative-path links, since the agent
+reads those by path):
+
+### 1. Wikilinks for every internal cross-reference
+
+Link between deliverables and to tickets with `[[target|alias]]`, never with
+`[text](path.md)`:
+
+- To a ticket card: `[[PM-207-self-service-cluster-suspension|PM-207]]`.
+- To a sibling doc: `[[01-tabla-maestra|01 · Tabla maestra]]`.
+- To a heading inside a doc: `[[02-master-table#Quick stats|stats]]`.
+- **Any ticket key mentioned in prose becomes a wikilink** (e.g. "synergy with
+  [[PM-296-backup-in-update-version-dialog|PM-296]]").
+
+Rules:
+
+- The target is the **basename without folder path and without `.md`**. Obsidian
+  resolves it by filename across the vault, so a doc in the root can link a card
+  in `tickets/` with no path. Keep deliverable filenames unique (the
+  `PM-<n>-<slug>` and `NN-<slug>` schemes already are).
+- Use the alias (`|`) to render a short, readable label.
+- **External URLs stay standard markdown links** — Jira
+  (`https://…/browse/PM-207`), `figma.com`, `notion.so`. Wikilinks are
+  vault-internal only.
+- Add `aliases: ["PM-207"]` to each card's frontmatter so a bare `[[PM-207]]`
+  also resolves.
+
+### 2. YAML frontmatter (Properties) on every file
+
+Open every deliverable with a `---` frontmatter block so Obsidian Properties and
+Dataview can query it. Always include a `tags:` list. The exact schemas live with
+the skills that own each artifact: **ticket cards** → `jira-ticket-audit`,
+**synthesis docs** → `jira-backlog-synthesis`.
+
+### 3. Tags — a small controlled vocabulary
+
+Use frontmatter `tags:` from a fixed set, not free-form: `backlog-audit` (all),
+`ticket` / `synthesis` (kind), the project key (`PM`), and on cards the DoR
+verdict (`readiness/ready`, `readiness/almost-ready`, `readiness/not-ready`).
+
+### 4. Callouts for verdicts and alerts
+
+Render the standout blockquotes as Obsidian callouts instead of plain `>`:
+
+- Read-only / "nothing modified in Jira" note → `> [!info]`
+- DoR verdict → `> [!success]` (🟢 ready) · `> [!warning]` (🟡 almost ready) ·
+  `> [!danger]` (🔴 not ready)
+- Estimate / hidden-scope alert → `> [!warning]`
+- "Single source of truth / canonical" pointers → `> [!note]`
 
 ---
 
@@ -106,6 +163,8 @@ QDRANT_REPOS_ROOT=../qdrant
 - **Host vs. bash paths differ** → file tools use host paths; `bash` uses the mount. Keep this in mind when copying between folders.
 - **You can't write outside mounted folders** → if `Write` fails with "outside connected folders", mount the working folder first.
 - **Anchor `Edit`s on stable, unique headings** when editing long markdown.
+- **Obsidian wikilinks resolve by basename** → keep deliverable filenames unique; qualify with a path only on collision (`[[folder/name|alias]]`). Wikilinks are for deliverables; external URLs (Jira/Figma/Notion) stay markdown links.
+- **Escape the alias pipe inside markdown tables** → a wikilink in a table cell needs `\|` before the alias (`[[PM-207-…\|PM-207]]`), or the `|` is read as a column separator and the row breaks. Outside tables a plain `|` is fine.
 
 ---
 

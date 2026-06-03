@@ -1,13 +1,24 @@
+---
+title: "Actions audit — read-only proof"
+doc: actions-audit
+team: "<Team>"
+board: <NNN>
+project: <KEY>
+generated: <YYYY-MM-DD>
+readonly: true
+tags: [backlog-audit, synthesis, actions-audit]
+---
+
 # Actions audit report — backlog analysis session
 
 **Date:** <date> · **System:** Jira/Confluence (<site>) · **User:** <email>
 
 ## Conclusion
 
-**No write, edit, move, transition, comment, or sprint change was made in Jira
-or on board <NNN> during this session.** All Jira interactions were **read-only**.
-The only writes this session made were to **local disk** (the markdown analysis
-files).
+> [!info] No write, edit, move, transition, comment, or sprint change was made in
+> Jira or on board <NNN> during this session. All Jira interactions were
+> **read-only**. The only writes this session made were to **local disk** (the
+> markdown analysis files).
 
 ---
 
@@ -44,6 +55,6 @@ any other field touched.
 | Create files | Local working folder `<folder>/` | <N> markdown files (<n> cards + <m> synthesis docs + this report). |
 | Edit files | local `.md` | Corrections to my own analysis. **Not Jira issues.** |
 
-> Note: the board, the issues, and all their fields remain **exactly as before**
+> [!note] The board, the issues, and all their fields remain **exactly as before**
 > the session. Any priority or field change suggested by this analysis would have
 > to be applied manually (or with explicit authorization).

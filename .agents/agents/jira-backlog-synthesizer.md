@@ -39,6 +39,11 @@ scope + verified scoring model from part 1.
    scoring, placeholder/missing context, épic, unrealistic estimate). Reuse the
    shared rubric from the `definition-of-ready` skill — don't reinvent it.
 4. **Don't invent.** Mark gaps explicitly; never fabricate a value to fill a cell.
+5. **Obsidian-native docs.** Every document opens with the synthesis frontmatter,
+   links to sibling docs and to ticket cards with **wikilinks** (escape the alias
+   pipe as `\|` inside tables), and renders the read-only note as a `> [!info]`
+   callout. External URLs stay markdown links. See *Output format — Obsidian
+   vault* in `AGENTS.md`.
 
 ## What you return
 

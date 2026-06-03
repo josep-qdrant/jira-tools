@@ -131,12 +131,16 @@ into a sprint on a false premise. Keep deductions labelled until confirmed.
 ## The DoR block (paste into each ticket)
 
 End every audit card / refined ticket with this block. Fill the table, then the
-one-liner. See `assets/dor-block-template.md` for the copy-paste skeleton.
+one-liner. Render the verdict as an Obsidian **callout** — 🟢 → `[!success]`,
+🟡 → `[!warning]`, 🔴 → `[!danger]` — and keep the card's frontmatter `dor:`
+(`ready` / `almost-ready` / `not-ready`) in sync. See
+`assets/dor-block-template.md` for the copy-paste skeleton.
 
 ```markdown
 ## Definition of Ready (DoR)
 
-> **Verdict: 🟢/🟡/🔴 <READY TO START / ALMOST READY / NOT READY>** — <one line>
+> [!success] Verdict: 🟢 READY TO START — <one line>
+<!-- callout type by verdict: 🟢 [!success] · 🟡 [!warning] · 🔴 [!danger] -->
 
 | DoR criterion | Status |
 |---|---|

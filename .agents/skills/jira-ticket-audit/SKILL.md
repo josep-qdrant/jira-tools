@@ -123,28 +123,69 @@ Qdrant repo map as a worked example).
 
 ## Step 5 — Write the audit card
 
-Use the structure in `assets/audit-card-template.md`. Each card is:
+Cards are **Obsidian-native markdown** (see *Output format — Obsidian vault* in
+`AGENTS.md`): they open with YAML frontmatter, cross-reference other tickets with
+**wikilinks**, and render verdicts/alerts as **callouts**. Use the structure in
+`assets/audit-card-template.md`. Each card is:
+
+- **Frontmatter** — the Dataview-queryable schema (fill every field from the
+  ticket; use the value vocabulary in the template):
+
+  ```yaml
+  ---
+  ticket: PM-207
+  aliases: ["PM-207"]
+  title: "Self-service Cluster suspension in Managed Cloud and Hybrid Cloud"
+  type: Objective
+  status: Ready for planning
+  bucket: Backlog Prio 1          # sprint / backlog bucket
+  objective_class: Standard
+  owner: Bastian Hofmann
+  priority: Medium
+  domain: Clusters
+  carryover: true                 # was it dragged from a past quarter?
+  size: M
+  size_factor: 6
+  impact: 6
+  confidence: 6
+  score: 216
+  scoring_complete: true          # false when a factor is missing (Score 0)
+  requires_ui: true               # true | probable | false
+  design_linked: false
+  design_reuse: PARTIAL           # FULL | PARTIAL | NONE | N/A
+  code_reuse: PARTIAL             # FULL | PARTIAL | NONE
+  repos: [qdrant-cloud-cluster-api, operator, qdrant-cloud-public-api, qdrant-cloud-ui]
+  dor: almost-ready               # ready | almost-ready | not-ready
+  jira: https://qdrant.atlassian.net/browse/PM-207
+  tags: [backlog-audit, ticket, PM, readiness/almost-ready]
+  ---
+  ```
 
 - **Header** with metadata (type, sprint + carryover note, status, class, owner,
-  priority, link).
+  priority). The **Jira link stays a standard markdown URL**; any **other ticket
+  referenced** (synergy, duplicate, same theme) is a **wikilink**
+  (`[[PM-285-…|PM-285]]`).
 - **Audit summary table** — one row per axis: verdict (OK / Risk / N/A) + a short
   note.
 - **Project & technical notes** — repo(s), high-level approach, notes,
   identification confidence.
 - **The four axes**, each as its own `## N. <axis>` section. Anchor edits on
-  these stable, unique headings (see gotchas).
+  these stable, unique headings (see gotchas). The **estimate / hidden-scope
+  alert** in axis 3 is a `> [!warning]` callout.
 - **Code reuse** — what already exists vs. what's new, with a verdict
   (FULL / PARTIAL / NONE) and suggested approach.
 - **Definition of Ready (DoR)** — **end every card with the DoR block** from the
-  `definition-of-ready` skill (don't use a freeform readiness line): one verdict
-  (🟢 Ready to start / 🟡 Almost ready / 🔴 Not ready), the seven-point checklist,
-  and a one-line *"To be ready it needs: …"* drawn from the reason taxonomy. The
-  four axes feed it directly — goal/scope → criteria 1–3 & 7; UI/design →
-  criterion 5; size coherence → criteria 3–4 & "unrealistic estimate";
+  `definition-of-ready` skill (don't use a freeform readiness line): the verdict
+  as a callout (`> [!success]` 🟢 / `> [!warning]` 🟡 / `> [!danger]` 🔴), the
+  seven-point checklist, and a one-line *"To be ready it needs: …"* drawn from the
+  reason taxonomy. The four axes feed it directly — goal/scope → criteria 1–3 & 7;
+  UI/design → criterion 5; size coherence → criteria 3–4 & "unrealistic estimate";
   prioritization → criterion 4 ("incomplete scoring" when the Score is 0). This
-  keeps every card comparable.
+  keeps every card comparable, and `dor:` in the frontmatter mirrors the verdict.
 
-One file per ticket, named `<KEY>_<slug>.md` (e.g. `PM-207_Self-service-Cluster-suspension.md`).
+One file per ticket, named `<KEY>-<kebab-slug>.md` (e.g.
+`PM-207-self-service-cluster-suspension.md`) — a unique basename so wikilinks
+resolve cleanly.
 
 ## Gotchas
 
@@ -161,6 +202,9 @@ One file per ticket, named `<KEY>_<slug>.md` (e.g. `PM-207_Self-service-Cluster-
   with trailing text may not match — use just the heading.
 - **Host vs. mount paths differ:** file tools use host paths (`/Users/...`);
   `bash` uses the mount (`/sessions/<id>/mnt/...`). Account for it when copying.
+- **Cards are Obsidian deliverables** → cross-ticket references are wikilinks
+  (`[[PM-285-…|PM-285]]`), the Jira/Figma/Notion URLs stay markdown links, and the
+  file opens with frontmatter. See *Output format — Obsidian vault* in `AGENTS.md`.
 
 ## Related skills
 

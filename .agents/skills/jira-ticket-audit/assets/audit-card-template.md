@@ -1,7 +1,36 @@
-# <KEY> — <Issue title>
+---
+ticket: <KEY>
+aliases: ["<KEY>"]
+title: "<Issue title>"
+type: <issue type>
+status: <status>
+bucket: <sprint / backlog bucket>
+objective_class: <Standard | Big Rock>
+owner: <name or "unassigned">
+priority: <priority>
+domain: <domain or "—">
+carryover: <true | false>
+size: <XS | S | M | L | XL>
+size_factor: <10 | 8 | 6 | 4 | 2>
+impact: <9 | 6 | 2 | null>
+confidence: <9 | 6 | 2 | null>
+score: <n | 0>
+scoring_complete: <true | false>
+requires_ui: <true | probable | false>
+design_linked: <true | false>
+design_reuse: <FULL | PARTIAL | NONE | N/A>
+code_reuse: <FULL | PARTIAL | NONE>
+repos: [<repo>, <repo>]
+dor: <ready | almost-ready | not-ready>
+jira: https://<site>/browse/<KEY>
+tags: [backlog-audit, ticket, <PROJECT>, readiness/<ready|almost-ready|not-ready>]
+---
+
+# <KEY> · <Issue title>
 
 **Type:** <issue type> · **Sprint:** <sprint> (note carryover, e.g. "was in 2025-Q3, closed without completing") · **Status:** <status> · **Objective Class:** <Standard/Big Rock> · **Owner:** <name or "unassigned"> · **Priority:** <priority>
-**Link:** https://<site>/browse/<KEY>
+**Link:** [<KEY>](https://<site>/browse/<KEY>) · **Reporter:** <name> · **Domain:** <domain> · **Created/Updated:** <date> / <date>
+**Related:** <wikilink any ticket referenced, e.g. same theme as [[PM-285-unify-ui-text-fields|PM-285]] (Done); synergy with [[PM-296-backup-in-update-version-dialog|PM-296]]>
 
 ---
 
@@ -18,7 +47,7 @@
 
 **Project(s):** <repo(s) involved, leader vs. secondary>
 **How it'd be done (high level):** <approach in 1–2 sentences, no file-by-file detail>
-**Technical notes:** <risks, e.g. data-loss risk; dependencies on other tickets>
+**Technical notes:** <risks, e.g. data-loss risk; dependencies on other tickets — wikilink them>
 **Identification confidence:** <High / Medium / Low> (<why>)
 
 ## 1. Goal & scope clarity
@@ -46,8 +75,9 @@ Missing design-asset checklist:
 
 Size **<size>** (factor <n>).
 
-> **ESTIMATE ALERT (under/over-estimation risk):** <why the estimate may be off;
-> what scope is hidden>. Realistic estimate **<size>**; review before committing.
+> [!warning] Estimate alert (under/over-estimation risk)
+> <why the estimate may be off; what scope is hidden>. Realistic estimate
+> **<size>**; review before committing.
 
 <If re-estimating changes the ranking, recompute: Impact × Confidence × new-size
 = new Score, and state the delta.>
@@ -85,7 +115,9 @@ re-estimated? bold any incoherence>.
 
 > **Single source of truth — don't duplicate the block here.** Paste the DoR block
 > from `definition-of-ready/assets/dor-block-template.md` and fill it in: the
-> verdict (🟢 / 🟡 / 🔴), the seven-point checklist (✅ / 🔎 deduced / ⚠️ / ❌ / N/A),
-> the *Deductions to verify* lines (whenever a row is 🔎), and the closing
-> *"To be ready it needs: …"*. The rubric and the block live in the
-> `definition-of-ready` skill; edit them there so this template never drifts.
+> verdict **as a callout** (`> [!success]` 🟢 / `> [!warning]` 🟡 / `> [!danger]` 🔴),
+> the seven-point checklist (✅ / 🔎 deduced / ⚠️ / ❌ / N/A), the *Deductions to
+> verify* lines (whenever a row is 🔎), and the closing *"To be ready it needs: …"*.
+> Keep `dor:` in the frontmatter in sync with the verdict. The rubric and the block
+> live in the `definition-of-ready` skill; edit them there so this template never
+> drifts.
