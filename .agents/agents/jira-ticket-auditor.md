@@ -16,7 +16,7 @@ description: >-
   Definition of Ready verdict. This is for PRODUCT/BACKLOG tickets — for inbound
   support/customer ticket triage use a different workflow. Read-only on Jira:
   never creates, edits, or transitions issues. Feeds jira-backlog-synthesizer.
-tools: Read, Write, Edit, Bash, Grep, Glob, mcp__atlassian__searchJiraIssuesUsingJql, mcp__atlassian__getJiraIssue, mcp__atlassian__getJiraIssueRemoteIssueLinks, mcp__figma__get_metadata, mcp__figma__get_screenshot, mcp__figma__get_design_context, mcp__figma__get_variable_defs, mcp__figma__get_code_connect_map, mcp__notion__notion-search, mcp__notion__notion-fetch, mcp__notion__notion-get-comments
+tools: Read, Write, Edit, Bash, Grep, Glob, mcp__atlassian__searchJiraIssuesUsingJql, mcp__atlassian__getJiraIssue, mcp__atlassian__getJiraIssueRemoteIssueLinks, mcp__figma__get_metadata, mcp__figma__get_screenshot, mcp__figma__get_design_context, mcp__figma__get_variable_defs, mcp__figma__get_code_connect_map, mcp__notion__notion-search, mcp__notion__notion-fetch, mcp__notion__notion-get-comments, mcp__slack__slack_read_thread, mcp__slack__slack_read_channel, mcp__slack__slack_search_public, mcp__slack__slack_search_public_and_private
 model: opus
 ---
 
@@ -34,6 +34,10 @@ Read and follow exactly:
 - `.claude/skills/jira-notion-context/SKILL.md` — Step 3b: detect, register and
   read the Notion docs linked from tickets, and the `## Notion context` card
   section (skeleton in its `assets/notion-context-block.md`).
+- `.claude/skills/slack-mcp/SKILL.md` — how to read Slack threads and channels
+  when `slack.com` URLs appear during the hunt or linked-ticket context step.
+- `.claude/skills/gh-cli/SKILL.md` — how to use the `gh` CLI to fetch GitHub
+  PRs and issues when `github.com` URLs appear.
 
 Assume jira-backlog-scoper has produced the scope, field map, and verified
 scoring model; if they're missing, establish at least the field map and formula
@@ -72,6 +76,15 @@ before extracting.
    to the card. Externalized AC counts as ✅ **only if read**; an unreadable link
    is ⚠️ *externalized, unverified*. Never create/update/move Notion pages —
    your tool scope only includes Notion reads.
+9. **Chase linked and child tickets (Step 3c — one hop).** Collect all subtasks,
+   issue-link targets, and Jira-pointing remote links. For each (up to ~8), fetch
+   the ticket and run the same five-place design hunt. Follow any `slack.com`
+   thread URLs with `mcp__slack__slack_read_thread` (see `slack-mcp` skill).
+   Follow `github.com` PR/issue URLs via Bash using the `gh` CLI (see `gh-cli`
+   skill — requires `gh auth login`). Summarise findings in a
+   `## Linked-ticket context` table in the card. A design or Figma link found in
+   a linked ticket counts as found — update the parent card's frontmatter
+   accordingly. Do not recurse beyond one hop.
 
 ## What you return
 

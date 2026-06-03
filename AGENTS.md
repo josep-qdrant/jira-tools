@@ -90,10 +90,19 @@ Canonical repo map and duplicates-to-ignore list:
 - `getJiraIssue` markdown output truncates custom fields; use default format.
 - Score can be `0` when factors are missing. Mark scoring incomplete.
 - Figma often lives in remote links, not design fields.
+- **Also check linked/child tickets (Step 3c).** Subtasks, issue-link targets,
+  and Jira-pointing remote links can carry the Figma, Notion doc, Slack thread,
+  or GitHub PR that the parent ticket only references. One hop, cap at ~8 keys.
 - Attachments are not automatically design assets. Verify.
 - Wrong language glob means false zero results.
 - Keep code sweeps to one repo and a few terms.
 - Host paths and shell mount paths may differ.
+- **Slack thread URLs:** `slack_read_thread` needs `channel` (the `C…` or `G…`
+  ID from the URL path) and `thread_ts` (the `p<digits>` → insert `.` after
+  position 10 to get the float timestamp). See the `slack-mcp` skill.
+- **GitHub → use `gh` CLI, not an MCP.** Run via Bash: `gh pr view <n> --repo
+  <owner>/<repo> --json title,state,body,url`. Requires `gh auth login` before
+  use. See the `gh-cli` skill for the full reference.
 
 ## More detail
 

@@ -96,6 +96,11 @@ several places. Check all five and record where you looked:
 Record per ticket: requires UI? (yes/probable/no), design linked? (yes/no + where
 found), and the missing-asset checklist. See `references/design-link-hunt.md`.
 
+When the hunt surfaces a `slack.com` URL (thread or channel link), fetch the
+thread with `mcp__slack__slack_read_thread` and note the relevant content (see
+`slack-mcp` skill). When it surfaces a `github.com` URL, fetch the PR or issue
+with the `gh` CLI via Bash (see `gh-cli` skill).
+
 ## Step 3b — Open & extract the linked Notion context
 
 Whenever the hunt surfaces a `notion.so` URL (the **Acceptance Criteria field is
@@ -108,6 +113,82 @@ boundaries and freshness, and add the **`## Notion context`** section to the car
 DoR criterion 2: AC externalized to Notion only counts as ✅ **if the doc was
 read**; an unreadable link is ⚠️ *externalized, unverified*. Flag in **bold** any
 discrepancy between the Notion doc and the Jira ticket.
+
+## Step 3c — Recursive linked-ticket context
+
+Every Jira ticket can carry child issues (subtasks), linked issues (blocks /
+blocked-by / relates-to / duplicates / …), and remote links pointing to other
+Jira keys. Those linked tickets may hold the design, spec, or discussion that
+the parent ticket only gestures at. **Always chase one hop.**
+
+### 3c-1 Collect linked tickets
+
+Gather all Jira keys referenced by the parent from three sources:
+
+1. **`subtasks`** field in the parent's ADF payload.
+2. **`issuelinks`** field — every `inwardIssue` / `outwardIssue`, regardless of
+   relationship type.
+3. **Remote/web links** that point back to `*.atlassian.net/browse/…` (may be
+   cross-project references).
+
+Deduplicate, skip the parent itself, and cap at **~8 linked tickets** (record
+the rest as "not followed — cap reached").
+
+### 3c-2 Fetch and hunt each linked ticket
+
+For each collected key, call `getJiraIssue` (default/ADF format, explicit field
+list) and run the **same five-place hunt** as Step 3:
+
+1. Design fields (UX Designs, Concept Design, Design, Technical Documentation).
+2. Attachments — verify what each one actually is.
+3. Description & AC — scan for `figma.com`, `notion.so`, `slack.com`,
+   `github.com` URLs.
+4. `issuelinks` — check for any further Jira references (record but don't
+   recurse deeper).
+5. `getJiraIssueRemoteIssueLinks` — **always check**; Figma most often hides
+   here.
+
+**Do not recurse** into the linked tickets' own linked tickets — one hop only.
+
+### 3c-3 Follow external links found in linked tickets
+
+Apply the same external-link rules as for the parent:
+
+- **`notion.so` link** → run Step 3b (jira-notion-context skill) on it.
+- **`slack.com` link** (direct message or thread URL, e.g.
+  `https://qdrant.slack.com/archives/…`) → fetch the thread with the Slack MCP:
+  `mcp__slack__slack_read_thread`. Extract the relevant decision, question, or
+  design reference and summarise it. Note date and channel. See the
+  `slack-mcp` skill for URL parsing and tool usage.
+- **`github.com` link** (PR or issue URL) → fetch with the **`gh` CLI** via
+  Bash (see the `gh-cli` skill for commands and URL parsing):
+  - PR URL → `gh pr view <number> --repo <owner>/<repo> --json title,state,body,url`
+  - Issue URL → `gh issue view <number> --repo <owner>/<repo> --json title,state,body,url`
+  - Record title, state, and any Figma/Notion links found in the body.
+- **`figma.com` link** → fetch metadata with `mcp__figma__get_metadata`. A
+  design found one hop away in a linked ticket is a **found design** — credit it
+  to the parent card.
+
+### 3c-4 Record findings in the parent card
+
+Add a **`## Linked-ticket context`** section after `## Notion context` (or after
+the design hunt section if there is no Notion context). Format:
+
+```markdown
+## Linked-ticket context
+
+| Key | Relationship | Summary | Figma | Notion | Slack | GitHub |
+|-----|-------------|---------|-------|--------|-------|--------|
+| PM-208 | subtask | "Suspension API endpoint" | None | [Spec](https://…) | None | [PR #42](https://…) |
+| PM-209 | blocks | "Billing freeze on suspend" | None | None | [#billing thread](https://…) | None |
+```
+
+- If a linked ticket yielded a Figma → update `design_linked: true` in the
+  parent card's frontmatter and note *"Found via linked ticket PM-xxx"*.
+- If a linked ticket's Notion doc was read, register it in the same Notion
+  coverage registry as Step 2 of the jira-notion-context skill.
+- If nothing extra was found in a linked ticket, still record the row with
+  "No additional signals" — absence of findings is a finding.
 
 ## Step 4 — Identify the implicated project(s) and code
 
@@ -218,6 +299,15 @@ resolve cleanly.
 - **Cards are Obsidian deliverables** → cross-ticket references are wikilinks
   (`[[PM-285-…|PM-285]]`), the Jira/Figma/Notion URLs stay markdown links, and the
   file opens with frontmatter. See *Output format — Obsidian vault* in `AGENTS.md`.
+- **Linked-ticket recursion is one hop only.** Fetch the linked tickets and hunt
+  them; don't recurse into their links. Cap at ~8 linked tickets to avoid blowing
+  token budget.
+- **Slack thread URLs** look like `https://qdrant.slack.com/archives/C.../p...`;
+  use `slack_read_thread` with the channel ID and thread timestamp extracted from
+  the URL.
+- **GitHub → use `gh` CLI** (not an MCP). Run via Bash: `gh pr view <n> --repo
+  <owner>/<repo> --json title,state,body,url`. See the `gh-cli` skill for the
+  full command reference and URL parsing. Requires `gh auth login` beforehand.
 
 ## Related skills
 

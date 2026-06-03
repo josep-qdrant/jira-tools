@@ -25,6 +25,31 @@ Skills are instruction sets loaded by agents. Each agent loads the relevant skil
 | `sprint-planning` | Scopes a sprint against team capacity, sets goals, handles carryover |
 | `ticket-triage` | Triages inbound support tickets (P1–P4 priority, routing) |
 | `atlassian-mcp` | Reference for Jira/Confluence MCP tool usage and authentication |
+| `slack-mcp` | Reference for Slack MCP tool usage (thread reads, search) |
+| `gh-cli` | Reference for GitHub CLI (`gh`) usage — PRs, issues, search |
+
+## Required tools
+
+The pipeline depends on a few external tools and MCP servers. Install them before running any workflow.
+
+### CLI tools
+
+| Tool | Purpose | Install |
+|------|---------|---------|
+| **[engram](https://github.com/Gentleman-Programming/engram)** | Persistent memory across sessions — stores scope, field map, decisions, and DoR verdicts so the agent doesn't re-derive them on every reset | `brew install gentleman-programming/tap/engram` |
+| **[gh](https://cli.github.com)** | GitHub CLI — reads PRs and issues linked from Jira tickets, Notion docs, or Slack threads during the audit hunt | `brew install gh` then `gh auth login` |
+
+### MCP servers (configured in `.mcp.json`)
+
+| Server | What it provides | Notes |
+|--------|----------------|-------|
+| **Atlassian** | Jira search, issue fetch, remote links, Confluence pages | Needs a Jira API token; see [Atlassian token docs](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/) |
+| **Figma** | Design metadata, screenshots, variable definitions | Needs a Figma personal access token |
+| **Notion** | Page and database fetch, comments (read-only) | Needs a Notion integration token with read access to the relevant pages |
+| **Slack** | Thread reads, channel reads, search (read-only) | Needs the Slack MCP app installed in the workspace; see [Slack MCP docs](https://api.slack.com/mcp) |
+| **engram** | Persistent memory (local SQLite) | Runs as a local binary — install engram first |
+
+> All MCP servers are **read-only** for the purposes of this toolkit. The only writes are markdown files on disk.
 
 ## Persistent memory (engram)
 
@@ -50,7 +75,7 @@ In Claude Code you can alternatively install it as a plugin (`claude plugin mark
 
 ```
 AGENTS.md             ← master instructions (golden rules, workflow, output format)
-.mcp.json             ← MCP server configuration (Atlassian, Figma, Notion, engram memory)
+.mcp.json             ← MCP server configuration (Atlassian, Figma, Notion, Slack, engram memory)
 skills-lock.json      ← pinned skill versions
 .agents/agents/       ← autonomous subagent definitions (model, tools, boundaries)
 .agents/skills/       ← skill instruction sets loaded by agents at runtime

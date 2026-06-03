@@ -10,6 +10,11 @@ wrongly conclude "no design" (or worse, miss one that exists).
 
 ## The five places to check (per ticket)
 
+> **Also check linked/child tickets (Step 3c).** Run the same five-place hunt
+> on every subtask, blocked-by, and related Jira issue (one hop). A design or
+> spec "missing" on the parent is frequently attached to a linked ticket.
+> See `jira-ticket-audit` Step 3c for the full procedure.
+
 1. **Design fields** — UX Designs, Concept Design, Design, Technical
    Documentation. Often empty even when a design exists elsewhere.
 2. **Attachments** — list them and **verify what each actually is**. A PNG can be
@@ -27,6 +32,18 @@ wrongly conclude "no design" (or worse, miss one that exists).
 
 Record where you looked and what you found, so the synthesis design-review doc
 can state coverage precisely (e.g. "0 / 11 UI tickets have a Figma link").
+
+## Following external links found during the hunt
+
+When the five-place hunt surfaces a URL that is not Figma or Notion, don't stop
+at "link exists" — follow it:
+
+| URL type | Action | Tool / method |
+|----------|--------|---------------|
+| `slack.com/archives/…` | Read the thread; extract decisions, design links, open questions. Note channel and date. | `mcp__slack__slack_read_thread` — see `slack-mcp` skill for URL parsing |
+| `github.com/…/pull/N` | Fetch PR title, state, body; look for Figma/Notion links inside the body. | `gh pr view N --repo owner/repo --json title,state,body,url` via Bash — see `gh-cli` skill |
+| `github.com/…/issues/N` | Fetch issue title, state, body. | `gh issue view N --repo owner/repo --json title,state,body,url` via Bash — see `gh-cli` skill |
+| Any Jira key (`PM-NNN`) | Collect for Step 3c recursion — don't follow inline. | — |
 
 ## A missing Figma is not automatically a blocker
 

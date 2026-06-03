@@ -51,9 +51,27 @@
         "notion-get-comments"
       ]
     },
+    "slack": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.slack.com/mcp"
+      ],
+      "disabled": false,
+      "autoApprove": [
+        "slack_read_channel",
+        "slack_read_thread",
+        "slack_search_public",
+        "slack_search_public_and_private",
+        "slack_read_user_profile"
+      ]
+    },
     "engram": {
       "command": "engram",
-      "args": ["mcp"],
+      "args": [
+        "mcp"
+      ],
       "disabled": false,
       "autoApprove": [
         "mem_search",
