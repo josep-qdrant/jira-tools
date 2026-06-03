@@ -18,6 +18,20 @@ This repository provides a three-step, read-only pipeline to audit a Jira backlo
 
 (You can run the full chain end-to-end or invoke subagents for each phase.)
 
+## Visual pipeline (Mermaid)
+
+```mermaid
+flowchart LR
+  Jira["Jira backlog (issues)"] --> Scoper["jira-backlog-scoping\n(build JQL, map fields)"]
+  Scoper --> Auditor["jira-ticket-audit\n(per-ticket cards, design hunt)"]
+  Auditor --> Synth["jira-backlog-synthesis\n(synthesize cards)"]
+  Scoper -->|"scope file"| Output["Output folder\n(Obsidian vault)"]
+  Auditor -->|"ticket cards"| Output
+  Synth -->|"synthesis docs"| Output
+  Auditor --> Integrations["Notion / Figma / Slack / GitHub (reads)"]
+  Scoper --> Codegraph["codegraph / local repos (optional)"]
+```
+
 ## What the workflow looks at
 
 - Jira issue fields (summary, description, status, priority, assignee, Sprint, custom fields such as Score/Impact/Confidence/Size, attachments, issue links, remote links).
