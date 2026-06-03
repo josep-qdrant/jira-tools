@@ -1,0 +1,179 @@
+---
+name: jira-ticket-audit
+description: >-
+  Audit Jira backlog tickets one by one and produce a markdown audit card per
+  issue. Use this after scoping a backlog (see jira-backlog-scoping) whenever you
+  need to assess whether tickets are ready to plan: it extracts issues in small
+  batches and judges each on four axes — goal/scope clarity, UI/design needs,
+  size-estimate coherence (recomputing the Score with a realistic size), and
+  prioritization soundness — then hunts for the linked design/Figma in the five
+  places it can hide, and identifies the implicated repos/code with confidence.
+  Trigger whenever someone wants to audit, refine, or review backlog tickets,
+  check ticket "readiness" or "definition of ready" (applying the shared
+  definition-of-ready rubric), judge whether estimates and
+  scores hold up, find whether a UI ticket has a design linked, or map a ticket
+  to the code/projects it touches. This is for product/backlog tickets — for
+  triaging inbound support/customer issues (P1–P4, routing) use ticket-triage.
+  Read-only on Jira — never writes. Part 2 of a
+  3-skill workflow (follows jira-backlog-scoping, feeds jira-backlog-synthesis).
+---
+
+# Jira Ticket Audit
+
+Turn a scoped backlog into **one audit card per ticket**. Each card judges the
+ticket on four axes, records its design/Figma status, maps it to the code that
+would implement it, and ends with a **Definition of Ready (DoR)** verdict (see the
+`definition-of-ready` skill for the shared rubric).
+
+This is **part 2 of 3**. It assumes `jira-backlog-scoping` (part 1) has produced
+the scope, field map, and verified scoring model. Its cards feed
+`jira-backlog-synthesis` (part 3). If part 1 hasn't run, do that first — or at
+minimum establish the field map and scoring model before extracting.
+
+## Ground rules (apply throughout)
+
+1. **Read-only on Jira.** Only `searchJiraIssuesUsingJql`, `getJiraIssue`,
+   `getJiraIssueRemoteIssueLinks`, metadata. Never write. The only writes are
+   the markdown cards on disk.
+2. **Don't invent.** If scope, design, or estimate isn't there, mark it
+   explicitly as uncertain. "Not stated" beats a fabricated value.
+3. **Verify.** Re-confirm `Score = Impact × Confidence × Size` on each ticket;
+   recount with `grep`/`rg` when you make claims about totals.
+4. **Surgical and traceable.** Each card answers what's asked. No speculative
+   analysis, no restructuring of what already works.
+5. **Work in batches, write before moving on.** Process ~3 issues, write their
+   cards, then fetch the next batch. This keeps context from ballooning.
+
+## Step 1 — Extract in small batches
+
+Search responses are large by default (forced project/issuetype/status/assignee/
+description blocks per issue), so asking for many issues at once blows the token
+limit. What works:
+
+- Batches of **~3 issues**: `key in (PM-a, PM-b, PM-c)`.
+- An **explicit field list**: the custom fields from the field map (Score,
+  Impact-calc, Confidence select+calc, Size select+calc, Acceptance Criteria,
+  Draft Requirements, the design fields, Objective Class, Sprint) **plus**
+  summary, status, parent, priority, labels, issuelinks, attachment.
+- **Write each batch's cards before fetching the next.** Don't accumulate raw
+  issue data across many batches.
+
+> Use the **default (ADF) format**, not `markdown`, when reading issues — the
+> markdown rendering truncates custom fields.
+
+## Step 2 — Audit each ticket on four axes
+
+For every issue, assess:
+
+1. **Goal & scope clarity** — Is there a clear objective, bounded scope, enough
+   requirements and acceptance criteria to work in the quarter without blockers?
+   Is the information *in Jira* or externalized (e.g. a Notion link)?
+2. **UI / Design** — Does it need a UI? What design assets are missing? (Do the
+   five-place design hunt in Step 3.) Produce a checklist of missing assets.
+3. **Size coherence** — Is the T-Shirt Size realistic against the real scope and
+   acceptance criteria? **Recompute the Score with a realistic size** to show how
+   far the ranking would move. Watch for scope hiding under a small estimate
+   (API + UI + billing + migration + risky behavior all under one "XS").
+4. **Prioritization** — Are Impact and Confidence logical? Does the Score hold up
+   given the description? Re-verify the arithmetic. Put **incoherences in bold**.
+
+Then write the card (Step 5). The four axes are the heart of every card.
+
+## Step 3 — Hunt for the design / Figma in FIVE places
+
+Don't look only at the design field — for UI tickets, the linked design hides in
+several places. Check all five and record where you looked:
+
+1. **Design fields** — UX Designs, Concept Design, Design, Technical Documentation.
+2. **Attachments** — and **verify what each one actually is**. An attached PNG
+   may be product information, not a UI mockup; it is not a design asset.
+3. **Description & Acceptance Criteria** — search for `figma.com` / `notion.so`
+   URLs.
+4. **Issue links** — usually Jira↔Jira, rarely a design.
+5. **Remote / web links** (`getJiraIssueRemoteIssueLinks`) — **this is where
+   Figma usually lives.** Always check it for UI tickets.
+
+Record per ticket: requires UI? (yes/probable/no), design linked? (yes/no + where
+found), and the missing-asset checklist. See `references/design-link-hunt.md`.
+
+## Step 4 — Identify the implicated project(s) and code
+
+For each ticket, name the repo(s) involved, the high-level approach, and your
+identification confidence. To do this well:
+
+1. **Characterize the repos first** by reading each `README` (scope) and
+   detecting language (`go.mod` / `package.json` / `pyproject.toml`). Don't
+   assume language from the repo name.
+2. **If `codegraph` (the `codegraph_*` MCP tools) is available, prefer it** for
+   structural questions — what calls what, where a symbol is defined, blast
+   radius. It's faster and more accurate than grep for "does this code exist".
+3. **Otherwise do scoped term sweeps:** `rg -i -l <term> <one-repo>`, **one repo
+   and a few terms at a time**. Sweeping all repos × many terms at once times
+   out — scope it down.
+4. Write per ticket: **project(s) involved**, **how it'd be done at a high level**
+   (no file-by-file detail), **technical notes**, and **identification
+   confidence**. If scope can't be pinned down, say so explicitly.
+
+For UI tickets, also classify design effort by what the code already supports —
+**Extrapolable** (a pattern/component already exists; reuse it, no new Figma),
+**Partial** (reuses most; only one new sub-part needs a design decision), or
+**New design** (no analogous pattern). This is what tells you a missing Figma
+isn't actually a blocker. See `references/code-identification.md` (with the
+Qdrant repo map as a worked example).
+
+## Step 5 — Write the audit card
+
+Use the structure in `assets/audit-card-template.md`. Each card is:
+
+- **Header** with metadata (type, sprint + carryover note, status, class, owner,
+  priority, link).
+- **Audit summary table** — one row per axis: verdict (OK / Risk / N/A) + a short
+  note.
+- **Project & technical notes** — repo(s), high-level approach, notes,
+  identification confidence.
+- **The four axes**, each as its own `## N. <axis>` section. Anchor edits on
+  these stable, unique headings (see gotchas).
+- **Code reuse** — what already exists vs. what's new, with a verdict
+  (FULL / PARTIAL / NONE) and suggested approach.
+- **Definition of Ready (DoR)** — **end every card with the DoR block** from the
+  `definition-of-ready` skill (don't use a freeform readiness line): one verdict
+  (🟢 Ready to start / 🟡 Almost ready / 🔴 Not ready), the seven-point checklist,
+  and a one-line *"To be ready it needs: …"* drawn from the reason taxonomy. The
+  four axes feed it directly — goal/scope → criteria 1–3 & 7; UI/design →
+  criterion 5; size coherence → criteria 3–4 & "unrealistic estimate";
+  prioritization → criterion 4 ("incomplete scoring" when the Score is 0). This
+  keeps every card comparable.
+
+One file per ticket, named `<KEY>_<slug>.md` (e.g. `PM-207_Self-service-Cluster-suspension.md`).
+
+## Gotchas
+
+- **Markdown rendering truncates custom fields** → use the default format.
+- **The Score can be 0** even with a size set, if Impact/Confidence are missing →
+  "scoring incomplete", not a formula error.
+- **An attachment is not necessarily a design** → verify what each one is.
+- **Figma usually lives in remote links**, not the design field.
+- **Mind each repo's real language** when filtering by glob — the wrong glob
+  returns 0 and misleads (e.g. a "cluster-api" that's Python, not Go).
+- **Over-broad code sweeps time out** → one repo, few terms.
+- **Anchor markdown `Edit`s on stable, unique headings** (e.g.
+  `## 1. Goal & scope clarity`). If a reply sits inside bold text, an `old_string`
+  with trailing text may not match — use just the heading.
+- **Host vs. mount paths differ:** file tools use host paths (`/Users/...`);
+  `bash` uses the mount (`/sessions/<id>/mnt/...`). Account for it when copying.
+
+## Related skills
+
+- **`definition-of-ready`** — owns the DoR rubric (verdicts, the seven-point
+  checklist, the reason taxonomy, and the copy-paste DoR block). Every card ends
+  with its block: this skill *judges*, that skill *defines*.
+
+## Reference files
+
+- `assets/audit-card-template.md` — the per-ticket card skeleton to copy and
+  fill (its closing section is the DoR block). Based on a real, well-formed card.
+- `references/design-link-hunt.md` — the five places a design hides, plus the
+  Extrapolable / Partial / New-design classification for UI tickets.
+- `references/code-identification.md` — how to characterize repos and run scoped
+  sweeps (or use codegraph), with the Qdrant repo map and useful search terms as
+  a worked example.

@@ -1,0 +1,41 @@
+{
+  "mcpServers": {
+    "atlassian": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.atlassian.com/v1/mcp/authv2"
+      ],
+      "disabled": false,
+      "autoApprove": [
+        "atlassianUserInfo",
+        "getAccessibleAtlassianResources",
+        "getVisibleJiraProjects",
+        "getJiraProjectIssueTypesMetadata",
+        "getJiraIssue",
+        "searchJiraIssuesUsingJql",
+        "getJiraIssueRemoteIssueLinks",
+        "lookupJiraAccountId",
+        "getConfluencePage",
+        "searchConfluenceUsingCql"
+      ]
+    },
+    "figma": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.figma.com/mcp"
+      ],
+      "disabled": false,
+      "autoApprove": [
+        "get_metadata",
+        "get_screenshot",
+        "get_design_context",
+        "get_variable_defs",
+        "get_code_connect_map"
+      ]
+    }
+  }
+}
