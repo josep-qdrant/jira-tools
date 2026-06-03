@@ -36,6 +36,9 @@
         "get_variable_defs",
         "get_code_connect_map"
       ]
+    },
+    "notion": {
+      "url": "https://mcp.notion.com/mcp"
     }
   }
 }

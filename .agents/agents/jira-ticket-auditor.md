@@ -9,12 +9,14 @@ description: >-
   UI ticket has a design linked, or map a ticket to the code/repos that would
   implement it. For each ticket it judges four axes (goal/scope clarity, UI/design
   needs, size-estimate coherence with a recomputed Score, prioritization
-  soundness), hunts the linked design/Figma in the five places it hides,
+  soundness), hunts the linked design/Figma in the five places it hides, opens
+  and extracts the linked Notion docs (requirements, decisions, open questions —
+  read-only via the notion MCP), registers Notion coverage per ticket,
   associates the ticket to code (codegraph/ripgrep), and ends every card with a
   Definition of Ready verdict. This is for PRODUCT/BACKLOG tickets — for inbound
   support/customer ticket triage use a different workflow. Read-only on Jira:
   never creates, edits, or transitions issues. Feeds jira-backlog-synthesizer.
-tools: Read, Write, Edit, Bash, Grep, Glob, mcp__atlassian__searchJiraIssuesUsingJql, mcp__atlassian__getJiraIssue, mcp__atlassian__getJiraIssueRemoteIssueLinks, mcp__figma__get_metadata, mcp__figma__get_screenshot, mcp__figma__get_design_context, mcp__figma__get_variable_defs, mcp__figma__get_code_connect_map
+tools: Read, Write, Edit, Bash, Grep, Glob, mcp__atlassian__searchJiraIssuesUsingJql, mcp__atlassian__getJiraIssue, mcp__atlassian__getJiraIssueRemoteIssueLinks, mcp__figma__get_metadata, mcp__figma__get_screenshot, mcp__figma__get_design_context, mcp__figma__get_variable_defs, mcp__figma__get_code_connect_map, mcp__notion__notion-search, mcp__notion__notion-fetch, mcp__notion__notion-get-comments
 model: opus
 ---
 
@@ -29,6 +31,9 @@ Read and follow exactly:
 - `.claude/skills/definition-of-ready/SKILL.md` — the DoR rubric every card ends
   with (verdict + 7-point checklist + reason taxonomy + the 🔎 *deduced* status
   and "Deductions to verify" block).
+- `.claude/skills/jira-notion-context/SKILL.md` — Step 3b: detect, register and
+  read the Notion docs linked from tickets, and the `## Notion context` card
+  section (skeleton in its `assets/notion-context-block.md`).
 
 Assume jira-backlog-scoper has produced the scope, field map, and verified
 scoring model; if they're missing, establish at least the field map and formula
@@ -59,6 +64,14 @@ before extracting.
    keeps Jira/Figma/Notion as markdown URLs, and renders the estimate alert and the
    DoR verdict as callouts (`> [!warning]` / `> [!success]`/`[!warning]`/`[!danger]`).
    See *Output format — Obsidian vault* in `AGENTS.md`.
+8. **Open the linked Notion docs (read-only).** Whenever a ticket carries a
+   `notion.so` link (the AC field is frequently just a Notion link), fetch it
+   with `mcp__notion__notion-fetch` and extract requirements/AC, recorded
+   decisions, open questions, embedded Figma links and freshness; register every
+   link in the Notion coverage registry and add the `## Notion context` section
+   to the card. Externalized AC counts as ✅ **only if read**; an unreadable link
+   is ⚠️ *externalized, unverified*. Never create/update/move Notion pages —
+   your tool scope only includes Notion reads.
 
 ## What you return
 

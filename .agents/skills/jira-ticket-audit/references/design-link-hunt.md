@@ -16,7 +16,9 @@ wrongly conclude "no design" (or worse, miss one that exists).
    product information or a reference photo, not a UI mockup. Only count it as a
    design asset if it really is one.
 3. **Description & Acceptance Criteria** — grep the text for `figma.com`,
-   `notion.so`, or other design/spec URLs. (AC is frequently just a Notion link.)
+   `notion.so`, or other design/spec URLs. (AC is frequently just a Notion link —
+   when it is, **open and extract it** with the `jira-notion-context` skill,
+   Step 3b of the audit; a Figma may be hiding one hop away inside the doc.)
 4. **Issue links** (`issuelinks`) — usually Jira↔Jira dependencies, occasionally
    a design ticket.
 5. **Remote / web links** (`getJiraIssueRemoteIssueLinks`) — **the most common

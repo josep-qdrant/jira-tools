@@ -111,6 +111,14 @@ re-estimated? bold any incoherence>.
 
 **Suggested approach:** <reuse X; design only the new sub-part Y>.
 
+## Notion context
+
+> **Single source of truth — don't duplicate the block here.** If the ticket has
+> any `notion.so` link, paste and fill the section from
+> `jira-notion-context/assets/notion-context-block.md` (registry row, takeaways,
+> freshness, discrepancies, effect on DoR). If there are no Notion links, state
+> "No Notion links found" — absence is also a recorded result.
+
 ## Definition of Ready (DoR)
 
 > **Single source of truth — don't duplicate the block here.** Paste the DoR block

@@ -118,7 +118,11 @@ what lives in Notion and wasn't opened).
 
 **Design (06) & Code (07) reviews.** Report Figma coverage as a fraction
 (e.g. "0/11 UI tickets have a Figma link") and immediately reframe it with the
-code reality ("but only 3/11 need new design"). The code review cites the actual
+code reality ("but only 3/11 need new design"). Alongside it, report **Notion
+coverage** from the cards' `## Notion context` sections (built by the
+`jira-notion-context` skill): how many tickets link a Notion doc, how many docs
+were actually read vs *linked but not readable*, and any **bold** Notion↔Jira
+discrepancies — unopened docs go to the methodology limitations. The code review cites the actual
 component/file paths found, and notes they should be confirmed by the owning team.
 
 **Tickets-by-project (08).** A matrix (★ leader · ● involved · ○ minor/possible)

@@ -96,6 +96,19 @@ several places. Check all five and record where you looked:
 Record per ticket: requires UI? (yes/probable/no), design linked? (yes/no + where
 found), and the missing-asset checklist. See `references/design-link-hunt.md`.
 
+## Step 3b — Open & extract the linked Notion context
+
+Whenever the hunt surfaces a `notion.so` URL (the **Acceptance Criteria field is
+frequently just a Notion link**), don't stop at "link exists" — follow the
+**`jira-notion-context`** skill: register the link in the Notion coverage
+registry, fetch the page read-only (`mcp__notion__notion-fetch`), extract
+requirements/AC, recorded decisions, open questions, embedded Figma links, scope
+boundaries and freshness, and add the **`## Notion context`** section to the card
+(skeleton in that skill's `assets/notion-context-block.md`). The result drives
+DoR criterion 2: AC externalized to Notion only counts as ✅ **if the doc was
+read**; an unreadable link is ⚠️ *externalized, unverified*. Flag in **bold** any
+discrepancy between the Notion doc and the Jira ticket.
+
 ## Step 4 — Identify the implicated project(s) and code
 
 For each ticket, name the repo(s) involved, the high-level approach, and your
@@ -211,6 +224,10 @@ resolve cleanly.
 - **`definition-of-ready`** — owns the DoR rubric (verdicts, the seven-point
   checklist, the reason taxonomy, and the copy-paste DoR block). Every card ends
   with its block: this skill *judges*, that skill *defines*.
+- **`jira-notion-context`** — owns Step 3b: detecting, registering and reading
+  the Notion docs linked from tickets (read-only via the `notion` MCP) and the
+  `## Notion context` card section. Use it for every ticket with a `notion.so`
+  link before judging DoR criterion 2.
 
 ## Reference files
 

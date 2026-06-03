@@ -53,7 +53,11 @@ criteria are grounded in the engineering skills they each map to:
 1. **Objective / description clear** — there's a real description, not a one-liner
    or placeholder. *(writing-style, engineering:documentation)*
 2. **Acceptance criteria defined** — you can tell when it's done and how it's
-   verified. *(engineering:testing-strategy)*
+   verified. AC are often **externalized to a Notion doc**: that counts as ✅ only
+   if the doc was **opened and read** (see the `jira-notion-context` skill) and
+   actually contains AC — note it as *"externalized in Notion — read"*. A Notion
+   link that couldn't be read is **⚠️ externalized, unverified** (not ❌ — the doc
+   exists; not ✅ — you couldn't verify it). *(engineering:testing-strategy)*
 3. **Well scoped** — it's a single story with a realistic size, not an épic that
    needs splitting. *(engineering:system-design)*
 4. **Scoring complete** — Impact, Confidence and Size are all set so the Score is
