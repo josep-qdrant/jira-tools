@@ -24,7 +24,10 @@ Use the skills in this order:
 Related skills:
 
 - `definition-of-ready` — readiness verdict and 7-point checklist.
-- `atlassian-mcp` — Jira / Confluence MCP mechanics.
+- `jira-notion-context` — read the Notion docs linked from tickets (Step 3b).
+- `atlassian-mcp` — read-only Jira / Confluence MCP mechanics (the plumbing).
+- `slack-mcp` — read Slack threads/channels linked from tickets.
+- `gh-cli` — read GitHub PRs/issues linked from tickets.
 - `sprint-planning` — sprint plan after an audit.
 
 ## Memory (engram)

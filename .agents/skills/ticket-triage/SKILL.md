@@ -4,17 +4,9 @@ description: Triage and prioritize an inbound SUPPORT ticket or customer issue (
 argument-hint: "<ticket or issue description>"
 ---
 
-# /ticket-triage
-
-> If you see unfamiliar placeholders or need to check which tools are connected, see [CONNECTORS.md](../../CONNECTORS.md).
+# Ticket Triage
 
 Categorize, prioritize, and route an incoming support ticket or customer issue. Produces a structured triage assessment with a suggested initial response.
-
-## Usage
-
-```
-/ticket-triage <ticket text, customer message, or issue description>
-```
 
 Examples:
 - `/ticket-triage Customer says their dashboard has been showing a blank page since this morning`
@@ -46,9 +38,9 @@ Using the category taxonomy and priority framework below:
 
 Before routing, check available sources:
 
-- **~~support platform**: Search for similar open or recently resolved tickets
-- **~~knowledge base**: Check for known issues or existing documentation
-- **~~project tracker**: Check if there's an existing bug report or feature request
+- **Support platform** (if connected): Search for similar open or recently resolved tickets
+- **Knowledge base** (if connected): Check for known issues or existing documentation
+- **Project tracker** (if connected): Check if there's an existing bug report or feature request
 
 Apply the duplicate detection process below.
 
@@ -96,7 +88,7 @@ After presenting the triage:
 - "Want me to draft a full response to the customer?"
 - "Should I search for more context on this issue?"
 - "Want me to check if this is a known bug in the tracker?"
-- "Should I escalate this? I can package it with /customer-escalation."
+- "Should I escalate this to a higher tier or on-call?"
 
 ---
 

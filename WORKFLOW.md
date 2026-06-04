@@ -271,6 +271,9 @@ QDRANT_REPOS_ROOT=/absolute/path/to/your/repos
 | `jira-ticket-audit` | `jira-ticket-auditor` | Never |
 | `jira-backlog-synthesis` | `jira-backlog-synthesizer` | Never |
 | `definition-of-ready` | `jira-ticket-auditor`, `sprint-planning`, main agent | Never |
+| `jira-notion-context` | `jira-ticket-auditor`, `jira-backlog-synthesizer` | Never |
+| `slack-mcp` | `jira-ticket-auditor` (design hunt) | Never |
+| `gh-cli` | `jira-ticket-auditor` (design hunt) | Never |
 | `sprint-planning` | Main agent (standalone) | Never |
 | `ticket-triage` | Main agent (standalone) | Never |
-| `atlassian-mcp` | Reference / setup | — |
+| `atlassian-mcp` | `jira-backlog-scoper` (read-only plumbing) | Never |

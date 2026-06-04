@@ -4,37 +4,23 @@ description: Plan a sprint — scope work, estimate capacity, set goals, and dra
 argument-hint: "[sprint name or date range]"
 ---
 
-# /sprint-planning
-
-> If you see unfamiliar placeholders or need to check which tools are connected, see [CONNECTORS.md](../../CONNECTORS.md).
+# Sprint Planning
 
 Plan a sprint by scoping work, estimating capacity, and setting clear goals.
 
-## Usage
+## What it does
 
-```
-/sprint-planning $ARGUMENTS
-```
+Works standalone from what you paste or describe:
 
-## How It Works
+- Define sprint goals and success criteria
+- Estimate team capacity (accounting for PTO and meetings)
+- Scope and prioritize backlog items
+- Identify dependencies and risks
+- Generate a sprint plan document
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    SPRINT PLANNING                                 │
-├─────────────────────────────────────────────────────────────────┤
-│  STANDALONE (always works)                                       │
-│  ✓ Define sprint goals and success criteria                     │
-│  ✓ Estimate team capacity (accounting for PTO, meetings)        │
-│  ✓ Scope and prioritize backlog items                           │
-│  ✓ Identify dependencies and risks                              │
-│  ✓ Generate sprint plan document                                │
-├─────────────────────────────────────────────────────────────────┤
-│  SUPERCHARGED (when you connect your tools)                      │
-│  + Project tracker: Pull backlog, create sprint, assign items   │
-│  + Calendar: Account for PTO and meetings in capacity           │
-│  + Chat: Share sprint plan with the team                        │
-└─────────────────────────────────────────────────────────────────┘
-```
+If a project tracker, calendar, or chat MCP is connected, it can also pull the
+backlog, fold PTO/meetings into the capacity estimate, and share the finished
+plan — but none of that is required.
 
 ## Definition of Ready gate
 
