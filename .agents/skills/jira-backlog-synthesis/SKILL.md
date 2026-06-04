@@ -42,7 +42,7 @@ trace back to a card or a verified count.
    sections.
 5. **Obsidian-native output.** Every doc opens with YAML frontmatter, links to
    sibling docs and to tickets with **wikilinks** (`[[02-master-table|…]]`,
-   `[[PM-207-…|PM-207]]`), and renders the read-only note as a `> [!info]`
+   `[[ABC-207-…|ABC-207]]`), and renders the read-only note as a `> [!info]`
    callout. External URLs stay markdown links. See *Output format — Obsidian
    vault* in `AGENTS.md`; the frontmatter schema is below.
 
@@ -86,7 +86,7 @@ tags: [backlog-audit, synthesis]
 ## Key construction notes
 
 **Master table (02).** Order by Score descending. Each issue cell is a **wikilink**
-to its card (`[[PM-207-self-service-cluster-suspension|PM-207]]`). Include a column
+to its card (`[[ABC-207-export-reports-to-pdf|ABC-207]]`). Include a column
 that shows `Impact × Confidence × Size ✓` (the explicit reconciliation), so a
 reader can see the formula holds and which rows are "scoring incomplete". Add quick stats: by
 sprint, by status, by size, scoring completeness, documentation/design coverage,

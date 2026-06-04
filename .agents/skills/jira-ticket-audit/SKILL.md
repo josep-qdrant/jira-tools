@@ -50,11 +50,12 @@ Search responses are large by default (forced project/issuetype/status/assignee/
 description blocks per issue), so asking for many issues at once blows the token
 limit. What works:
 
-- Batches of **~3 issues**: `key in (PM-a, PM-b, PM-c)`.
+- Batches of **~3 issues**: `key in (<KEY>-a, <KEY>-b, <KEY>-c)`.
 - An **explicit field list**: the custom fields from the field map (Score,
   Impact-calc, Confidence select+calc, Size select+calc, Acceptance Criteria,
-  Draft Requirements, the design fields, Objective Class, Sprint) **plus**
-  summary, status, parent, priority, labels, issuelinks, attachment.
+  any draft-requirements field, the design fields, a class/category field if
+  present, Sprint) **plus** summary, status, parent, priority, labels,
+  issuelinks, attachment.
 - **Write each batch's cards before fetching the next.** Don't accumulate raw
   issue data across many batches.
 
@@ -84,7 +85,8 @@ Then write the card (Step 5). The four axes are the heart of every card.
 Don't look only at the design field — for UI tickets, the linked design hides in
 several places. Check all five and record where you looked:
 
-1. **Design fields** — UX Designs, Concept Design, Design, Technical Documentation.
+1. **Design fields** — the project's design-related custom fields (names vary;
+   e.g. UX/Concept/Design/Technical-Documentation fields from the field map).
 2. **Attachments** — and **verify what each one actually is**. An attached PNG
    may be product information, not a UI mockup; it is not a design asset.
 3. **Description & Acceptance Criteria** — search for `figma.com` / `notion.so`
@@ -152,9 +154,9 @@ Deduplicate, skip the parent itself, and cap at **~8 linked tickets** (record
 the rest as "not followed — cap reached").
 
 **Frontmatter to set immediately (before fetching):**
-- `subtasks:` — list of Jira keys from source 1, e.g. `[PM-208, PM-209]`. Empty
+- `subtasks:` — list of Jira keys from source 1, e.g. `[ABC-208, ABC-209]`. Empty
   list `[]` if none.
-- `linked_issues:` — list of Jira keys from sources 2 and 3, e.g. `[PM-111]`.
+- `linked_issues:` — list of Jira keys from sources 2 and 3, e.g. `[ABC-111]`.
   Empty list `[]` if none.
 - These are **keys only** — titles and relationship types go in the body table.
 
@@ -163,7 +165,7 @@ the rest as "not followed — cap reached").
 For each collected key, call `getJiraIssue` (default/ADF format, explicit field
 list) and run the **same five-place hunt** as Step 3:
 
-1. Design fields (UX Designs, Concept Design, Design, Technical Documentation).
+1. Design fields (the project's design-related custom fields).
 2. Attachments — verify what each one actually is.
 3. Description & AC — scan for `figma.com`, `notion.so`, `slack.com`,
    `github.com` URLs.
@@ -180,7 +182,7 @@ Apply the same external-link rules as for the parent:
 
 - **`notion.so` link** → run Step 3b (jira-notion-context skill) on it.
 - **`slack.com` link** (direct message or thread URL, e.g.
-  `https://qdrant.slack.com/archives/…`) → fetch the thread with the Slack MCP:
+  `https://<workspace>.slack.com/archives/…`) → fetch the thread with the Slack MCP:
   `mcp__slack__slack_read_thread`. Extract the relevant decision, question, or
   design reference and summarise it. Note date and channel. See the
   `slack-mcp` skill for URL parsing and tool usage.
@@ -204,8 +206,8 @@ is already scaffolded in the card template — fill its table.
 
 | Key | Relationship | Title | Figma | Notion | Slack | GitHub | Notes |
 |-----|-------------|-------|-------|--------|-------|--------|-------|
-| [[PM-208-slug\|PM-208]] | subtask | "Suspension API endpoint" | None | [Spec](https://…) | None | [PR #42](https://…) | API contract already exists |
-| [[PM-209-slug\|PM-209]] | blocks | "Billing freeze on suspend" | None | None | [#billing](https://…) | None | No additional signals |
+| [[ABC-208-slug\|ABC-208]] | subtask | "Suspension API endpoint" | None | [Spec](https://…) | None | [PR #42](https://…) | API contract already exists |
+| [[ABC-209-slug\|ABC-209]] | blocks | "Billing freeze on suspend" | None | None | [#billing](https://…) | None | No additional signals |
 ```
 
 **Frontmatter to update after completing Step 3c:**
@@ -213,7 +215,7 @@ is already scaffolded in the card template — fill its table.
 - `child_context: partial` — cap reached or some fetch failed.
 - `child_context: none` — `subtasks` and `linked_issues` are both empty.
 - If a Figma was found in a linked ticket: `design_linked: true`,
-  `design_source: linked_ticket`, note *"Found via [[PM-xxx|PM-xxx]]"*.
+  `design_source: linked_ticket`, note *"Found via [[ABC-xxx|ABC-xxx]]"*.
 - If a Slack thread was found and read in a linked ticket: `slack_context: read`.
 - If a GitHub PR was found and read in a linked ticket: `github_context: read`.
 - If a Notion doc in a linked ticket was read: register it in the Notion coverage
@@ -243,8 +245,7 @@ For UI tickets, also classify design effort by what the code already supports �
 **Extrapolable** (a pattern/component already exists; reuse it, no new Figma),
 **Partial** (reuses most; only one new sub-part needs a design decision), or
 **New design** (no analogous pattern). This is what tells you a missing Figma
-isn't actually a blocker. See `references/code-identification.md` (with the
-Qdrant repo map as a worked example).
+isn't actually a blocker. See `references/code-identification.md`.
 
 ## Step 5 — Write the audit card
 
@@ -259,45 +260,45 @@ Cards are **Obsidian-native markdown** (see *Output format — Obsidian vault* i
 
   ```yaml
   ---
-  ticket: PM-207
-  aliases: ["PM-207"]
-  title: "Self-service Cluster suspension in Managed Cloud and Hybrid Cloud"
-  type: Objective
-  status: Ready for planning
-  bucket: Backlog Prio 1          # sprint / backlog bucket
-  objective_class: Standard
-  owner: Bastian Hofmann
-  priority: Medium
-  domain: Clusters
-  carryover: true                 # was it dragged from a past quarter?
-  size: M
-  size_factor: 6
-  impact: 6
-  confidence: 6
-  score: 216
-  scoring_complete: true          # false when a factor is missing (Score 0)
-  requires_ui: true               # true | probable | false ← Step 3
-  design_linked: false            # true | false ← Step 3 (or 3c if found in linked ticket)
-  design_source: none             # ← Step 3/3b/3c: none|jira_design_field|jira_remote_link|description|notion_doc|linked_ticket|github|slack
-  design_reuse: PARTIAL           # FULL | PARTIAL | NONE | N/A ← Step 4
-  code_reuse: PARTIAL             # FULL | PARTIAL | NONE ← Step 4
-  repos: [qdrant-cloud-cluster-api, operator, qdrant-cloud-public-api, qdrant-cloud-ui]
-  notion: read                    # none | read | unreadable ← Step 3b
-  slack_context: none             # none | found | read ← Steps 3/3c
-  github_context: none            # none | found | read ← Steps 3/3c
+  ticket: <KEY>                   # e.g. ABC-207
+  aliases: ["<KEY>"]
+  title: "<issue title>"
+  type: <issue type>              # whatever the project uses (Story, Objective, Epic…)
+  status: <status>
+  bucket: <sprint / backlog bucket>
+  objective_class: <class>        # only if the project has such a field; else "—"
+  owner: <name or "unassigned">
+  priority: <priority>
+  domain: <domain or "—">
+  carryover: <true | false>       # was it dragged from a past quarter/sprint?
+  size: <XS | S | M | L | XL | points>
+  size_factor: <numeric factor>
+  impact: <numeric | null>
+  confidence: <numeric | null>
+  score: <n | 0>
+  scoring_complete: <true | false>  # false when a factor is missing (Score 0)
+  requires_ui: <true | probable | false>   # ← Step 3
+  design_linked: <true | false>            # ← Step 3 (or 3c if found in linked ticket)
+  design_source: <none | jira_design_field | jira_remote_link | description | notion_doc | linked_ticket | github | slack>
+  design_reuse: <FULL | PARTIAL | NONE | N/A>   # ← Step 4
+  code_reuse: <FULL | PARTIAL | NONE>           # ← Step 4
+  repos: [<repo>, <repo>]
+  notion: <none | read | unreadable>       # ← Step 3b
+  slack_context: <none | found | read>     # ← Steps 3/3c
+  github_context: <none | found | read>    # ← Steps 3/3c
   subtasks: []                    # Jira keys of direct child/subtask issues ← Step 3c
-  linked_issues: [PM-111]         # Jira keys of issue-link targets ← Step 3c
-  child_context: full             # none | partial | full ← Step 3c
-  dor: almost-ready               # ready | almost-ready | not-ready ← Step 5
-  jira: https://qdrant.atlassian.net/browse/PM-207
-  tags: [backlog-audit, ticket, PM, readiness/almost-ready]
+  linked_issues: []               # Jira keys of issue-link targets ← Step 3c
+  child_context: <none | partial | full>   # ← Step 3c
+  dor: <ready | almost-ready | not-ready>  # ← Step 5
+  jira: https://<site>/browse/<KEY>
+  tags: [backlog-audit, ticket, <PROJECT>, readiness/<ready|almost-ready|not-ready>]
   ---
   ```
 
 - **Header** with metadata (type, sprint + carryover note, status, class, owner,
   priority). The **Jira link stays a standard markdown URL**; any **other ticket
   referenced** (synergy, duplicate, same theme) is a **wikilink**
-  (`[[PM-285-…|PM-285]]`).
+  (`[[ABC-285-…|ABC-285]]`).
 - **Audit summary table** — one row per axis: verdict (OK / Risk / N/A) + a short
   note.
 - **Project & technical notes** — repo(s), high-level approach, notes,
@@ -323,7 +324,7 @@ Cards are **Obsidian-native markdown** (see *Output format — Obsidian vault* i
   keeps every card comparable, and `dor:` in the frontmatter mirrors the verdict.
 
 One file per ticket, named `<KEY>-<kebab-slug>.md` (e.g.
-`PM-207-self-service-cluster-suspension.md`) — a unique basename so wikilinks
+`ABC-207-export-reports-to-pdf.md`) — a unique basename so wikilinks
 resolve cleanly.
 
 ## Gotchas
@@ -342,12 +343,12 @@ resolve cleanly.
 - **Host vs. mount paths differ:** file tools use host paths (`/Users/...`);
   `bash` uses the mount (`/sessions/<id>/mnt/...`). Account for it when copying.
 - **Cards are Obsidian deliverables** → cross-ticket references are wikilinks
-  (`[[PM-285-…|PM-285]]`), the Jira/Figma/Notion URLs stay markdown links, and the
+  (`[[ABC-285-…|ABC-285]]`), the Jira/Figma/Notion URLs stay markdown links, and the
   file opens with frontmatter. See *Output format — Obsidian vault* in `AGENTS.md`.
 - **Linked-ticket recursion is one hop only.** Fetch the linked tickets and hunt
   them; don't recurse into their links. Cap at ~8 linked tickets to avoid blowing
   token budget.
-- **Slack thread URLs** look like `https://qdrant.slack.com/archives/C.../p...`;
+- **Slack thread URLs** look like `https://<workspace>.slack.com/archives/C.../p...`;
   use `slack_read_thread` with the channel ID and thread timestamp extracted from
   the URL.
 - **GitHub → use `gh` CLI** (not an MCP). Run via Bash: `gh pr view <n> --repo
@@ -371,5 +372,5 @@ resolve cleanly.
 - `references/design-link-hunt.md` — the five places a design hides, plus the
   Extrapolable / Partial / New-design classification for UI tickets.
 - `references/code-identification.md` — how to characterize repos and run scoped
-  sweeps (or use codegraph), with the Qdrant repo map and useful search terms as
-  a worked example.
+  sweeps (or use codegraph). It builds the repo map per run; if you keep a local
+  environment reference (`*.local.md`) with your repos, point it there.

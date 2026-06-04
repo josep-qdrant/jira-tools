@@ -22,12 +22,8 @@
       ]
     },
     "figma": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "mcp-remote",
-        "https://mcp.figma.com/mcp"
-      ],
+      "type": "http",
+      "url": "https://mcp.figma.com/mcp",
       "disabled": false,
       "autoApprove": [
         "get_metadata",
@@ -52,12 +48,12 @@
       ]
     },
     "slack": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "mcp-remote",
-        "https://mcp.slack.com/mcp"
-      ],
+      "type": "http",
+      "url": "https://mcp.slack.com/mcp",
+      "oauth": {
+        "clientId": "1601185624273.8899143856786",
+        "callbackPort": 3118
+      },
       "disabled": false,
       "autoApprove": [
         "slack_read_channel",

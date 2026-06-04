@@ -1,12 +1,17 @@
 # Scoring model — multiplicative RICE, verification, and the inverse-size trap
 
-This explains the priority model that most product backlogs use, how to verify
-it against real data, and the one structural effect that drives most audit
-findings.
+This explains a priority model many product backlogs use, how to verify it
+against real data, and the one structural effect that drives most audit findings.
 
-## The formula
+> **This is the common case, not a given.** Reverse-engineer the actual model
+> from the data before relying on it. Some boards use an additive model, WSJF, a
+> weighted sum, or a fully custom formula. The verification recipe below is how
+> you find out which — if the arithmetic doesn't reconcile, the model is
+> different (or a factor is missing), not "broken".
 
-The Score behaves as a **multiplicative RICE**:
+## The formula (common case)
+
+The Score often behaves as a **multiplicative RICE**:
 
 ```
 Score = Impact(calc) × Confidence(calc) × Size factor(calc)
@@ -18,9 +23,9 @@ XS/S/M/L/XL) and a system-computed **numeric** value used in the Score. The nume
 
 ## Value mappings (confirm, don't assume)
 
-These are the values observed in the Qdrant `PM` audit, consistent across all
-issues with data. Treat them as a strong prior, but **verify against the actual
-data** for any new team — a different project may calibrate differently.
+These mappings are a frequently-seen calibration. Treat them as a prior to
+check, but **verify against the actual data** for any team — a different project
+may calibrate the buckets differently (or use story points, a 1–5 scale, etc.).
 
 | Variable | Qualitative | Numeric |
 |----------|-------------|---------|
@@ -51,8 +56,8 @@ For every issue that has Impact, Confidence, and Size:
 
 The point of this pass: prove that any ranking problems come from **input
 quality** (optimistic sizes, generous impacts, missing factors), not from the
-arithmetic. In the Qdrant audit the formula reconciled in 100% of the 15 issues
-that had complete data; the 3 with Score 0 were missing Impact/Confidence.
+arithmetic. (A typical result: the formula reconciles on every issue with
+complete data, and the only Score-0 rows are those missing Impact/Confidence.)
 
 ## The inverse-size trap (the most important consequence)
 

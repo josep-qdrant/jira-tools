@@ -80,10 +80,13 @@ The Qdrant repos live under `QDRANT_REPOS_ROOT`.
 3. Characterize each repo by README + actual language before searching.
 4. Prefer `codegraph` if available; otherwise use scoped `rg` searches.
 
-Canonical repo map and duplicates-to-ignore list:
+The skills are project-agnostic — they build the repo map per run. The real
+Qdrant repo map + duplicates-to-ignore list + proven search terms now live in a
+local, gitignored env file:
 
-- `.agents/skills/jira-ticket-audit/references/qdrant-cloud-repos.md`
-- `.agents/skills/jira-ticket-audit/references/code-identification.md`
+- `QDRANT-ENV.local.md` — the Qdrant Cloud repo map and domain caveats.
+- `.agents/skills/jira-ticket-audit/references/code-identification.md` — the
+  generic method (characterize repos per run).
 
 ## Gotchas
 
@@ -113,4 +116,5 @@ Canonical repo map and duplicates-to-ignore list:
 - Scoping reference: `.agents/skills/jira-backlog-scoping/SKILL.md`
 - Ticket audit reference: `.agents/skills/jira-ticket-audit/SKILL.md`
 - Synthesis reference: `.agents/skills/jira-backlog-synthesis/SKILL.md`
-- Qdrant worked example: `.agents/skills/jira-backlog-scoping/references/qdrant-reference.md`
+- Generic scoping example: `.agents/skills/jira-backlog-scoping/references/scoping-example.md`
+- Qdrant values (worked example + repo map): `QDRANT-ENV.local.md` (gitignored)

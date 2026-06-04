@@ -53,7 +53,7 @@ up later:
 
 | Ticket | Notion URL | Fetched? | Doc type | Notion last-edited | Takeaway |
 |---|---|---|---|---|---|
-| PM-XXX | https://notion.so/… | ✅ read / ❌ no access / ❌ not found | AC / spec / RFC / notes | date | one line |
+| ABC-XXX | https://notion.so/… | ✅ read / ❌ no access / ❌ not found | AC / spec / RFC / notes | date | one line |
 
 Every ticket gets a row per link (or one row stating "no Notion links found" —
 absence is also a result). This registry is the source for the **Notion

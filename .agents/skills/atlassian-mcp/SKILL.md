@@ -46,14 +46,14 @@ are markdown files on disk.
 ## JQL for an audit (read)
 
 ```
-# Scope: project + team (UUID, not display name) + sprint, ranked
-project = PM
-AND "Team[Team]" in (a58b9345-d5c4-46bd-857f-24747fe27038)
-AND Sprint in ("Backlog Prio 1", "Backlog Prio 2")
+# Scope: project + team (UUID, not display name) + backlog definition, ranked
+project = <KEY>
+AND "Team[Team]" in (<team-uuid>)
+AND Sprint in ("<bucket A>", "<bucket B>")   # or statusCategory, a saved filter — whatever defines the backlog
 ORDER BY Rank ASC
 
 # Validate a new query cheaply before pulling the full set
-project = PM AND statusCategory != Done ORDER BY Rank ASC   # fetch with maxResults small
+project = <KEY> AND statusCategory != Done ORDER BY Rank ASC   # fetch with maxResults small
 ```
 
 Fetch the **key list** with `fields: ["summary"]` and a small `maxResults`;
@@ -88,9 +88,9 @@ space = "ENG" AND type = page AND text ~ "deployment runbook" ORDER BY lastModif
   URL is not `filter = NNN` in JQL (that returns 0). Rebuild scope from explicit
   fields — project + team + sprint/status.
 - **The Team field uses a UUID**, not the display name: `"Team[Team]" in (<uuid>)`.
-- **"Backlog Prio 1/2" buckets are usually future sprints** (the Sprint field),
-  not a status or a separate field. Read the Sprint field of a few issues to
-  confirm the real names before filtering.
+- **Priority "buckets" are usually future sprints** (the Sprint field), not a
+  status or a separate field. Read the Sprint field of a few issues to confirm
+  the real names before filtering.
 
 ## Division of labour
 

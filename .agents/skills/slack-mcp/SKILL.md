@@ -64,7 +64,7 @@ messages about the Jira ticket key or feature.
 
 ```
 mcp__slack__slack_search_public_and_private(
-  query = "PM-207 suspension",
+  query = "ABC-207 suspension",
   count = 10
 )
 ```

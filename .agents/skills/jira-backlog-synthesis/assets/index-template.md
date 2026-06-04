@@ -34,7 +34,7 @@ Confidence / RICE Score).
 
 | <Bucket 1> | <Bucket 2> |
 |------------|------------|
-| [[PM-<a>-<slug>\|PM-<a>]] · [[PM-<b>-<slug>\|PM-<b>]] | [[PM-<c>-<slug>\|PM-<c>]] · … |
+| [[ABC-<a>-<slug>\|ABC-<a>]] · [[ABC-<b>-<slug>\|ABC-<b>]] | [[ABC-<c>-<slug>\|ABC-<c>]] · … |
 
 ## How the Score is computed (recap)
 

@@ -5,8 +5,8 @@ description: >-
   its scoring model. Use this FIRST, at the start of any Jira backlog audit,
   refinement, or quarter/sprint-planning prep. It turns a board + team + sprint
   into an explicit JQL query, maps cryptic customfield_XXXXX IDs to readable
-  labels, and deduces + verifies the RICE-style formula
-  (Score = Impact × Confidence × Size factor). Trigger whenever someone asks to
+  labels, and deduces + verifies the team's priority Score formula (commonly
+  RICE-style: Impact × Confidence × Size). Trigger whenever someone asks to
   audit / refine / analyze a Jira backlog, prep a quarter or sprint from a board,
   understand how a team's priority Score is computed, or work out which issues
   actually belong to a team's backlog — even if they don't say "JQL" or "scoring".
@@ -43,9 +43,10 @@ Before any query, make these explicit and confirm with the user. Don't deduce
 them silently — a wrong scope poisons the whole audit:
 
 - **Team / board** (and the team's UUID if known).
-- **Project** key (e.g. `PM`).
-- **What defines the backlog**: which sprints, filter, or status. A board
-  *quick-filter* in a URL (`?customFilter=NNN`) is **not** a global saved
+- **Project** key (e.g. `ABC`).
+- **What defines the backlog**: which sprints, filter, or status — the team's
+  own definition (named priority buckets, a saved filter, a status category…).
+  A board *quick-filter* in a URL (`?customFilter=NNN`) is **not** a global saved
   filter — `filter = NNN` in JQL returns 0. Do not rely on it.
 - **Working folder** where the markdown output will be written. If `Write`
   fails with "outside connected folders", the folder isn't mounted yet.
@@ -59,10 +60,10 @@ project and inspect the real field values to learn:
 
 - The **Team** field UUID. The team filter uses a special field name and a UUID,
   not the display name: `"Team[Team]" in (<uuid>)`.
-- The exact **sprint names**. "Backlog Prio 1/2"-style buckets are typically
-  **future sprints** on the board (the Sprint field), not a status and not a
-  separate field. Read the Sprint field of a few issues to confirm the real
-  names/IDs before filtering on them.
+- The exact **sprint / bucket names**. Priority buckets (whatever the team calls
+  them) are often **future sprints** on the board (the Sprint field), not a
+  status and not a separate field. Read the Sprint field of a few issues to
+  confirm the real names/IDs before filtering on them.
 
 ## Step 2 — Reconstruct the scope with explicit JQL
 
@@ -70,11 +71,15 @@ Build the scope from explicit fields — project + team + sprint/status — orde
 by Rank so the ranking is meaningful:
 
 ```
-project = PM
-AND "Team[Team]" in (a58b9345-d5c4-46bd-857f-24747fe27038)
-AND Sprint in ("Backlog Prio 1", "Backlog Prio 2")
+project = <KEY>
+AND "Team[Team]" in (<team-uuid>)
+AND Sprint in ("<bucket A>", "<bucket B>")   # or statusCategory != Done, or a saved filter — whatever defines the backlog
 ORDER BY Rank ASC
 ```
+
+The team clause uses the special field name and the team's **UUID**, not the
+display name. The backlog clause (`Sprint in (…)` here) is just an example —
+swap in whatever the user confirmed defines this backlog in Step 0.
 
 To get **just the key list** of the scope, search with `fields: ["summary"]`
 and a small `maxResults`. If there are many issues, paginate with
@@ -103,11 +108,12 @@ table mapping each relevant `customfield_XXXXX` to its label.
 > Use the **default format** when you need the custom-field values.
 
 The fields that matter for a scoring/readiness audit are usually: Score,
-Impact (calculated), Confidence (select + calculated), T-Shirt Size (select +
-calculated), Acceptance Criteria, Draft Requirements, the design fields
-(UX Designs / Concept Design / Design / Technical Documentation), Objective
-Class, and Sprint. See `references/qdrant-reference.md` for a fully worked field
-map you can use as a template.
+Impact (calculated), Confidence (select + calculated), a size estimate (select +
+calculated — e.g. T-Shirt or story points), Acceptance Criteria, any draft
+requirements / business-context field, the project's design-related fields
+(names vary — e.g. UX/Concept/Technical-Documentation fields), a class/category
+field if the project has one, and Sprint. See `references/scoping-example.md`
+for a worked field map you can use as a template.
 
 ## Step 4 — Deduce and VERIFY the scoring model
 
@@ -156,7 +162,8 @@ inferred because no issue in the set used it).
 - `references/scoring-model.md` — the RICE model in depth: value mappings, the
   arithmetic-verification recipe, the inverse-size effect, and how to record
   "scoring incomplete". Read it when deducing or sanity-checking the model.
-- `references/qdrant-reference.md` — a fully worked example from the Qdrant
-  `PM` / board 267 / "Cloud Regions and Clusters" audit: team UUID, sprint
-  names, the complete field map, scoring values, and issue types. Use it as a
-  filled-in template to copy the *shape* of, not as defaults to assume.
+- `references/scoping-example.md` — a fictional, fully worked example showing the
+  *shape* of a completed scoping (scope params, JQL, field map, scoring model).
+  Copy the shape, not the values — discover the real ones per run. If you keep a
+  local environment reference (`*.local.md`) with your real project key, team
+  UUID, field map, etc., use that instead of re-deriving every time.

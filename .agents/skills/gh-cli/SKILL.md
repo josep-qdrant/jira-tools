@@ -32,14 +32,14 @@ Before calling `gh`, extract `owner`, `repo`, and the number from the URL:
 
 | URL pattern | owner | repo | number |
 |-------------|-------|------|--------|
-| `https://github.com/qdrant/qdrant-cloud/pull/123` | `qdrant` | `qdrant-cloud` | `123` |
-| `https://github.com/qdrant/qdrant/issues/456` | `qdrant` | `qdrant` | `456` |
+| `https://github.com/<owner>/<repo>/pull/123` | `<owner>` | `<repo>` | `123` |
+| `https://github.com/<owner>/<repo>/issues/456` | `<owner>` | `<repo>` | `456` |
 
 ## Fetching a pull request
 
 ```bash
 gh pr view 123 \
-  --repo qdrant/qdrant-cloud \
+  --repo <owner>/<repo> \
   --json number,title,state,body,url,labels,linkedIssues,files \
   | jq '{number,title,state,url,body: .body[0:2000],labels: [.labels[].name]}'
 ```
@@ -54,18 +54,18 @@ Extract from the output:
 
 ```bash
 gh issue view 456 \
-  --repo qdrant/qdrant \
+  --repo <owner>/<repo> \
   --json number,title,state,body,url,labels \
   | jq '{number,title,state,url,body: .body[0:2000],labels: [.labels[].name]}'
 ```
 
 ## Searching for a Jira key in a repo
 
-When you know a Jira key (e.g. `PM-207`) and want to find related PRs:
+When you know a Jira key (e.g. `ABC-207`) and want to find related PRs:
 
 ```bash
-gh search prs "PM-207" \
-  --repo qdrant/qdrant-cloud \
+gh search prs "ABC-207" \
+  --repo <owner>/<repo> \
   --state all \
   --json number,title,state,url \
   | jq '.[:5]'

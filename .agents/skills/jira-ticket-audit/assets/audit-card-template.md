@@ -5,15 +5,15 @@ title: "<Issue title>"
 type: <issue type>
 status: <status>
 bucket: <sprint / backlog bucket>
-objective_class: <Standard | Big Rock>
+objective_class: <class/category value, or "—" if the project has no such field>
 owner: <name or "unassigned">
 priority: <priority>
 domain: <domain or "—">
 carryover: <true | false>
-size: <XS | S | M | L | XL>
-size_factor: <10 | 8 | 6 | 4 | 2>
-impact: <9 | 6 | 2 | null>
-confidence: <9 | 6 | 2 | null>
+size: <size value — e.g. XS | S | M | L | XL, or points>
+size_factor: <numeric factor, or null>
+impact: <numeric | null>
+confidence: <numeric | null>
 score: <n | 0>
 scoring_complete: <true | false>
 requires_ui: <true | probable | false>
@@ -37,9 +37,9 @@ tags: [backlog-audit, ticket, <PROJECT>, readiness/<ready|almost-ready|not-ready
 
 **Type:** <issue type> · **Sprint:** <sprint> (note carryover, e.g. "was in 2025-Q3, closed without completing") · **Status:** <status> · **Objective Class:** <Standard/Big Rock> · **Owner:** <name or "unassigned"> · **Priority:** <priority>
 **Link:** [<KEY>](https://<site>/browse/<KEY>) · **Reporter:** <name> · **Domain:** <domain> · **Created/Updated:** <date> / <date>
-**Subtasks:** <comma-separated wikilinks, e.g. [[PM-208-slug|PM-208]], [[PM-209-slug|PM-209]] — or "none">
-**Linked issues:** <comma-separated wikilinks with relation, e.g. [[PM-111-slug|PM-111]] (blocks), [[PM-285-slug|PM-285]] (relates-to) — or "none">
-**Related:** <wikilink any ticket referenced for theme/synergy, e.g. same theme as [[PM-285-unify-ui-text-fields|PM-285]] (Done); synergy with [[PM-296-backup-in-update-version-dialog|PM-296]]>
+**Subtasks:** <comma-separated wikilinks, e.g. [[ABC-208-slug|ABC-208]], [[ABC-209-slug|ABC-209]] — or "none">
+**Linked issues:** <comma-separated wikilinks with relation, e.g. [[ABC-111-slug|ABC-111]] (blocks), [[ABC-285-slug|ABC-285]] (relates-to) — or "none">
+**Related:** <wikilink any ticket referenced for theme/synergy, e.g. same theme as [[ABC-285-dark-mode-toggle|ABC-285]] (Done); synergy with [[ABC-296-inline-help-tooltips|ABC-296]]>
 
 ---
 
@@ -124,7 +124,7 @@ re-estimated? bold any incoherence>.
 
 > **Step 3c output.** Fill when subtasks or linked issues were fetched. One row per
 > linked ticket; include the key as a **wikilink** if the card exists
-> (`[[PM-208-slug|PM-208]]`). Record `child_context:` in frontmatter as `full`
+> (`[[ABC-208-slug|ABC-208]]`). Record `child_context:` in frontmatter as `full`
 > (all fetched), `partial` (cap hit or access error), or `none` (no linked tickets).
 > If no linked tickets exist, write "No linked tickets — child_context: none."
 

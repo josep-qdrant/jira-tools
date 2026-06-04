@@ -15,8 +15,9 @@ wrongly conclude "no design" (or worse, miss one that exists).
 > spec "missing" on the parent is frequently attached to a linked ticket.
 > See `jira-ticket-audit` Step 3c for the full procedure.
 
-1. **Design fields** — UX Designs, Concept Design, Design, Technical
-   Documentation. Often empty even when a design exists elsewhere.
+1. **Design fields** — the project's design-related custom fields (names vary;
+   e.g. UX/Concept/Design/Technical-Documentation fields from the field map).
+   Often empty even when a design exists elsewhere.
 2. **Attachments** — list them and **verify what each actually is**. A PNG can be
    product information or a reference photo, not a UI mockup. Only count it as a
    design asset if it really is one.
@@ -43,7 +44,7 @@ at "link exists" — follow it:
 | `slack.com/archives/…` | Read the thread; extract decisions, design links, open questions. Note channel and date. | `mcp__slack__slack_read_thread` — see `slack-mcp` skill for URL parsing |
 | `github.com/…/pull/N` | Fetch PR title, state, body; look for Figma/Notion links inside the body. | `gh pr view N --repo owner/repo --json title,state,body,url` via Bash — see `gh-cli` skill |
 | `github.com/…/issues/N` | Fetch issue title, state, body. | `gh issue view N --repo owner/repo --json title,state,body,url` via Bash — see `gh-cli` skill |
-| Any Jira key (`PM-NNN`) | Collect for Step 3c recursion — don't follow inline. | — |
+| Any Jira key (`ABC-NNN`) | Collect for Step 3c recursion — don't follow inline. | — |
 
 ## A missing Figma is not automatically a blocker
 

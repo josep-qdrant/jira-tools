@@ -33,40 +33,32 @@ timing out on giant searches.
   scope genuinely can't be pinned (no description, cross-cutting architecture),
   say "not scopable" rather than guessing.
 
-## Worked example — Qdrant Cloud repo map
+## Build a repo map (per run)
 
-> **Canonical, live map:** `qdrant-cloud-repos.md` holds the authoritative repo
-> map with real paths and the "duplicates to ignore" list. The table below is a
-> worked-example snapshot for portability; when working in this repo, defer to
-> that reference and don't maintain a second authoritative copy here.
-
-The repos in the Qdrant Cloud platform and what each owns (verify per audit;
-names and ownership drift):
+There's no built-in repo map — discover it for the codebase you're auditing.
+Produce a small table once and reuse it across the batch:
 
 | Repo | Language | Scope |
 |------|----------|-------|
-| `qdrant-cloud-ui` | React (MUI, TanStack, Connect/protobuf, apexcharts) | frontend |
-| `qdrant-cloud-cluster-api` | **Python** | control-plane API (packages: `booking`, `metrics`, `backup`, `authentication`, `payment`, `control_plane`…) |
-| `operator` | Go | Kubernetes operator (pods, PVCs, resources, GPU, snapshots, finalizers) |
-| `qdrant-cloud-public-api` | `.proto` | the API contract — changes in most behavior tickets |
-| `qdrant-cloud-iam-service` | Go | platform authn/authz |
-| `qdrant-cloud` | Terraform / FluxCD | infrastructure |
-| `qdrant-cloud-admin-v2` | — | admin |
-| `qdrant-cloud-api-gateway` | — | gateway |
+| `<repo>` | `<lang from go.mod/package.json/pyproject.toml>` | `<what it owns, from its README>` |
 
-Useful, already-proven search terms for this domain: `suspend`, `snapshot`,
-`vault`, `cors`, `gpu`, `traefik`, `reserved`, `force.?delete|finalizer`,
-`bundle`, `backup`, `support`, `diagnostics`.
+How to populate it cheaply:
 
-Domain caveats learned the hard way:
+1. List the repos under the projects root (ask the user for the path if you
+   don't have it).
+2. For each, read the `README` (scope) and detect the real language from the
+   build file — **the repo name can lie about the language**, so verify.
+3. Note a few **proven search terms** for the domain (feature nouns that recur
+   in tickets) so later sweeps are fast and targeted.
 
-- **`cluster-api` is Python**, not Go — filtering by `*.go` returns 0 and misleads.
-- **The platform deploys with FluxCD, not ArgoCD** internally (a GitOps ticket is
-  about *customer-facing* GitOps support, not internal ArgoCD).
-- **Traefik lives in the infra repo**, not the services.
-- Some enforcement (e.g. metrics-only API keys, CORS) may live in the **Qdrant
-  engine** (the database itself), which is **outside** the cloud repos — note
-  when a ticket isn't fully contained in the candidate set.
+> **If you keep a local environment reference** (a `*.local.md` file with your
+> real repo map, paths, proven search terms, and domain caveats), use it instead
+> of rebuilding the map every run — but keep that file out of the skill so the
+> skill stays project-agnostic. Watch for repos that are easy to mis-scope:
+> a service whose name implies one language but is written in another, infra
+> code that lives in a separate repo from the services, or enforcement that
+> lives outside the candidate set entirely (e.g. in an upstream engine). Note
+> when a ticket isn't fully contained in the repos you can see.
 
 ## UI design-effort classification (reuse vs. new design)
 

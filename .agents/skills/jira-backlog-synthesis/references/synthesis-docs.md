@@ -7,7 +7,7 @@ or a re-verified count.
 > [!note] Obsidian conventions (apply to every doc below)
 > Each file opens with the synthesis frontmatter (see the `jira-backlog-synthesis`
 > skill). Links to sibling docs and to ticket cards are **wikilinks**
-> (`[[02-master-table|…]]`, `[[PM-207-…|PM-207]]`); ticket keys in prose are
+> (`[[02-master-table|…]]`, `[[ABC-207-…|ABC-207]]`); ticket keys in prose are
 > wikilinks too. The "read-only, nothing modified in Jira" line is a `> [!info]`
 > callout. External URLs (Jira/Figma/Notion) stay markdown links. See *Output
 > format — Obsidian vault* in `AGENTS.md`.
@@ -18,7 +18,7 @@ or a re-verified count.
 - A `> [!info]` callout: "Read-only, nothing modified in Jira. Generated <date>."
 - **Suggested reading order** — a numbered list pointing at 01–08 as **wikilinks**.
 - **Cards by bucket** — a small table listing the issue keys per sprint/bucket,
-  each key a **wikilink** to its card (`[[PM-207-…|PM-207]]`).
+  each key a **wikilink** to its card (`[[ABC-207-…|ABC-207]]`).
 - **One-line scoring recap** — the formula + value mappings.
 - **Top 3 immediate actions.**
 
@@ -35,7 +35,7 @@ or a re-verified count.
 - Header: # issues, ordering (Score desc), date, the formula + mappings.
 - The table. Columns: `# | Issue | Title | Bucket | Status | Size | Imp | Conf |
   **Score** | I×C×T ✓ | UI | Design | Notion | Linked | DoR`. The **Issue** cell
-  is a **wikilink** to the card (`[[PM-207-self-service-cluster-suspension|PM-207]]`).
+  is a **wikilink** to the card (`[[ABC-207-export-reports-to-pdf|ABC-207]]`).
   - **Design** — `design_linked` + `design_source` abbreviated: "✓ remote",
     "✓ notion", "✓ linked", "✓ slack", "✓ gh", "✗".
   - **Notion** — `notion` field value: "read", "unread.", "—".
