@@ -119,6 +119,40 @@ Produce the full synthesis package.
 
 ---
 
+#### One-command orchestrator (`backlog-audit` workflow)
+
+For a single deterministic run of the whole pipeline — no manual chaining — use
+the saved workflow at [.agents/workflows/backlog-audit.js](.agents/workflows/backlog-audit.js)
+(exposed to Claude Code as `.claude/workflows/backlog-audit.js`). It runs
+scoper → auditor → synthesizer, fans the audit out over batches of ~3 tickets in
+parallel (auditor on Opus, scoper/synthesizer on Sonnet), and the three phases
+hand off through files in the output folder.
+
+> [!info] Read-only and non-interactive
+> Every phase keeps the read-only guarantee. Because the run can't stop to ask,
+> **you confirm the scope up front by passing it in `args`** — that is the
+> "ask scope first" gate. Nothing is written to Jira.
+
+Run it:
+
+```
+Run the backlog-audit workflow with args:
+{
+  "outputFolder": "refinement-PM-2026",
+  "project": "PM",
+  "board": "267",
+  "team": "Cloud Regions & Clusters",
+  "buckets": "Backlog, 2026-Q3, Backlog Prio 1, Backlog Prio 2",
+  "reposRoot": "/absolute/path/to/repos",   // optional — code association
+  "batchSize": 3                             // optional — default 3
+}
+```
+
+`outputFolder` is the only required arg; if it's missing the workflow aborts
+before touching Jira. Watch live progress with `/workflows`. The result reports
+the scoped count, cards written, the readiness split, any failed batches, and
+whether the actions-audit confirmed Jira was untouched.
+
 #### One-shot (let the agent chain all three steps)
 
 If you trust the agent to run end-to-end without checkpoints:
