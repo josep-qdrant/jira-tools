@@ -1,88 +1,53 @@
 # jira-tools
 
-AI-powered toolkit for Jira backlog auditing, refinement, and sprint planning. Contains the agents, skills, and configuration to run a structured audit pipeline against any Jira board — scoping, per-ticket audit, and synthesis. All work against Jira is **strictly read-only**.
+AI toolkit to audit, refine, and plan a Jira backlog. You point it at a board; it scopes the backlog, audits every ticket for readiness, and writes a planning-ready package — one markdown card per ticket plus cross-cutting synthesis docs, as an Obsidian vault.
 
-## Agents
+> **Strictly read-only on Jira.** No agent ever creates, edits, transitions, or comments on an issue. The only writes are markdown files on disk. Every backlog audit ships an actions-audit doc that proves it.
 
-The pipeline ships three **autonomous subagents** — each one runs independently with its own model and tool set. They are chained in order:
+## What it does
 
-| Agent | Model | Role |
-|---|---|---|
-| `jira-backlog-scoper` | Sonnet | Scopes the backlog, maps custom fields, verifies the scoring formula |
-| `jira-ticket-auditor` | Opus | Audits every ticket and writes one card per issue |
-| `jira-backlog-synthesizer` | Sonnet | Rolls up cards into the full planning package |
+- **Scopes** a backlog into explicit JQL, maps the cryptic `customfield_XXXXX` IDs, and verifies the `Score = Impact × Confidence × Size factor` formula against real issues.
+- **Audits** each ticket on four axes (goal clarity · design needs · size coherence · prioritization), hunts the linked design/Notion/Slack/GitHub, maps it to code, and ends with a Definition-of-Ready verdict.
+- **Synthesizes** the cards into an executive summary, a master table, a readiness plan, and design/code reviews.
 
-## Skills
+It also does deep single-ticket research, sprint planning, and quick readiness/triage checks — see the guides below.
 
-Skills are instruction sets loaded by agents. Each agent loads the relevant skill(s) at runtime.
+## Quickstart
 
-| Skill | What it does |
+1. **Connect the MCP servers** your tickets need (Atlassian is required; Figma/Notion/Slack optional) in your AI client, and authenticate `gh`. Full steps: **[docs/SETUP.md](docs/SETUP.md)**.
+2. **Open this repo as your workspace.** `AGENTS.md` is picked up automatically and activates the pipeline — nothing to paste.
+3. **Run your first audit.** Ask the assistant:
+   ```
+   Run the backlog-audit workflow with args:
+   { "outputFolder": "refinement-PM-2026-Q3", "project": "PM",
+     "board": "267", "team": "Cloud Regions & Clusters", "buckets": "2026-Q3" }
+   ```
+   `outputFolder` is the only required arg. Watch progress with `/workflows`.
+
+New here? Walk through one full run, start to finish, in **[docs/guides/getting-started.md](docs/guides/getting-started.md)**.
+
+## What's inside
+
+```
+AGENTS.md            ← always-loaded instructions (golden rules + map); auto-picked-up by the assistant
+WORKFLOW.md          ← usage hub → links every task guide
+docs/                ← SETUP, MODEL_POLICY, WORKFLOW_OVERVIEW, and guides/
+.agents/agents/      ← the three subagent definitions (scoper · auditor · synthesizer)
+.agents/skills/      ← skill instruction sets the agents load at runtime
+.agents/workflows/   ← backlog-audit.js (whole backlog) · ticket-research.js (specific tickets)
+skills-lock.json     ← pinned skill versions
+```
+
+All three agents default to **Sonnet**; Opus is escalation-only. Why and when: [docs/MODEL_POLICY.md](docs/MODEL_POLICY.md).
+
+## Documentation
+
+| Read this | When you want to |
 |---|---|
-| `jira-backlog-scoping` | Step-by-step method for scoping a backlog (used by `jira-backlog-scoper`) |
-| `jira-ticket-audit` | Per-ticket audit method and card format (used by `jira-ticket-auditor`) |
-| `jira-backlog-synthesis` | Synthesis documents spec (used by `jira-backlog-synthesizer`) |
-| `definition-of-ready` | Shared DoR rubric: 7-point checklist, verdicts, reason taxonomy |
-| `sprint-planning` | Scopes a sprint against team capacity, sets goals, handles carryover |
-| `ticket-triage` | Triages inbound support tickets (P1–P4 priority, routing) |
-| `atlassian-mcp` | Reference for Jira/Confluence MCP tool usage and authentication |
-| `slack-mcp` | Reference for Slack MCP tool usage (thread reads, search) |
-| `gh-cli` | Reference for GitHub CLI (`gh`) usage — PRs, issues, search |
-
-## Required tools
-
-The pipeline depends on a few external tools and MCP servers. Install them before running any workflow.
-
-### CLI tools
-
-| Tool | Purpose | Install |
-|------|---------|---------|
-| **[engram](https://github.com/Gentleman-Programming/engram)** | Persistent memory across sessions — stores scope, field map, decisions, and DoR verdicts so the agent doesn't re-derive them on every reset | `brew install gentleman-programming/tap/engram` |
-| **[gh](https://cli.github.com)** | GitHub CLI — reads PRs and issues linked from Jira tickets, Notion docs, or Slack threads during the audit hunt | `brew install gh` then `gh auth login` |
-
-### MCP servers (configured in `.mcp.json`)
-
-| Server | What it provides | Notes |
-|--------|----------------|-------|
-| **Atlassian** | Jira search, issue fetch, remote links, Confluence pages | Needs a Jira API token; see [Atlassian token docs](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/) |
-| **Figma** | Design metadata, screenshots, variable definitions | Needs a Figma personal access token |
-| **Notion** | Page and database fetch, comments (read-only) | Needs a Notion integration token with read access to the relevant pages |
-| **Slack** | Thread reads, channel reads, search (read-only) | Needs the Slack MCP app installed in the workspace; see [Slack MCP docs](https://api.slack.com/mcp) |
-| **engram** | Persistent memory (local SQLite) | Runs as a local binary — install engram first |
-
-> All MCP servers are **read-only** for the purposes of this toolkit. The only writes are markdown files on disk.
-
-## Persistent memory (engram)
-
-The toolkit uses **[engram](https://github.com/Gentleman-Programming/engram)** for persistent memory that survives session resets and context compaction. A backlog audit can span days; engram lets the agent recall what was already established instead of re-deriving it.
-
-What gets remembered across sessions:
-
-- Verified **scope** and JQL (team/board, project, backlog definition, key list + counts)
-- The custom-field map (`customfield_XXXXX` → readable label) and the verified **scoring formula**
-- Decisions, per-ticket gotchas, design-link locations, and DoR verdict rationale
-
-> **Local memory only.** engram writes to a local SQLite DB (`~/.engram/engram.db`) — it **never** writes to Jira. The strictly-read-only rule for Jira is unaffected.
-
-engram is wired into the repo through the `engram` server in `.mcp.json`, so any MCP-capable agent that opens this repo picks it up. Install the binary first:
-
-```bash
-brew install gentleman-programming/tap/engram
-```
-
-In Claude Code you can alternatively install it as a plugin (`claude plugin marketplace add Gentleman-Programming/engram && claude plugin install engram`); for other agents see engram's [AGENT-SETUP](https://github.com/Gentleman-Programming/engram) docs.
-
-## Repository layout
-
-```
-AGENTS.md             ← master instructions (golden rules, workflow, output format)
-.mcp.json             ← MCP server configuration (Atlassian, Figma, Notion, Slack, engram memory)
-skills-lock.json      ← pinned skill versions
-.agents/agents/       ← autonomous subagent definitions (model, tools, boundaries)
-.agents/skills/       ← skill instruction sets loaded by agents at runtime
-```
-
-## How to use
-
-Open this repo as your workspace in an AI coding assistant (VS Code + GitHub Copilot agent mode, Claude Code, Cursor…). The `AGENTS.md` file is picked up automatically and activates the full pipeline.
-
-See **[WORKFLOW.md](WORKFLOW.md)** for the full guide: available workflows, step-by-step prompts, tips for talking to the agent, and a skill reference.
+| [docs/SETUP.md](docs/SETUP.md) | Set up MCP connectors, `gh`, engram memory, and code association |
+| [docs/guides/getting-started.md](docs/guides/getting-started.md) | Go from clone to first audit, with a worked example |
+| [WORKFLOW.md](WORKFLOW.md) | Pick and run a workflow (hub linking every task guide) |
+| [docs/guides/prompts.md](docs/guides/prompts.md) | Copy-paste a ready prompt for any task |
+| [docs/WORKFLOW_OVERVIEW.md](docs/WORKFLOW_OVERVIEW.md) | Understand the pipeline conceptually — what it reads, the rules it follows |
+| [docs/MODEL_POLICY.md](docs/MODEL_POLICY.md) | Know which model runs which task |
+| [AGENTS.md](AGENTS.md) | See the always-loaded rules the assistant reads on open |

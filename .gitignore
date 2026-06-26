@@ -1,3 +1,4 @@
 *.local.md
+!QDRANT-ENV.local.md
 .obsidian/
 .DS_Store

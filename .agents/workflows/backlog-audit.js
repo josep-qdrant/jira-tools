@@ -4,7 +4,8 @@ export const meta = {
   whenToUse: 'Run the full read-only backlog refinement pipeline (scoper → auditor → synthesizer) with one command instead of chaining three agents by hand. Pass the scope in args.',
   phases: [
     { title: 'Scope',      detail: 'jira-backlog-scoper — build JQL, map customfields, verify the scoring formula', model: 'sonnet' },
-    { title: 'Audit',      detail: 'jira-ticket-auditor — one Obsidian card per ticket, batched (~3), on opus', model: 'opus' },
+    { title: 'Audit',      detail: 'jira-ticket-auditor — one Obsidian card per ticket, batched (~3), on sonnet', model: 'sonnet' },
+    { title: 'Escalate',   detail: 'jira-ticket-auditor — re-audit only the tickets Sonnet flagged as contested, on opus', model: 'opus' },
     { title: 'Synthesize', detail: 'jira-backlog-synthesizer — roll the cards into the 9-doc planning package', model: 'sonnet' },
   ],
 }
@@ -62,6 +63,7 @@ const AUDIT_SCHEMA = {
     ready: { type: 'integer' },
     almostReady: { type: 'integer' },
     notReady: { type: 'integer' },
+    escalate: { type: 'array', items: { type: 'string' }, description: 'Keys whose readiness/Score is genuinely contested — re-audited on Opus' },
   },
   required: ['cardsWritten', 'keys'], // keys is required: coverage check reconciles it against the scope
 }
@@ -104,7 +106,9 @@ ${reposRoot ? `Code-association repos root: ${reposRoot} — characterize each r
 
 Read-only on Jira. Do NOT write synthesis docs.
 
-Return: cardsWritten, the keys you wrote, and the readiness split (ready / almostReady / notReady).`
+You run on Sonnet (see docs/MODEL_POLICY.md). For any ticket whose readiness/Score call is GENUINELY contested — low confidence, Score contested by judgment (not a missing factor), or an epic-in-disguise whose split is non-obvious — add its key to \`escalate\`. Don't agonise: write your best card now and flag it; a later Opus pass re-audits only the flagged ones. Most tickets need no escalation.
+
+Return: cardsWritten, the keys you wrote, the readiness split (ready / almostReady / notReady), and \`escalate\` (the contested keys, or []).`
 
 const synthPrompt = (missingKeys) => `Every per-ticket audit card now exists in ${outputFolder}/tickets/. Synthesize the full planning package. Follow your skill exactly (.claude/skills/jira-backlog-synthesis/SKILL.md + references/ + assets/).
 
@@ -113,6 +117,12 @@ ${missingKeys.length ? `\nINCOMPLETE PACKAGE: these scoped tickets have NO audit
 Write all synthesis documents AND the actions-audit report to ${outputFolder}/ as Obsidian-native markdown (frontmatter, sibling + ticket wikilinks, escape \\| inside tables). Read-only on Jira — any re-query only re-verifies counts.
 
 Return: docsWritten (the filenames), the headline readiness split, and whether the actions-audit confirms Jira was untouched.`
+
+const escalatePrompt = (batch) => `You are the ESCALATION pass (Opus). The Sonnet audit flagged these tickets as having a genuinely contested readiness/Score call: ${batch.join(', ')}. Their cards already exist in ${outputFolder}/tickets/.
+
+For EACH, read its existing card, re-read the scope hand-off note at ${scopeNote} (field map + verified scoring model), and re-fetch the ticket from Jira if needed. Resolve the contested call with rigorous reasoning — re-check the Score arithmetic, the scope boundary, or the epic split. Then UPDATE the card in place (Edit): append a \`## Escalated review (Opus)\` section with your verdict, and if it changes readiness, update the \`dor:\` frontmatter and the DoR verdict callout to match. Read-only on Jira. Follow the jira-ticket-audit + definition-of-ready skills.
+
+Return: cardsWritten (= tickets you updated), keys (the ones you updated), the readiness split across them, and escalate=[] (no further escalation).`
 
 // ─── pipeline ──────────────────────────────────────────────────────────────
 phase('Scope')
@@ -127,12 +137,12 @@ log(`Scope locked: ${scope.count} tickets. JQL: ${scope.jql}`)
 
 phase('Audit')
 const batches = chunk(scope.keys, batchSize)
-log(`Auditing ${scope.keys.length} tickets in ${batches.length} batch(es) of ≤${batchSize} (opus).`)
+log(`Auditing ${scope.keys.length} tickets in ${batches.length} batch(es) of ≤${batchSize} (sonnet; Opus only for flagged tickets).`)
 
 const runBatch = (batch, i, suffix = '') =>
   agent(auditorPrompt(batch, i, batches.length), {
     agentType: 'jira-ticket-auditor',
-    model: 'opus',
+    model: 'sonnet',
     schema: AUDIT_SCHEMA,
     phase: 'Audit',
     label: `audit:batch-${i + 1}${suffix}`,
@@ -171,6 +181,17 @@ if (missingKeys.length) {
 }
 log(`Audit done: ${cardsWritten}/${scope.count} cards written.`)
 
+// Escalation: re-audit on Opus only the tickets Sonnet flagged as contested.
+// They have cards already; the Opus pass updates them in place. Cheap because
+// it runs on a handful of keys, not the whole backlog (see docs/MODEL_POLICY.md).
+const escalateKeys = [...new Set(good.flatMap(r => r.escalate || []))].filter(k => auditedKeys.has(k))
+if (escalateKeys.length) {
+  phase('Escalate')
+  log(`${escalateKeys.length} contested ticket(s) → Opus re-audit: ${escalateKeys.join(', ')}`)
+  await parallel(chunk(escalateKeys, batchSize).map((b, i) => () =>
+    agent(escalatePrompt(b), { agentType: 'jira-ticket-auditor', model: 'opus', schema: AUDIT_SCHEMA, phase: 'Escalate', label: `escalate:batch-${i + 1}` })))
+}
+
 phase('Synthesize')
 const synth = await agent(synthPrompt(missingKeys), { agentType: 'jira-backlog-synthesizer', model: 'sonnet', schema: SYNTH_SCHEMA, label: 'synthesize' })
 
@@ -180,6 +201,7 @@ return {
   scopedCount: scope.count,
   cardsWritten,
   missingKeys,
+  escalatedKeys: escalateKeys,
   readiness,
   synthesisDocs: synth?.docsWritten || [],
   readOnlyConfirmed: synth?.actionsAuditConfirmsReadOnly ?? null,

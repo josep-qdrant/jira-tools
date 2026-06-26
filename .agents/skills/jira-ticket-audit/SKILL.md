@@ -249,8 +249,8 @@ isn't actually a blocker. See `references/code-identification.md`.
 
 ## Step 5 — Write the audit card
 
-Cards are **Obsidian-native markdown** (see *Output format — Obsidian vault* in
-`AGENTS.md`): they open with YAML frontmatter, cross-reference other tickets with
+Cards are **Obsidian-native markdown** (see the `obsidian-vault` skill): they
+open with YAML frontmatter, cross-reference other tickets with
 **wikilinks**, and render verdicts/alerts as **callouts**. Use the structure in
 `assets/audit-card-template.md`. Each card is:
 
@@ -344,7 +344,7 @@ resolve cleanly.
   `bash` uses the mount (`/sessions/<id>/mnt/...`). Account for it when copying.
 - **Cards are Obsidian deliverables** → cross-ticket references are wikilinks
   (`[[ABC-285-…|ABC-285]]`), the Jira/Figma/Notion URLs stay markdown links, and the
-  file opens with frontmatter. See *Output format — Obsidian vault* in `AGENTS.md`.
+  file opens with frontmatter. See the `obsidian-vault` skill.
 - **Linked-ticket recursion is one hop only.** Fetch the linked tickets and hunt
   them; don't recurse into their links. Cap at ~8 linked tickets to avoid blowing
   token budget.

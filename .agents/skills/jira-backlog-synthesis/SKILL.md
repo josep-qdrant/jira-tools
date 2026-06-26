@@ -43,8 +43,8 @@ trace back to a card or a verified count.
 5. **Obsidian-native output.** Every doc opens with YAML frontmatter, links to
    sibling docs and to tickets with **wikilinks** (`[[02-master-table|…]]`,
    `[[ABC-207-…|ABC-207]]`), and renders the read-only note as a `> [!info]`
-   callout. External URLs stay markdown links. See *Output format — Obsidian
-   vault* in `AGENTS.md`; the frontmatter schema is below.
+   callout. External URLs stay markdown links. See the `obsidian-vault` skill;
+   the frontmatter schema is below.
 
 ## The deliverable set
 

@@ -51,8 +51,7 @@ scope + verified scoring model from part 1.
 5. **Obsidian-native docs.** Every document opens with the synthesis frontmatter,
    links to sibling docs and to ticket cards with **wikilinks** (escape the alias
    pipe as `\|` inside tables), and renders the read-only note as a `> [!info]`
-   callout. External URLs stay markdown links. See *Output format — Obsidian
-   vault* in `AGENTS.md`.
+   callout. External URLs stay markdown links. See the `obsidian-vault` skill.
 
 ## What you return
 
