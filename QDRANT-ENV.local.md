@@ -3,47 +3,35 @@
 This file holds the **company/environment-specific** values the backlog-audit
 skills used to inline. The skills themselves are now project-agnostic: they
 instruct to *discover* scope, field map, scoring model, and repo map per run.
-This is the filled-in reference for **this** environment — paste the relevant
-parts into a working note when you start a Qdrant audit, or hand them to the
-skills as the "scope parameters".
+This is the filled-in reference for **this** environment.
+
+Read it top to bottom when you start an audit:
+
+- **A. Stable facts** — true for *any* team/board/quarter in the Qdrant Jira
+  instance. Reuse as-is.
+- **B. Per-run scope template** — the blanks you fill in fresh each audit. Copy
+  into your working note and complete via discovery.
+- **C. Worked example** — one fully filled-in run (board 267) to show the shape.
+- **D. Repo map** — for ticket-to-code association.
 
 `*.local.md` is gitignored, so this stays local.
 
 ---
 
-## A. Worked example — "Cloud Regions and Clusters" (project PM, board 267)
+## A. Stable facts — Qdrant Jira instance
 
-A fully filled-in scoping result from a real audit. Use it to see the **shape**
-of a completed scoping step. **Discover these values per run** — they are correct
-only for this specific team/board/period.
+These do **not** change between teams, boards, or quarters. Custom-field IDs are
+instance-wide; the scoring model is the PM project's RICE setup. Verify once,
+then trust across runs.
 
-### Scope parameters
+### Constants
 
 - **Site / cloudId:** `qdrant.atlassian.net`
 - **Project:** `PM` (Product Management)
-- **Board:** `267`
-- **Team:** Cloud Regions and Clusters
-- **Team UUID:** `a58b9345-d5c4-46bd-857f-24747fe27038`
-- **Backlog sprints:** `Backlog Prio 1`, `Backlog Prio 2` (future sprints used as
-  priority buckets — NOT statuses, NOT a separate field)
-- **Issue types:** `Objective` (hierarchy 2), `Product Request` (hierarchy 0)
-
-### Scope JQL (read-only)
-
-```
-project = PM
-AND "Team[Team]" in (a58b9345-d5c4-46bd-857f-24747fe27038)
-AND Sprint in ("Backlog Prio 1", "Backlog Prio 2")
-ORDER BY Rank ASC
-```
-
-Result: 18 issues, all of type `Objective` (12 in Prio 1, 6 in Prio 2).
-
-> The board's `?customFilter=272` is a board quick-filter, not a saved global
-> filter — `filter = 272` in JQL returns 0. The scope had to be rebuilt from
-> project + Team[Team] + Sprint as above.
 
 ### Field map (customfield → label)
+
+Instance-wide — the same IDs apply to every PM ticket regardless of team/board.
 
 | Concept | Field | Notes |
 |---------|-------|-------|
@@ -56,11 +44,11 @@ Result: 18 issues, all of type `Objective` (12 in Prio 1, 6 in Prio 2).
 | Target Impact | `customfield_10085` | often empty |
 | Complexity | `customfield_10089` | |
 | Acceptance Criteria | `customfield_10087` | usually a link to Notion |
-| Draft Requirements | `customfield_10086` | empty across the set |
-| UX Designs / Concept Design / Design | `customfield_10096` / `_10095` / `_10034` | empty across the set |
-| Technical Documentation | `customfield_10097` | empty across the set |
+| Draft Requirements | `customfield_10086` | often empty |
+| UX Designs / Concept Design / Design | `customfield_10096` / `_10095` / `_10034` | often empty |
+| Technical Documentation | `customfield_10097` | often empty |
 | Objective Class | `customfield_10829` | Standard / Big Rock |
-| Sprint | `customfield_10020` | here: Prio 1 / Prio 2 (and past quarter sprints) |
+| Sprint | `customfield_10020` | holds the priority-bucket / quarter sprints |
 
 ### Scoring model (verified)
 
@@ -69,30 +57,96 @@ Score = Impact × Confidence × Size factor
 ```
 
 - Impact / Confidence: High = 9 · Medium = 6 · Low = 2
-- Size factor (inverse): XS = 10 · S = 8 · M = 6 · L = 4 · XL = 2 (XL inferred —
-  no issue in the set used it)
+- Size factor (inverse): XS = 10 · S = 8 · M = 6 · L = 4 · XL = 2
 
-Verified: reconciles in 100% of the 15 issues with complete data. 3 issues had
-Score 0 from missing Impact/Confidence (scoring incomplete).
+Verified against real audits: reconciles in 100% of issues with complete data.
+Issues with Score 0 are missing Impact and/or Confidence (scoring incomplete) —
+not a different formula.
+
+---
+
+## B. Per-run scope template — fill this in each audit
+
+Everything below is **per-run**: discover and confirm it live, never assume it
+carried over from a previous quarter or another team.
+
+### Scope parameters (blank)
+
+- **Team:** `<team name>`
+- **Team UUID:** `<uuid>` — used in the `Team[Team]` JQL clause
+- **Board:** `<board id>`
+- **Backlog definition:** `<which sprints / statuses count as "the backlog">`
+  (future sprints are often used as priority buckets — they are sprints, NOT
+  statuses, NOT a separate field)
+- **Issue types in scope:** `<e.g. Objective, Product Request>`
+
+### Scope JQL skeleton (read-only)
+
+```
+project = PM
+AND "Team[Team]" in (<team-uuid>)
+AND Sprint in ("<bucket 1>", "<bucket 2>")
+ORDER BY Rank ASC
+```
+
+### How to discover the blanks (proven call sequence)
+
+1. JQL searches to find the team filter and sprint names (sample a few issues).
+2. `getJiraProjectIssueTypesMetadata` to learn the project's issue types.
+3. `getJiraIssue(<key>, fields: ["*all"], expand: "names")` on one issue to
+   reconcile against the field map in section A.
+4. Key+summary search of the full scope, paginated by Rank, to get the issue list.
+
+All read-only.
+
+### Gotcha — board quick-filters are not global JQL filters
+
+A board's `?customFilter=NNN` in the URL is a **board quick-filter**, not a saved
+global filter — `filter = NNN` in JQL returns 0. Rebuild the scope from
+`project + Team[Team] + Sprint` as in the skeleton above.
+
+---
+
+## C. Worked example — "Cloud Regions and Clusters" (board 267)
+
+One fully filled-in run, to show the shape of a completed section B. These values
+are correct **only** for this specific team/board/period — they are an
+illustration, not defaults.
+
+### Filled scope parameters
+
+- **Team:** Cloud Regions and Clusters
+- **Team UUID:** `a58b9345-d5c4-46bd-857f-24747fe27038`
+- **Board:** `267`
+- **Backlog definition:** `Backlog Prio 1`, `Backlog Prio 2` (future sprints used
+  as priority buckets)
+- **Issue types in scope:** `Objective` (hierarchy 2), `Product Request` (hierarchy 0)
+
+### Filled scope JQL
+
+```
+project = PM
+AND "Team[Team]" in (a58b9345-d5c4-46bd-857f-24747fe27038)
+AND Sprint in ("Backlog Prio 1", "Backlog Prio 2")
+ORDER BY Rank ASC
+```
+
+Result: 18 issues, all of type `Objective` (12 in Prio 1, 6 in Prio 2).
+
+> This run hit the quick-filter gotcha: the board's `?customFilter=272` returned
+> 0 as `filter = 272`. Scope was rebuilt from project + Team[Team] + Sprint.
 
 ### The 18 issues audited
 
 PM-102, 106, 184, 194, 207, 225, 252, 273, 281, 284, 288, 295, 296, 310, 313,
 338, 345, 346.
 
-### How the discovery actually went (call sequence)
-
-1. JQL searches to find the team filter and sprint names (sample issues).
-2. `getJiraProjectIssueTypesMetadata` to learn the project's issue types.
-3. `getJiraIssue(<key>, fields: ["*all"], expand: "names")` on one issue to
-   build the field map.
-4. Key+summary search of the full scope, paginated by Rank.
-
-All read-only.
+Scoring reconciled in 15/15 issues with complete data; 3 had Score 0 from
+missing Impact/Confidence.
 
 ---
 
-## B. Qdrant Cloud repo map (for ticket-to-code association)
+## D. Qdrant Cloud repo map (for ticket-to-code association)
 
 Repos live under `QDRANT_REPOS_ROOT` (host path; shell mount path may differ).
 See `AGENTS.local.md` for the local value. Characterize per audit — names,
