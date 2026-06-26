@@ -12,6 +12,8 @@ tags: [backlog-audit, synthesis]
 
 # Backlog audit — <Team> (<Quarter/Period>)
 
+> [!tldr] <one line: the headline verdict — e.g. "X/N ready, M blocked on AC; ranking inflated by optimistic sizes. Recalibrate the top K before planning.">
+
 **Read-only** analysis package for the **<Team>** backlog (project <KEY>, board
 <NNN>), scope **<sprints/filter>**. <N> <issue type>s audited across 4 axes:
 goal/scope clarity, UI/design, size coherence, and prioritization (Impact /

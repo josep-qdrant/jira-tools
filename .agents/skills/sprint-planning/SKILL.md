@@ -81,6 +81,10 @@ audited (see `jira-ticket-audit`), each ticket already carries its DoR verdict.
 | [Date] | Retro |
 ```
 
+Keep the plan human and concise: lead with the goal, fill a row only when it's
+real, and drop empty sections (no "Risks: none" filler rows). See the
+**`writing-style`** skill.
+
 ## Tips
 
 1. **Leave buffer** — Plan to 70-80% capacity. You will get interrupts.

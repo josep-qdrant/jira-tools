@@ -32,7 +32,8 @@ Each skill carries its own steps and gotchas — invoke it for the detail.
 - `jira-ticket-audit` — per-ticket card, four-axis audit, design hunt, code link, DoR.
 - `jira-backlog-synthesis` — roll-up docs, master table, actions audit.
 - `definition-of-ready` — readiness verdict + 7-point checklist.
-- `obsidian-vault` — output conventions for every deliverable on disk.
+- `obsidian-vault` — output format conventions for every deliverable on disk.
+- `writing-style` — how output reads: human, concise, TL;DR-first, no repetition.
 - `jira-notion-context` — read Notion docs linked from tickets (Step 3b).
 - `atlassian-mcp` — read-only Jira / Confluence MCP plumbing.
 - `slack-mcp` / `gh-cli` — read Slack threads / GitHub PRs linked from tickets.

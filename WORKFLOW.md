@@ -65,6 +65,8 @@ Model tiering (Haiku retrieval · Sonnet reasoning · Opus escalation-only) is d
 | `jira-backlog-synthesis` | `jira-backlog-synthesizer` | Never |
 | `definition-of-ready` | `jira-ticket-auditor`, `sprint-planning`, main agent | Never |
 | `jira-notion-context` | `jira-ticket-auditor`, `jira-backlog-synthesizer` | Never |
+| `obsidian-vault` | all output-writing skills (format) | Never |
+| `writing-style` | all output-writing skills (voice / TL;DR) | Never |
 | `slack-mcp` | `jira-ticket-auditor` (design hunt) | Never |
 | `gh-cli` | `jira-ticket-auditor` (design hunt) | Never |
 | `sprint-planning` | Main agent (standalone) | Never |

@@ -4,13 +4,15 @@ Section-by-section structure for the 10 deliverables. Adapt headings to the
 team/quarter; keep the substance. Every figure must trace to a per-ticket card
 or a re-verified count.
 
-> [!note] Obsidian conventions (apply to every doc below)
+> [!note] Conventions (apply to every doc below)
 > Each file opens with the synthesis frontmatter (see the `jira-backlog-synthesis`
-> skill). Links to sibling docs and to ticket cards are **wikilinks**
-> (`[[02-master-table|…]]`, `[[ABC-207-…|ABC-207]]`); ticket keys in prose are
-> wikilinks too. The "read-only, nothing modified in Jira" line is a `> [!info]`
-> callout. External URLs (Jira/Figma/Notion) stay markdown links. See *Output
-> format — Obsidian vault* in `AGENTS.md`.
+> skill), then a **one-line `**TL;DR:**`** directly under the H1 stating the doc's
+> bottom line — most important on top (see the `writing-style` skill). Links to
+> sibling docs and to ticket cards are **wikilinks** (`[[02-master-table|…]]`,
+> `[[ABC-207-…|ABC-207]]`); ticket keys in prose are wikilinks too. The "read-only,
+> nothing modified in Jira" line is a `> [!info]` callout. External URLs
+> (Jira/Figma/Notion) stay markdown links. Keep the prose human and concise — no
+> filler, no repetition. See `obsidian-vault` (format) and `writing-style` (voice).
 
 ## 00_README_index.md
 
@@ -36,8 +38,9 @@ or a re-verified count.
 - The table. Columns: `# | Issue | Title | Bucket | Status | Size | Imp | Conf |
   **Score** | I×C×T ✓ | UI | Design | Notion | Linked | DoR`. The **Issue** cell
   is a **wikilink** to the card (`[[ABC-207-export-reports-to-pdf|ABC-207]]`).
-  - **Design** — `design_linked` + `design_source` abbreviated: "✓ remote",
-    "✓ notion", "✓ linked", "✓ slack", "✓ gh", "✗".
+  - **Design** — `design_linked` + `design_source` abbreviated, one per enum value:
+    "✓ field" (jira_design_field), "✓ remote" (jira_remote_link), "✓ desc"
+    (description), "✓ notion", "✓ linked", "✓ slack", "✓ gh", "✗" (none).
   - **Notion** — `notion` field value: "read", "unread.", "—".
   - **Linked** — `child_context` value + count: "full (3)", "partial (2/5)", "—".
   - **DoR** — `dor` field value: 🟢 / 🟡 / 🔴.
@@ -107,8 +110,8 @@ or a re-verified count.
   (coverage as a fraction, e.g. 0/11).
 - **Where I looked** — the five places, with the result of each.
 - **Design-source breakdown** — a small table: where were the designs actually
-  found? Aggregate `design_source` across all UI tickets:
-  `jira_remote_link N | notion_doc N | linked_ticket N | slack N | github N | none N`.
+  found? Aggregate `design_source` across all UI tickets — cover every enum value:
+  `jira_design_field N | jira_remote_link N | description N | notion_doc N | linked_ticket N | slack N | github N | none N`.
   This tells the team which source is most productive to check first.
 - **"One hop away" callout** — if any design was found only via a linked ticket
   (`design_source: linked_ticket`), name those tickets and note that the parent

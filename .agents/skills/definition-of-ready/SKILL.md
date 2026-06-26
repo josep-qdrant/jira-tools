@@ -134,32 +134,14 @@ into a sprint on a false premise. Keep deductions labelled until confirmed.
 
 ## The DoR block (paste into each ticket)
 
-End every audit card / refined ticket with this block. Fill the table, then the
+End every audit card / refined ticket with the DoR block. Fill the table, then the
 one-liner. Render the verdict as an Obsidian **callout** — 🟢 → `[!success]`,
 🟡 → `[!warning]`, 🔴 → `[!danger]` — and keep the card's frontmatter `dor:`
-(`ready` / `almost-ready` / `not-ready`) in sync. See
-`assets/dor-block-template.md` for the copy-paste skeleton.
+(`ready` / `almost-ready` / `not-ready`) in sync.
 
-```markdown
-## Definition of Ready (DoR)
-
-> [!success] Verdict: 🟢 READY TO START — <one line>
-<!-- callout type by verdict: 🟢 [!success] · 🟡 [!warning] · 🔴 [!danger] -->
-
-| DoR criterion | Status |
-|---|---|
-| Objective / description clear | ✅/🔎/⚠️/❌ |
-| Acceptance criteria defined | ✅/🔎/⚠️/❌ |
-| Well scoped (realistic size, not an épic) | ✅/🔎/⚠️/❌ |
-| Scoring complete (Impact·Confidence·Size) | ✅/🔎/⚠️/❌ |
-| Design / UI available | ✅/🔎/⚠️/❌/N/A |
-| Extrapolable from existing code/contract | ✅/🔎/⚠️/❌ |
-| Context sufficient | ✅/🔎/⚠️/❌ |
-
-**Deductions to verify:** <only if any row is 🔎 — what was deduced · basis · confidence · how to confirm; otherwise "none">
-
-**To be ready it needs:** <reasons from the taxonomy + the concrete next step>
-```
+The copy-paste skeleton is the single source of truth: **`assets/dor-block-template.md`**.
+Don't reproduce it here — edit the asset so the block never drifts between this
+skill and the cards that paste it.
 
 ## How the other skills use it
 

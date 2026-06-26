@@ -120,7 +120,7 @@ Return: docsWritten (the filenames), the headline readiness split, and whether t
 
 const escalatePrompt = (batch) => `You are the ESCALATION pass (Opus). The Sonnet audit flagged these tickets as having a genuinely contested readiness/Score call: ${batch.join(', ')}. Their cards already exist in ${outputFolder}/tickets/.
 
-For EACH, read its existing card, re-read the scope hand-off note at ${scopeNote} (field map + verified scoring model), and re-fetch the ticket from Jira if needed. Resolve the contested call with rigorous reasoning — re-check the Score arithmetic, the scope boundary, or the epic split. Then UPDATE the card in place (Edit): append a \`## Escalated review (Opus)\` section with your verdict, and if it changes readiness, update the \`dor:\` frontmatter and the DoR verdict callout to match. Read-only on Jira. Follow the jira-ticket-audit + definition-of-ready skills.
+For EACH, read its existing card, re-read the scope hand-off note at ${scopeNote} (field map + verified scoring model), and re-fetch the ticket from Jira if needed. Resolve the contested call with rigorous reasoning — re-check the Score arithmetic, the scope boundary, or the epic split. Then UPDATE the card in place (Edit): append the \`## Escalated review (Opus)\` section from the audit-card template appendix with your verdict, and if it changes readiness, update the \`dor:\` frontmatter and the DoR verdict callout to match. Read-only on Jira. Follow the jira-ticket-audit + definition-of-ready skills.
 
 Return: cardsWritten (= tickets you updated), keys (the ones you updated), the readiness split across them, and escalate=[] (no further escalation).`
 

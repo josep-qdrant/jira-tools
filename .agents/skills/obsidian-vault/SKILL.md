@@ -15,6 +15,9 @@ Every deliverable written to the working folder is **Obsidian-native markdown**.
 This is the single source of truth for those conventions; the audit, synthesis,
 scoping, and DoR skills all defer here.
 
+This skill owns **format mechanics**. How the prose itself reads — human, concise,
+TL;DR-first — is the **`writing-style`** skill. Apply both to every file.
+
 ## Conventions
 
 - Every deliverable starts with YAML frontmatter and `tags:`.
@@ -26,6 +29,7 @@ scoping, and DoR skills all defer here.
 - Use controlled tags only: `backlog-audit`, `ticket` / `synthesis`, project key,
   and `readiness/ready`, `readiness/almost-ready`, `readiness/not-ready`.
 - Use Obsidian callouts for verdicts / alerts:
+  - `> [!tldr]` one-line bottom line at the top of a file (see `writing-style`)
   - `> [!info]` read-only note
   - `> [!success]` ready
   - `> [!warning]` almost ready, estimate risk, hidden scope

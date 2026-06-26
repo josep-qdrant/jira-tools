@@ -45,6 +45,10 @@ trace back to a card or a verified count.
    `[[ABC-207-…|ABC-207]]`), and renders the read-only note as a `> [!info]`
    callout. External URLs stay markdown links. See the `obsidian-vault` skill;
    the frontmatter schema is below.
+6. **TL;DR-first and human.** Every doc opens with a one-line `**TL;DR:**` under
+   its H1, then descends most-important to least — the verdict never hides at the
+   bottom. Keep the prose concise and human, no filler or repetition. See the
+   `writing-style` skill.
 
 ## The deliverable set
 
@@ -119,8 +123,9 @@ what lives in Notion and wasn't opened).
 **Design (06) & Code (07) reviews.** Report Figma coverage as a fraction
 (e.g. "0/11 UI tickets have a Figma link") and immediately reframe with the
 code reality ("but only 3/11 need new design"). Use the `design_source` field
-from each card to break down **where** designs were found — `jira_remote_link`,
-`notion_doc`, `linked_ticket`, `slack`, `github` — this shows the team which
+from each card to break down **where** designs were found — across all eight enum
+values (`jira_design_field`, `jira_remote_link`, `description`, `notion_doc`,
+`linked_ticket`, `slack`, `github`, `none`) — this shows the team which
 sources are worth checking first in future audits, and flags any design found
 "one hop away" in a linked ticket (parent ticket itself has no direct link).
 

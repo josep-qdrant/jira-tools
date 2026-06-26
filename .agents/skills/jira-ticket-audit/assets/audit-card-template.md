@@ -35,6 +35,16 @@ tags: [backlog-audit, ticket, <PROJECT>, readiness/<ready|almost-ready|not-ready
 
 # <KEY> · <Issue title>
 
+> [!tldr] <🟢/🟡/🔴 verdict> · Score <n> (<size>) · <the single thing that gates it, in a few words>
+
+<!-- One line: the bottom line up top (see the writing-style skill). It previews
+     the DoR verdict that closes the card — not a copy of it.
+     House rule for EVERY section below (writing-style §5–6): fill it only if
+     there's something real. Record a genuine absence in ONE line ("No Notion
+     links found"); omit a section that's truly N/A. Never ship an empty heading,
+     a leftover `- ...` placeholder, or filler to satisfy a slot — write
+     "Uncertain" rather than invent. -->
+
 **Type:** <issue type> · **Sprint:** <sprint> (note carryover, e.g. "was in 2025-Q3, closed without completing") · **Status:** <status> · **Objective Class:** <Standard/Big Rock> · **Owner:** <name or "unassigned"> · **Priority:** <priority>
 **Link:** [<KEY>](https://<site>/browse/<KEY>) · **Reporter:** <name> · **Domain:** <domain> · **Created/Updated:** <date> / <date>
 **Subtasks:** <comma-separated wikilinks, e.g. [[ABC-208-slug|ABC-208]], [[ABC-209-slug|ABC-209]] — or "none">
@@ -75,10 +85,9 @@ was found. If "No": design fields empty, no design attachments, 0 remote links.>
 
 **Requires UI? <Yes / Probable / No>** — <which screens/modals/states>.
 
-Missing design-asset checklist:
+Missing design-asset checklist (omit entirely when no UI, or when nothing is missing):
 
 - [ ] <missing mockup / flow / states / copy / Figma link>
-- [ ] ...
 
 ## 3. Size coherence (T-Shirt Size)
 
@@ -157,3 +166,36 @@ re-estimated? bold any incoherence>.
 > Keep `dor:` in the frontmatter in sync with the verdict. The rubric and the block
 > live in the `definition-of-ready` skill; edit them there so this template never
 > drifts.
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     OPTIONAL APPENDIX — only some runs add these. A plain backlog-audit card
+     ends at the DoR block above. The sections below are appended when:
+       · ticket-research dossier → "Open questions" + "Recommendation"
+       · any escalation pass     → "Escalated review (Opus)"
+     Omit any section that doesn't apply; never leave an empty heading.
+     ════════════════════════════════════════════════════════════════════════ -->
+
+## Open questions
+
+<!-- ticket-research dossiers only. What a human must answer before this ticket is
+     plannable — the unknowns that no amount of reading the ticket resolves. -->
+
+- <open question — the decision or fact still owed>
+
+## Recommendation
+
+<!-- ticket-research dossiers only. One call + one next action; no hedging. -->
+
+**<plan as-is | refine first | split | drop>** — <rationale in one line>.
+**Next action:** <single concrete step to take this forward>.
+
+## Escalated review (Opus)
+
+<!-- Added only by an escalation pass (backlog-audit or ticket-research) that
+     re-judged a contested call. Append it last. If the verdict changes, also
+     update the `dor:` frontmatter and the DoR callout above to match. -->
+
+> [!note] Contested call: <the single question escalated>
+
+<Rigorous resolution — re-checked Score arithmetic / scope boundary / epic split as
+relevant. One short paragraph. State the revised verdict, or "unchanged".>

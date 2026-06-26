@@ -90,9 +90,7 @@ const analyzePrompt = (g, key) => `You are the ANALYSIS stage (Sonnet) of a read
 
 Follow the jira-ticket-audit skill exactly (.claude/skills/jira-ticket-audit/SKILL.md + definition-of-ready + jira-notion-context). There is NO pre-built scope or scoring model here — map ${key}'s own score fields (Impact / Confidence / Size) from the dump and VERIFY the arithmetic yourself. A Score of 0 with a size set is "scoring incomplete", not a formula error.
 
-Write a deep research dossier for ${key} to ${outputFolder}/${key}-<kebab-slug>.md using the audit-card template (full frontmatter with the controlled vocabulary, the four-axis audit with incoherences in bold, the five-place design-hunt result, the linked-ticket / Notion / Slack / GitHub context, code association, and the DoR block). Then ADD two research-depth sections after the DoR block:
-- \`## Open questions\` — what a human must answer before this is plannable.
-- \`## Recommendation\` — your call (plan as-is / refine first / split / drop) and the single next action.
+Write a deep research dossier for ${key} to ${outputFolder}/${key}-<kebab-slug>.md using the audit-card template (full frontmatter with the controlled vocabulary, the four-axis audit with incoherences in bold, the five-place design-hunt result, the linked-ticket / Notion / Slack / GitHub context, code association, and the DoR block). Then fill the template's research-depth appendix after the DoR block — the \`## Open questions\` and \`## Recommendation\` sections defined at the end of audit-card-template.md (Open questions = what a human must answer before this is plannable; Recommendation = your call [plan as-is / refine first / split / drop] + the single next action).
 ${reposRoot ? `Code repos root: ${reposRoot} — characterize each repo (README + real language) before searching; prefer codegraph, else scoped rg.` : 'No repos root provided — record code association as "not available" rather than guessing.'}
 
 Read-only on Jira. Then self-assess the contested-call test: is the readiness/Score verdict genuinely contested — confidence low, Score arithmetic contested (judgment, not a missing factor), or an epic-in-disguise whose split is non-obvious? If yes, set needsEscalation=true and state the SINGLE question Opus should resolve; otherwise needsEscalation=false.
@@ -102,7 +100,7 @@ Return: key, cardPath (the file you wrote), dor (ready|almost-ready|not-ready), 
 const escalatePrompt = (an, key) => `You are the ESCALATION stage (Opus). The Sonnet analysis of ${key} flagged a contested call:
 "${an.escalationQuestion || 'low-confidence readiness/Score verdict'}"
 
-Read the dossier at ${an.cardPath} and the raw context at ${researchDir}/${key}-context.md. Resolve ONLY that question with rigorous reasoning — re-check the Score arithmetic, the scope boundary, or the epic split as relevant. Then Edit the dossier: append a \`## Escalated review (Opus)\` section with your verdict; if it changes readiness, also update the \`dor:\` frontmatter and the DoR verdict callout to match. Read-only on Jira.
+Read the dossier at ${an.cardPath} and the raw context at ${researchDir}/${key}-context.md. Resolve ONLY that question with rigorous reasoning — re-check the Score arithmetic, the scope boundary, or the epic split as relevant. Then Edit the dossier: append the \`## Escalated review (Opus)\` section from the audit-card template appendix with your verdict; if it changes readiness, also update the \`dor:\` frontmatter and the DoR verdict callout to match. Read-only on Jira.
 
 Return: key, resolved, revisedDor (ready|almost-ready|not-ready|unchanged), verdict (one paragraph).`
 

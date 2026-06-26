@@ -251,8 +251,9 @@ isn't actually a blocker. See `references/code-identification.md`.
 
 Cards are **Obsidian-native markdown** (see the `obsidian-vault` skill): they
 open with YAML frontmatter, cross-reference other tickets with
-**wikilinks**, and render verdicts/alerts as **callouts**. Use the structure in
-`assets/audit-card-template.md`. Each card is:
+**wikilinks**, and render verdicts/alerts as **callouts**. Keep the prose human,
+brief, and concise, and lead with the bottom line — follow the **`writing-style`**
+skill. Use the structure in `assets/audit-card-template.md`. Each card is:
 
 - **Frontmatter** — the Dataview-queryable schema (fill every field; use the
   vocabulary in the template). Fields are set progressively across Steps 3–3c
@@ -295,6 +296,9 @@ open with YAML frontmatter, cross-reference other tickets with
   ---
   ```
 
+- **TL;DR** — a `> [!tldr]` callout right under the H1, **one line**: verdict +
+  Score + the single thing that gates it. The bottom line up top; the full DoR
+  block still closes the card. (writing-style skill.)
 - **Header** with metadata (type, sprint + carryover note, status, class, owner,
   priority). The **Jira link stays a standard markdown URL**; any **other ticket
   referenced** (synergy, duplicate, same theme) is a **wikilink**
@@ -364,11 +368,15 @@ resolve cleanly.
   the Notion docs linked from tickets (read-only via the `notion` MCP) and the
   `## Notion context` card section. Use it for every ticket with a `notion.so`
   link before judging DoR criterion 2.
+- **`writing-style`** — how the card *reads*: human, brief, concise, no
+  repetition, TL;DR-first. `obsidian-vault` owns the format; this owns the voice.
 
 ## Reference files
 
 - `assets/audit-card-template.md` — the per-ticket card skeleton to copy and
-  fill (its closing section is the DoR block). Based on a real, well-formed card.
+  fill; the DoR block closes a standard card, followed by an **optional appendix**
+  (Open questions + Recommendation for ticket-research dossiers; Escalated review
+  for escalation passes). Based on a real, well-formed card.
 - `references/design-link-hunt.md` — the five places a design hides, plus the
   Extrapolable / Partial / New-design classification for UI tickets.
 - `references/code-identification.md` — how to characterize repos and run scoped
