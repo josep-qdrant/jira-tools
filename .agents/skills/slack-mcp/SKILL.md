@@ -18,8 +18,9 @@ consume messages — you never post, schedule, or edit.
 
 ## MCP server key
 
-The server is registered under the key `slack` in `.mcp.json`, so tools appear
-as `mcp__slack__<tool_name>` in the agent context.
+The Slack MCP server is connected in your AI client (see
+[docs/SETUP.md](../../../docs/SETUP.md#mcp-servers)); its tools appear as
+`mcp__slack__<tool_name>` in the agent context.
 
 ## Parsing Slack URLs
 

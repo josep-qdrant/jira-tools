@@ -4,8 +4,8 @@ description: >-
   Read-only mechanics for the official Atlassian MCP server (Jira + Confluence)
   used by the backlog audit. Use when you need the plumbing — which read tools
   exist, how to write JQL/CQL for an audit, how to fetch an issue's custom
-  fields and remote links, how to map customfield_XXXXX IDs, or how the server
-  is configured in `.mcp.json`. This skill owns the *tool plumbing*;
+  fields and remote links, how to map customfield_XXXXX IDs, or what its read
+  tools are named. This skill owns the *tool plumbing*;
   jira-backlog-scoping owns the *scoping task* (what to query and why).
   Strictly read-only: only search/get/metadata calls — never create, edit,
   transition, or comment on Jira/Confluence.
@@ -14,9 +14,9 @@ description: >-
 # Atlassian MCP — read-only audit usage
 
 The backlog audit talks to Jira (and occasionally Confluence) through the
-**official Atlassian MCP server**, registered as `atlassian` in `.mcp.json`
-(`https://mcp.atlassian.com/v1/mcp/authv2`, via `mcp-remote`). Its tools appear
-as `mcp__atlassian__<tool>` in the agent context. This file is the reference for
+**official Atlassian MCP server**, connected in your AI client (see
+[docs/SETUP.md](../../../docs/SETUP.md#mcp-servers)). Its tools appear as
+`mcp__atlassian__<tool>` in the agent context. This file is the reference for
 *how* to call them; for *what* to query and why, see **jira-backlog-scoping**.
 
 ## Read-only ground rule
