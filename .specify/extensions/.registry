@@ -54,6 +54,29 @@
       },
       "registered_skills": [],
       "installed_at": "2026-06-30T23:35:25.517006+00:00"
+    },
+    "axi": {
+      "version": "1.1.3",
+      "source": "local",
+      "manifest_hash": "sha256:c3e7f61ffc42e46610f798aa038465ecea60adff3a8c897a688812f2cbe722e0",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "agy": [
+          "speckit.axi.review"
+        ],
+        "claude": [
+          "speckit.axi.review"
+        ],
+        "codex": [
+          "speckit.axi.review"
+        ],
+        "zed": [
+          "speckit.axi.review"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-06-30T23:36:12.222592+00:00"
     }
   }
 }

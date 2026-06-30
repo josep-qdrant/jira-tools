@@ -1,5 +1,6 @@
 installed:
 - agent-context
+- axi
 - product
 settings:
   auto_execute_hooks: true
