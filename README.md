@@ -30,7 +30,8 @@ New here? Walk through one full run, start to finish, in **[docs/guides/getting-
 
 ```
 AGENTS.md            ← always-loaded instructions (golden rules + map); auto-picked-up by the assistant
-WORKFLOW.md          ← usage hub → links every task guide
+USAGE.md             ← what you can ask this repo to do
+WORKFLOW.md          ← how the pipeline is wired → links every task guide
 docs/                ← SETUP, MODEL_POLICY, WORKFLOW_OVERVIEW, and guides/
 .agents/agents/      ← the three subagent definitions (scoper · auditor · synthesizer)
 .agents/skills/      ← skill instruction sets the agents load at runtime
@@ -46,7 +47,8 @@ All three agents default to **Sonnet**; Opus is escalation-only. Why and when: [
 |---|---|
 | [docs/SETUP.md](docs/SETUP.md) | Set up MCP connectors, `gh`, engram memory, and code association |
 | [docs/guides/getting-started.md](docs/guides/getting-started.md) | Go from clone to first audit, with a worked example |
-| [WORKFLOW.md](WORKFLOW.md) | Pick and run a workflow (hub linking every task guide) |
+| [USAGE.md](USAGE.md) | See every possibility — what you can ask this repo to do |
+| [WORKFLOW.md](WORKFLOW.md) | Understand how the pipeline is wired (agents, skills, models) |
 | [docs/guides/prompts.md](docs/guides/prompts.md) | Copy-paste a ready prompt for any task |
 | [docs/WORKFLOW_OVERVIEW.md](docs/WORKFLOW_OVERVIEW.md) | Understand the pipeline conceptually — what it reads, the rules it follows |
 | [docs/MODEL_POLICY.md](docs/MODEL_POLICY.md) | Know which model runs which task |

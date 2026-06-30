@@ -74,7 +74,7 @@ The rest live in their skills. Two are universal:
 
 ## More detail
 
-- User guide: `WORKFLOW.md` · overview: `docs/WORKFLOW_OVERVIEW.md`
+- Usage / possibilities: `USAGE.md` · user guide: `WORKFLOW.md` · overview: `docs/WORKFLOW_OVERVIEW.md`
 - Model policy: `docs/MODEL_POLICY.md`
 - Workflows: `.agents/workflows/{backlog-audit,ticket-research}.js`
 - Qdrant repo map + worked example: `QDRANT-ENV.local.md` (gitignored)

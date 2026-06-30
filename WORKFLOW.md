@@ -6,6 +6,7 @@ This is the map. It explains how `jira-tools` is wired and points you to the rig
 
 ## Quick links
 
+- [USAGE.md](USAGE.md) — what you can ask this repo to do
 - [Getting started](docs/guides/getting-started.md) — prerequisites, setup, a worked end-to-end run
 - [Prompts cookbook](docs/guides/prompts.md) — copy-paste a prompt for any task
 - [docs/SETUP.md](docs/SETUP.md) — MCP connectors, `gh`, engram, code association
@@ -32,15 +33,7 @@ Open the repo as a workspace and `AGENTS.md` activates the pipeline. From there 
 
 ## Which workflow do I want?
 
-| Situation | Workflow | Guide |
-|---|---|---|
-| Audit a whole team backlog before planning | **backlog-audit** | [backlog-audit](docs/guides/backlog-audit.md) |
-| Deep-dive a few specific tickets | **ticket-research** | [ticket-research](docs/guides/ticket-research.md) |
-| Plan a sprint from an audited backlog | **sprint-planning** | [sprint-planning](docs/guides/sprint-planning.md) |
-| "Is this ticket ready to start?" | **definition-of-ready** | [quick-checks](docs/guides/quick-checks.md) |
-| Triage an inbound support ticket | **ticket-triage** | [quick-checks](docs/guides/quick-checks.md) |
-
-Two of these are saved, non-interactive workflows in [.agents/workflows/](.agents/workflows/) (`backlog-audit.js`, `ticket-research.js`); the rest run conversationally against the main agent.
+See **[USAGE.md](USAGE.md)** — the full list of what you can ask this repo to do, with a guide link for each.
 
 ---
 
