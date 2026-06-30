@@ -23,6 +23,37 @@
       },
       "registered_skills": [],
       "installed_at": "2026-06-30T23:13:16.056661+00:00"
+    },
+    "product": {
+      "version": "1.0.1",
+      "source": "local",
+      "manifest_hash": "sha256:05a4d13cffc6e6655cd664f644c396520d5bc98b0d288d3f7f486d034630edaa",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "agy": [
+          "speckit.product.brief",
+          "speckit.product.plan",
+          "speckit.product.design"
+        ],
+        "claude": [
+          "speckit.product.brief",
+          "speckit.product.plan",
+          "speckit.product.design"
+        ],
+        "codex": [
+          "speckit.product.brief",
+          "speckit.product.plan",
+          "speckit.product.design"
+        ],
+        "zed": [
+          "speckit.product.brief",
+          "speckit.product.plan",
+          "speckit.product.design"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-06-30T23:35:25.517006+00:00"
     }
   }
 }
