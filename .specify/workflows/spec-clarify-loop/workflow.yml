@@ -1,0 +1,107 @@
+schema_version: "1.0"
+workflow:
+  id: "spec-clarify-loop"
+  name: "Spec → Clarify loop → Plan"
+  version: "1.1.0"
+  author: "Josep Fornies"
+  description: "specify, loop clarify while a round leaves open questions, hold for spec approval, plan, tasks, always analyze, then hold for user verification"
+
+requires:
+  speckit_version: ">=0.8.5"
+  integrations:
+    any:
+      - "claude"
+      - "copilot"
+      - "gemini"
+      - "opencode"
+
+inputs:
+  spec:
+    type: string
+    required: true
+    prompt: "Describe what you want to build"
+  integration:
+    type: string
+    default: "auto"
+    prompt: "Integration to use ('auto' uses the project's initialized integration)"
+
+steps:
+  - id: specify
+    command: speckit.specify
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "{{ inputs.spec }}"
+
+  # The step right after specify is ALWAYS clarify: a do-while runs its body
+  # once unconditionally, then repeats while the condition is truthy.
+  #
+  # The loop must continue "while the previous round still left open
+  # questions". The engine cannot read that from clarify itself — a command
+  # step only exposes exit_code/dispatched (stdout capture is not
+  # implemented), so clarify's "N questions asked / none remain" report is
+  # not machine-readable. The clarify-check gate is the bridge: the operator
+  # (who just saw clarify's Q&A and final report) relays whether questions
+  # remain, and that choice drives the loop condition.
+  - id: clarify-loop
+    type: do-while
+    max_iterations: 5
+    condition: "{{ steps.clarify-check.output.choice == 'more' }}"
+    steps:
+      - id: clarify
+        command: speckit.clarify
+        integration: "{{ inputs.integration }}"
+        input:
+          args: "{{ inputs.spec }}"
+      - id: clarify-check
+        type: gate
+        message: "Did this clarify round still leave open / pending questions? Choose 'more' to run clarify again, or 'none' if nothing remains."
+        options:
+          - more
+          - none
+        on_reject: skip
+
+  # No more pending questions — hold here until the spec is approved.
+  # on_reject: retry pauses the run on 'reject' so it can be resumed and the
+  # gate re-presented later (i.e. wait until approved, then advance).
+  - id: approve-spec
+    type: gate
+    message: "Clarification complete. Approve the spec to proceed to planning?"
+    options:
+      - approve
+      - reject
+    on_reject: retry
+
+  - id: plan
+    command: speckit.plan
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "{{ inputs.spec }}"
+
+  - id: tasks
+    command: speckit.tasks
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "{{ inputs.spec }}"
+
+  # analyze ALWAYS runs right after tasks (plain sequential step, no
+  # condition): a non-destructive cross-artifact consistency/quality check
+  # across spec.md, plan.md and tasks.md.
+  - id: analyze
+    command: speckit.analyze
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "{{ inputs.spec }}"
+
+  # Hold for the user to verify the analyze report before the workflow ends.
+  # on_reject: retry pauses the run on 'reject' so it can be resumed and the
+  # gate re-presented after the reported issues are addressed.
+  - id: verify-analysis
+    type: gate
+    message: "Review the analyze report (spec / plan / tasks consistency). Approve to finish, or reject to pause and revisit."
+    options:
+      - approve
+      - reject
+    on_reject: retry
+  # Stops after user verification of analyze, per the requested flow. To run
+  # the full SDD cycle, append: speckit.implement (see the bundled "speckit"
+  # workflow for that pattern).
