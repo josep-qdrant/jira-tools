@@ -2,3 +2,4 @@
 !QDRANT-ENV.local.md
 .obsidian/
 .DS_Store
+.specify/presets/.cache/

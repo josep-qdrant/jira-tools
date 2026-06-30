@@ -1,0 +1,39 @@
+schema_version: "1.0"
+
+preset:
+  id: "multi-repo-jira-coordination"
+  name: "Multi-Repo Jira Coordination"
+  version: "1.0.0"
+  description: "Specs/plans/tasks assume a flow across multiple repos and languages that must stay in concordance, with Jira as the read-only coordination point and markdown as the actual deliverable."
+  author: "jira-tools"
+  license: "MIT"
+
+requires:
+  speckit_version: ">=0.10.0"
+
+provides:
+  templates:
+    - type: "template"
+      name: "spec-template"
+      file: "templates/spec-template.md"
+      description: "Adds a Jira reference line (read-only) and an optional repos-known-so-far note to the spec header."
+      replaces: "spec-template"
+
+    - type: "template"
+      name: "plan-template"
+      file: "templates/plan-template.md"
+      description: "Technical Context becomes a per-repo table; adds a Cross-Repo Concordance section and a multi-repo Project Structure option."
+      replaces: "plan-template"
+
+    - type: "template"
+      name: "tasks-template"
+      file: "templates/tasks-template.md"
+      description: "Task ID format gains a [Repo] tag; adds a Cross-Repo Dependencies subsection."
+      replaces: "tasks-template"
+
+tags:
+  - "multi-repo"
+  - "jira"
+  - "coordination"
+  - "read-only"
+  - "markdown"

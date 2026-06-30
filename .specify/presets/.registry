@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "presets": {
+    "multi-repo-jira-coordination": {
+      "version": "1.0.0",
+      "source": "local",
+      "manifest_hash": "sha256:6782be85bb8e12d2a77a0e3a2d7a4da5809c554bfe1fd6797292387988bea55e",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {},
+      "registered_skills": [],
+      "installed_at": "2026-06-30T23:29:21.798008+00:00"
+    }
+  }
+}
