@@ -7,8 +7,10 @@ description: >-
   Use whenever you write or edit any markdown deliverable (audit cards, synthesis
   docs, dossiers, sprint/triage notes). Trigger when asked to "humanize",
   "make it concise/less verbose", "cut the fluff", "add a TL;DR", "it's too
-  repetitive", "it reads like a robot/AI", or "it's padded with empty/placeholder
-  sections". Cross-cutting voice + concision +
+  repetitive", "it reads like a robot/AI", "remove the AI tells / AI-generated
+  phrasing" (delve, leverage, seamless, em dashes), or "it's padded with
+  empty/placeholder sections". Carries the full AI-tell catalog in
+  references/ai-tells.md. Cross-cutting voice + concision +
   ordering skill the audit, synthesis, DoR, scoping and sprint skills all defer
   to — the sibling of obsidian-vault, which owns format mechanics. Judgment only;
   never writes to Jira.
@@ -46,10 +48,42 @@ without losing the conclusion, it belongs lower — or not at all.
 - Write like a sharp colleague leaving a note, not a report generator.
 - **No throat-clearing:** drop "It is important to note that…", "This section
   will…", "In this analysis we…". Start with the point.
-- **No hedging stacks:** not "it seems this might potentially be…" — say what you
+- **No hedging stacks:** not "it seems this might potentially be…", say what you
   found, and mark a real unknown once, plainly (`Uncertain`, `Not recorded`).
 - Active voice, concrete subject. "The proto contract lacks a size field" beats
   "It was observed that a size field may be absent from the contract."
+
+**Kill the AI tells (the enforced minimum).** Generated prose has tells. These
+hard-banned phrases never appear in our prose, in any deliverable: `delve`,
+`tapestry`, `in essence`, `navigate the landscape`, `seamless`, `intuitive`,
+`leverage` (as a standalone verb), `robust` (without a measurable target), `it is
+worth noting`, `it should be noted`, `as previously mentioned`, `furthermore`,
+`moreover`, `additionally`, `cutting-edge`, `state-of-the-art`, `game-changer`,
+`revolutionary`, `unlock`, `unleash`, `empower`, `at the end of the day`,
+`crucial / vital / essential` (without a stake).
+
+And never the em dash. Replace it with a comma, colon, semicolon, parentheses, or
+a sentence break; a hyphen is fine.
+
+The full catalog (sentence-level tells like "not just X, but Y", hedging stacks,
+the rule of three; structural tells like parallel openers, uniform bullets,
+symmetric paragraphs; and cadence) lives in `references/ai-tells.md`. Read it for
+any real humanization pass.
+
+**Scope:** these rules touch *our* prose, never quoted Jira/Notion/Slack source
+text. Rewriting a quote to sound human breaks the no-invention rule; if a quoted
+source reads like marketing, that is a finding, not a thing to launder.
+
+**Verify (last pass over any deliverable you write).** Per the repo's
+verify-with-grep rule, scan the output folder before calling it done. Every hit is
+a candidate, not an automatic fail: `leverage`, `robust`, `intuitive`, `crucial`
+and friends can be legitimate (a measured guarantee, a verbatim quote), so read
+each one.
+
+```
+rg -in 'delve|tapestry|in essence|navigate the landscape|seamless|intuitive|leverage|robust|it is worth noting|it should be noted|as previously mentioned|furthermore|moreover|additionally|cutting.edge|state.of.the.art|game.changer|revolutionary|unlock|unleash|empower|at the end of the day|crucial|vital|essential' <deliverables-folder>/
+rg -n '—' <deliverables-folder>/        # em dashes
+```
 
 ## 3. Concise — no filler
 
@@ -105,6 +139,8 @@ Where unclear things go: a **dossier** (ticket-research) has a dedicated
   the template's `<placeholder>` text.
 - A made-up approach or estimate written because the template had a slot — when
   the honest answer is `Uncertain`.
+- An em dash, or any banned tell (`delve`, `leverage`, `seamless`, `furthermore`…),
+  in our prose. Full catalog and the verify grep in §2 and `references/ai-tells.md`.
 
 ## How the other skills use it
 
