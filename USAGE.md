@@ -4,6 +4,7 @@ What you can ask this repo to do. Everything below is read-only on Jira — see 
 
 | Situation | Ask for... | Guide |
 |---|---|---|
+| Verify Jira/MCP/config access before a big run | **doctor** | [quick-checks](docs/guides/quick-checks.md) |
 | Audit a whole team backlog before planning | the **backlog-audit** workflow | [backlog-audit](docs/guides/backlog-audit.md) |
 | Deep-dive a few specific tickets | the **ticket-research** workflow | [ticket-research](docs/guides/ticket-research.md) |
 | Plan a sprint from an audited backlog | **sprint-planning** | [sprint-planning](docs/guides/sprint-planning.md) |

@@ -22,6 +22,11 @@ skills — this file is only the always-loaded safety net + map.
   (gather → analyse → escalate). Cheaper and deeper than the full pipeline — don't
   run the whole backlog audit on a 1-ticket scope.
 
+Both workflows run a `doctor` Preflight phase first that proves the MCP
+connectors/config are actually reachable before spending tokens on the rest.
+A required failure (Atlassian MCP) aborts right there. Also invokable
+standalone any time: "check my setup" / "run the doctor".
+
 Both read-only, at `.agents/workflows/*.js`. Flagship details in `WORKFLOW.md`.
 
 ## Skills
@@ -40,6 +45,8 @@ Each skill carries its own steps and gotchas — invoke it for the detail.
   designs linked from tickets.
 - `sprint-planning` — sprint plan after an audit. `ticket-triage` — inbound support
   (both draft-only — see their skills' read-only/draft-only note).
+- `doctor` — live preflight check (MCP reachability, `gh`/engram/QDRANT
+  config) before either workflow spends tokens. Required check: Atlassian MCP.
 
 ## Models
 

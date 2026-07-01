@@ -2,7 +2,34 @@
 
 > Part of the [jira-tools workflow guide](../../WORKFLOW.md). For a full per-ticket dossier, use [ticket-research](./ticket-research.md) instead.
 
-Two fast, standalone checks that don't need a full audit.
+Three fast, standalone checks that don't need a full audit.
+
+---
+
+## Setup check (`doctor`)
+
+Verifies the tools a run actually depends on are reachable and authorized —
+live calls, not a static checklist. Both `backlog-audit` and `ticket-research`
+already run this automatically before spending tokens; use it standalone when
+you just want to know "is everything connected right now" without kicking off
+a full run.
+
+**When to use it:** before a big/expensive audit, right after connecting a
+new MCP server, or when a run failed partway through on a connector error and
+you want to confirm the fix before re-running.
+
+**Prompt:**
+
+```
+Run the doctor check — verify Jira/MCP/config access before I start.
+```
+
+**Checks:** Atlassian MCP (required); `gh` CLI, Notion/Slack/Figma MCP, engram,
+`QDRANT_REPOS_ROOT` (all optional — a gap degrades gracefully, same as
+mid-run, just surfaced now).
+
+**Verdicts:** ✅ READY · ⚠️ READY WITH GAPS (optional connector missing,
+proceed) · ❌ BLOCKED (a required check failed — fix before proceeding).
 
 ---
 

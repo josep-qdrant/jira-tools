@@ -26,7 +26,7 @@ Reads an entire team backlog, audits every ticket, and produces a full planning 
 
 ## A — One-command workflow (recommended)
 
-A single deterministic run of the whole pipeline — no manual chaining. Saved at [.agents/workflows/backlog-audit.js](../../.agents/workflows/backlog-audit.js) (exposed to Claude Code as `.claude/workflows/backlog-audit.js`). It runs scoper → gatherer → auditor → synthesizer: tickets are chunked into batches of ~3, and each batch flows Gather (Haiku — fetch + dump raw context) → Analyze (Sonnet — read the dump, judge, write the card) independently, so a slow batch doesn't hold up a fast one. Only genuinely contested tickets (or a genuinely ambiguous scope) get escalated to Opus — see [model policy](../MODEL_POLICY.md). The phases hand off through files in the output folder.
+A single deterministic run of the whole pipeline — no manual chaining. Saved at [.agents/workflows/backlog-audit.js](../../.agents/workflows/backlog-audit.js) (exposed to Claude Code as `.claude/workflows/backlog-audit.js`). It first runs a **Preflight** check ([doctor](./quick-checks.md#setup-check-doctor), Haiku) that verifies the Atlassian MCP and any optional connectors are actually reachable — a required failure aborts right there, before any Jira call. Then it runs scoper → gatherer → auditor → synthesizer: tickets are chunked into batches of ~3, and each batch flows Gather (Haiku — fetch + dump raw context) → Analyze (Sonnet — read the dump, judge, write the card) independently, so a slow batch doesn't hold up a fast one. Only genuinely contested tickets (or a genuinely ambiguous scope) get escalated to Opus — see [model policy](../MODEL_POLICY.md). The phases hand off through files in the output folder.
 
 ```
 Run the backlog-audit workflow with args:
@@ -76,6 +76,10 @@ Invoke each subagent directly. They run independently, each with a model tuned f
 **In Claude Code:**
 
 ```
+# Phase 0 (recommended) — cheap preflight before spending tokens on the rest
+/agent doctor
+Check that the Atlassian MCP and any optional connectors/config are reachable before I start.
+
 # Phase 1
 /agent jira-backlog-scoper
 Scope the backlog for board 267, team "Cloud Regions & Clusters". Save to refinement-PM-2026-Q3.

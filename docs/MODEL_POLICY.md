@@ -29,13 +29,18 @@ Escalate a **single question** to Opus only when the Sonnet pass self-flags one 
 Escalation is **per-question, per-ticket** — not "run the whole thing on Opus".
 If nothing is flagged, Opus never runs.
 
+Preflight (`doctor`) never escalates: a connector being unreachable is a
+fact, not a judgment call — it stays on Haiku always.
+
 ## Per-workflow assignment
 
 | Workflow | Phase | Model |
 |---|---|---|
+| `ticket-research` | Preflight (`doctor`) | `haiku` |
 | `ticket-research` | Gather (`jira-context-gatherer`) | `haiku` |
 | `ticket-research` | Analyze (`jira-ticket-auditor`) | `sonnet` |
 | `ticket-research` | Escalate (conditional) | `opus` |
+| `backlog-audit` | Preflight (`doctor`) | `haiku` |
 | `backlog-audit` | Scope (`jira-backlog-scoper`) | `sonnet` |
 | `backlog-audit` | Scope escalate (conditional) | `opus` |
 | `backlog-audit` | Gather (`jira-context-gatherer`, per batch) | `haiku` |

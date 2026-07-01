@@ -6,6 +6,16 @@ Every task this repo does, as a ready prompt. Each task has a **real** example (
 
 ---
 
+## Check your setup (recommended before a big run)
+
+Live tool check, not the static SETUP.md checklist. See [quick-checks](./quick-checks.md#setup-check-doctor). Both workflows below already run this automatically — use it standalone to confirm access without kicking off a full run.
+
+```
+Run the doctor check — verify Jira/MCP/config access before I start.
+```
+
+---
+
 ## Full backlog audit — one command (recommended)
 
 The deterministic [backlog-audit workflow](./backlog-audit.md#a--one-command-workflow-recommended). `outputFolder` is the only required arg.

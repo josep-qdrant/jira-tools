@@ -3,6 +3,7 @@ export const meta = {
   description: 'Read-only deep research on specific Jira tickets (1–N keys): gather all context, analyse, write one dossier per ticket — model-tiered Haiku→Sonnet→Opus',
   whenToUse: 'Use when you want a deep dive on a few SPECIFIC tickets (not a whole backlog). Pass the keys in args. Cheaper and deeper than running the backlog-audit pipeline on a 1-ticket scope: Haiku gathers the context, Sonnet writes the dossier, Opus only re-judges a contested call.',
   phases: [
+    { title: 'Preflight', detail: 'doctor — verify Atlassian MCP (required) and optional connectors/config are actually reachable before spending tokens; aborts here on a required failure', model: 'haiku' },
     { title: 'Gather',   detail: 'jira-context-gatherer, haiku — fetch ticket + remote links + one-hop linked tickets + Notion/Slack/GitHub/Figma, dump raw context', model: 'haiku' },
     { title: 'Analyze',  detail: 'sonnet — four-axis audit, design hunt, code association, DoR; write the research dossier', model: 'sonnet' },
     { title: 'Escalate', detail: 'opus — only the tickets Sonnet flagged as contested (low confidence / contested Score / epic)', model: 'opus' },
@@ -32,8 +33,21 @@ if (!keys.length) {
 }
 
 const researchDir = `${outputFolder}/_research`
+const projectPrefixes = [...new Set(keys.map(k => (k.match(/^([A-Z][A-Z0-9]+)-\d+$/) || [])[1]).filter(Boolean))]
 
 // ─── structured hand-offs ────────────────────────────────────────────────
+const DOCTOR_SCHEMA = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    ready: { type: 'boolean', description: 'True only if every REQUIRED check (Atlassian MCP, project visibility for each key\'s project prefix) passed' },
+    requiredFailures: { type: 'array', items: { type: 'string' } },
+    warnings: { type: 'array', items: { type: 'string' } },
+    report: { type: 'string', description: 'The short human-readable checklist from the doctor skill' },
+  },
+  required: ['ready', 'requiredFailures', 'warnings', 'report'],
+}
+
 const GATHER_SCHEMA = {
   type: 'object',
   additionalProperties: false,
@@ -74,6 +88,13 @@ const ESCALATE_SCHEMA = {
 }
 
 // ─── prompts ─────────────────────────────────────────────────────────────
+const doctorPrompt = `You are the PREFLIGHT stage (Haiku) of a read-only ticket-research run. Before fetching any ticket, verify the tools this run depends on are reachable and authorized. Follow your skill exactly (.claude/skills/doctor/SKILL.md).
+
+${projectPrefixes.length ? `- Project(s) these keys belong to (check each is visible): ${projectPrefixes.join(', ')}` : '- Could not derive a project key from args.keys — skip the project-visibility check.'}
+${reposRoot ? `- reposRoot this run will use (check the path exists): ${reposRoot}` : '- No reposRoot given — skip the QDRANT_REPOS_ROOT check.'}
+
+Run every check from the skill (Atlassian required; gh/Notion/Slack/Figma/engram/QDRANT optional). Read-only — every probe is a read/search/whoami/status call, never a write. Return the structured verdict.`
+
 const gatherPrompt = (key) => `You are the RETRIEVAL stage (Haiku) of a read-only ticket-research pipeline. Your ONLY job is to gather raw context for ${key} and dump it to a file. Do NOT judge, score, or assess readiness — that is the next stage.
 
 Read-only on Jira. Do, in order:
@@ -110,6 +131,22 @@ Read the dossier at ${an.cardPath} and the raw context at ${researchDir}/${key}-
 Return: key, resolved, revisedDor (ready|almost-ready|not-ready|unchanged), verdict (one paragraph).`
 
 // ─── pipeline — each key flows Gather→Analyze→Escalate independently ────────
+phase('Preflight')
+log('Preflight: verifying Atlassian MCP + optional connectors/config before touching Jira.')
+const doctor = await agent(doctorPrompt, { agentType: 'doctor', model: 'haiku', schema: DOCTOR_SCHEMA, phase: 'Preflight', label: 'preflight' })
+
+if (doctor && doctor.ready === false) {
+  log(`Preflight FAILED — required check(s) not met: ${(doctor.requiredFailures || []).join('; ')}. Aborting before touching Jira.`)
+  return { outputFolder, error: 'preflight-failed', requiredFailures: doctor.requiredFailures, warnings: doctor.warnings, report: doctor.report }
+}
+if (!doctor) {
+  log('Preflight check itself failed to run (non-fatal) — continuing without a preflight verdict.')
+} else if (doctor.warnings && doctor.warnings.length) {
+  log(`Preflight passed with ${doctor.warnings.length} warning(s): ${doctor.warnings.join('; ')}`)
+} else {
+  log('Preflight passed — all required tools reachable.')
+}
+
 phase('Gather')
 log(`Researching ${keys.length} ticket(s): ${keys.join(', ')} → ${outputFolder}`)
 

@@ -43,6 +43,7 @@ See **[USAGE.md](USAGE.md)** — the full list of what you can ask this repo to 
 
 | Agent | Model | Pipeline step | Writes to Jira? |
 |---|---|---|---|
+| `doctor` | Haiku | Preflight, ahead of Step 1 (both workflows) | Never |
 | `jira-backlog-scoper` | Sonnet (Opus on escalation) | Step 1 of 3 | Never |
 | `jira-context-gatherer` | Haiku | Retrieval ahead of Step 2 (both workflows) | Never |
 | `jira-ticket-auditor` | Sonnet (Opus on escalation) | Step 2 of 3 | Never |
@@ -67,3 +68,4 @@ Model tiering (Haiku retrieval · Sonnet reasoning · Opus escalation-only) is d
 | `sprint-planning` | Main agent (standalone, draft-only) | Never |
 | `ticket-triage` | Main agent (standalone, draft-only) | Never |
 | `atlassian-mcp` | `jira-backlog-scoper` (read-only plumbing) | Never |
+| `doctor` | `doctor` agent (Preflight, both workflows), main agent (standalone) | Never |

@@ -14,6 +14,7 @@ Each key flows through three stages independently (see [model policy](../MODEL_P
 
 | Stage | Model | Does |
 |---|---|---|
+| **Preflight** | Haiku | Verifies the Atlassian MCP (and `gh`/Notion/Slack/Figma/engram/QDRANT if relevant) are reachable and authorized before any ticket fetch. A required failure aborts here — see [doctor](./quick-checks.md#setup-check-doctor). |
 | **Gather** | Haiku | Fetches Jira fields, remote links, one-hop linked tickets, and every Notion/Slack/GitHub/Figma URL into a raw context dump. No judgment. |
 | **Analyze** | Sonnet | Reads the dump, writes the dossier: four-axis audit, design hunt, code association, DoR + Open questions + Recommendation. |
 | **Escalate** | Opus | Only if Sonnet flagged a genuinely contested call. Resolves that one question in place. |

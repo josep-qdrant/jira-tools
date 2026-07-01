@@ -60,11 +60,12 @@ Watch live progress with `/workflows`.
 
 ### What happens, in order
 
-1. **Scope** (Sonnet) — rebuilds the scope as explicit JQL, maps the cryptic `customfield_XXXXX` IDs to readable names, and verifies the `Score = Impact × Confidence × Size factor` formula against real issues. Writes `_scope-handoff.md`.
-2. **Gather** (Haiku, batches of ~3) — fetches each ticket, its remote links, one hop of linked tickets, and any Notion/Slack/GitHub/Figma links, dumping it verbatim to `_context/`. No judgment — just retrieval, on the cheap tier.
-3. **Analyze** (Sonnet, batches of ~3) — reads the dump, writes one Obsidian card per ticket: four-axis audit, five-place design hunt, code association, and a Definition-of-Ready verdict. Each batch flows Gather→Analyze independently — a slow batch doesn't hold up a fast one.
-4. **Escalate** (Opus, conditional) — only a genuinely contested ticket call, or a genuinely ambiguous scope, gets re-judged on Opus. If nothing is flagged, Opus never runs. See [model policy](../MODEL_POLICY.md).
-5. **Synthesize** (Sonnet) — rolls the cards into the 9-document planning package.
+1. **Preflight** (Haiku) — verifies the Atlassian MCP (and `gh`/Notion/Slack/Figma/engram/QDRANT if relevant) are actually reachable and authorized. A required failure aborts here, before any Jira call — see [doctor](./quick-checks.md#setup-check-doctor).
+2. **Scope** (Sonnet) — rebuilds the scope as explicit JQL, maps the cryptic `customfield_XXXXX` IDs to readable names, and verifies the `Score = Impact × Confidence × Size factor` formula against real issues. Writes `_scope-handoff.md`.
+3. **Gather** (Haiku, batches of ~3) — fetches each ticket, its remote links, one hop of linked tickets, and any Notion/Slack/GitHub/Figma links, dumping it verbatim to `_context/`. No judgment — just retrieval, on the cheap tier.
+4. **Analyze** (Sonnet, batches of ~3) — reads the dump, writes one Obsidian card per ticket: four-axis audit, five-place design hunt, code association, and a Definition-of-Ready verdict. Each batch flows Gather→Analyze independently — a slow batch doesn't hold up a fast one.
+5. **Escalate** (Opus, conditional) — only a genuinely contested ticket call, or a genuinely ambiguous scope, gets re-judged on Opus. If nothing is flagged, Opus never runs. See [model policy](../MODEL_POLICY.md).
+6. **Synthesize** (Sonnet) — rolls the cards into the 9-document planning package.
 
 ### What you get
 

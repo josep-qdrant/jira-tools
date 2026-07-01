@@ -3,6 +3,7 @@ export const meta = {
   description: 'Read-only Jira backlog audit, end-to-end: scope the backlog, audit every ticket, then synthesize the planning package',
   whenToUse: 'Run the full read-only backlog refinement pipeline (scoper → auditor → synthesizer) with one command instead of chaining three agents by hand. Pass the scope in args.',
   phases: [
+    { title: 'Preflight',  detail: 'doctor — verify Atlassian MCP (required) and optional connectors/config are actually reachable before spending tokens; aborts here on a required failure', model: 'haiku' },
     { title: 'Scope',      detail: 'jira-backlog-scoper — build JQL, map customfields, verify the scoring formula; self-flags ambiguous scope', model: 'sonnet' },
     { title: 'Gather',     detail: 'jira-context-gatherer — fetch + dump raw context per batch, on haiku', model: 'haiku' },
     { title: 'Analyze',    detail: 'jira-ticket-auditor — read the dump, write one Obsidian card per ticket, batched (~3), on sonnet', model: 'sonnet' },
@@ -48,6 +49,18 @@ const chunk = (arr, n) => {
 }
 
 // ─── structured hand-offs ────────────────────────────────────────────────
+const DOCTOR_SCHEMA = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    ready: { type: 'boolean', description: 'True only if every REQUIRED check (Atlassian MCP, project visibility if given) passed' },
+    requiredFailures: { type: 'array', items: { type: 'string' } },
+    warnings: { type: 'array', items: { type: 'string' } },
+    report: { type: 'string', description: 'The short human-readable checklist from the doctor skill' },
+  },
+  required: ['ready', 'requiredFailures', 'warnings', 'report'],
+}
+
 const SCOPE_SCHEMA = {
   type: 'object',
   additionalProperties: false,
@@ -109,6 +122,13 @@ const SYNTH_SCHEMA = {
 }
 
 // ─── prompts (each agent reads its own SKILL.md; we only set the job + paths) ─
+const doctorPrompt = `You are the PREFLIGHT stage (Haiku) of a read-only backlog-audit run. Before any Jira scoping happens, verify the tools this run depends on are reachable and authorized. Follow your skill exactly (.claude/skills/doctor/SKILL.md).
+
+${a.project ? `- Project this run will use (check its visibility): ${a.project}` : '- No project key given — skip the project-visibility check.'}
+${reposRoot ? `- reposRoot this run will use (check the path exists): ${reposRoot}` : '- No reposRoot given — skip the QDRANT_REPOS_ROOT check.'}
+
+Run every check from the skill (Atlassian required; gh/Notion/Slack/Figma/engram/QDRANT optional). Read-only — every probe is a read/search/whoami/status call, never a write. Return the structured verdict.`
+
 const scoperPrompt = `You are scoping a Jira backlog for a READ-ONLY refinement audit. Follow your skill exactly (.claude/skills/jira-backlog-scoping/SKILL.md and its references/).
 
 Scope parameters (already confirmed by the human who launched this workflow — do NOT pause to re-confirm them):
@@ -179,6 +199,22 @@ For EACH, read its existing card, re-read the scope hand-off note at ${scopeNote
 Return: cardsWritten (= tickets you updated), keys (the ones you updated), the readiness split across them, and escalate=[] (no further escalation).`
 
 // ─── pipeline ──────────────────────────────────────────────────────────────
+phase('Preflight')
+log('Preflight: verifying Atlassian MCP + optional connectors/config before touching Jira.')
+const doctor = await agent(doctorPrompt, { agentType: 'doctor', model: 'haiku', schema: DOCTOR_SCHEMA, phase: 'Preflight', label: 'preflight' })
+
+if (doctor && doctor.ready === false) {
+  log(`Preflight FAILED — required check(s) not met: ${(doctor.requiredFailures || []).join('; ')}. Aborting before touching Jira.`)
+  return { outputFolder, error: 'preflight-failed', requiredFailures: doctor.requiredFailures, warnings: doctor.warnings, report: doctor.report }
+}
+if (!doctor) {
+  log('Preflight check itself failed to run (non-fatal) — continuing without a preflight verdict.')
+} else if (doctor.warnings && doctor.warnings.length) {
+  log(`Preflight passed with ${doctor.warnings.length} warning(s): ${doctor.warnings.join('; ')}`)
+} else {
+  log('Preflight passed — all required tools reachable.')
+}
+
 phase('Scope')
 log(`Scoping backlog → ${outputFolder} (batch size ${batchSize})`)
 let scope = await agent(scoperPrompt, { agentType: 'jira-backlog-scoper', model: 'sonnet', schema: SCOPE_SCHEMA, label: 'scope' })
