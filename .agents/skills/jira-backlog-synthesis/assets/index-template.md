@@ -31,6 +31,7 @@ Confidence / RICE Score).
 6. [[06-revision-diseno|06 · Design / Figma review]] — design/Figma coverage on UI tickets (result: <x/y>).
 7. [[07-revision-codigo|07 · Code review]] — which UI tickets need new design vs. can reuse code (result: <x/y>).
 8. [[08-tickets-por-proyecto|08 · Tickets by project]] — repo per ticket (matrix + counts) + un-scopable tickets.
+9. [[09-agrupacion-tematica|09 · Thematic grouping]] — tickets clustered into logical themes (conceptual objectives).
 
 ## Cards by bucket
 

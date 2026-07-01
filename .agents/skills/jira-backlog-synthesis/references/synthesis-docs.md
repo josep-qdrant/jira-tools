@@ -161,6 +161,28 @@ or a re-verified count.
 - **Caveats** — language gotchas, internal-vs-customer distinctions, "confirm per
   team".
 
+## 09_THEMATIC_GROUPING.md
+
+- Header: # issues, # themes, date, the one-sentence method note ("no native
+  Jira Theme field — clustered from title/description/domain on the audited
+  cards; a synthesis judgment call, not a verified fact").
+- **Theme summary table**: `Theme | # tickets | Combined score | DoR mix
+  (🟢/🟡/🔴) | One-line rationale`.
+- **Per-theme section** (one `## <Theme name>` per cluster): member tickets as
+  a bullet list (wikilink + one-line TL;DR quoted/paraphrased from its card —
+  this is the evidence for the grouping), combined score, DoR mix, and a
+  short rationale for why they belong together conceptually.
+- **Coverage check**: state N/N tickets placed in exactly one theme (the
+  partition is complete — no ticket dropped, none double-counted).
+- **Cross-theme dependencies/overlaps** — call out any pair of tickets in
+  *different* themes whose cards already flagged a direct overlap (e.g. one
+  ticket's description or comment thread references the other) — sequencing
+  candidates, not a reason to merge the themes.
+- **Recommendation** — which theme(s) are closest to "attackable as one
+  conceptual objective" (highest combined readiness), and whether the team
+  would benefit from a persistent Jira field (Theme/Initiative) instead of
+  re-deriving this every audit — framed as a suggestion, not an action taken.
+
 ## ACTIONS_AUDIT.md
 
 See `assets/actions-audit-template.md`.

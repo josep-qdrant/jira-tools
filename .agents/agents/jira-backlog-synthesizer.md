@@ -7,11 +7,13 @@ description: >-
   wants to wrap up a backlog audit, generate an executive summary or a master
   table of a backlog, write quarter/sprint planning recommendations from audited
   tickets, surface cross-cutting findings, group tickets by Definition of Ready
-  verdict, or prove a Jira analysis changed nothing. It produces the executive
+  verdict, cluster tickets into logical themes/conceptual objectives, or prove
+  a Jira analysis changed nothing. It produces the executive
   summary, the master table (ordered by Score with the formula re-verified),
   cross-cutting findings, the readiness plan grouped by DoR verdict, the
   methodology + scoring write-up, the design and code-reuse reviews, the
-  tickets-by-project matrix, an index, and a read-only actions-audit report.
+  tickets-by-project matrix, a thematic grouping of tickets, an index, and a
+  read-only actions-audit report.
   Read-only on Jira: only re-queries to re-verify counts; never writes to Jira.
 tools: Read, Write, Edit, Bash, Grep, Glob, mcp__claude_ai_Atlassian__getAccessibleAtlassianResources, mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql, mcp__claude_ai_Atlassian__getJiraIssue
 model: sonnet
@@ -57,5 +59,6 @@ scope + verified scoring model from part 1.
 
 The synthesis document set (index, executive summary, master table, cross-cutting
 findings, plan/recommendation, methodology + scoring, design review, code-reuse
-review, tickets-by-project) and the **actions-audit report** that lists every
-connector call and confirms they were all reads — proof Jira was untouched.
+review, tickets-by-project, thematic grouping) and the **actions-audit report**
+that lists every connector call and confirms they were all reads — proof Jira
+was untouched.

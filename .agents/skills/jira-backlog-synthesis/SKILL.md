@@ -7,11 +7,13 @@ description: >-
   summary, master table (ordered by Score with the formula verified), cross-cutting
   findings, the quarter/sprint readiness plan with a Definition of Ready,
   the methodology + scoring-model write-up, the design/Figma coverage review, the
-  code-reuse review, the tickets-by-project matrix, an index, and an
+  code-reuse review, the tickets-by-project matrix, a thematic grouping that
+  clusters tickets into logical themes/conceptual objectives, an index, and an
   actions-audit report demonstrating that nothing in Jira was changed. Trigger
   whenever someone wants to wrap up a backlog audit, generate an executive
   summary or master table of a backlog, write quarter/sprint planning
   recommendations from audited tickets, surface cross-cutting backlog findings,
+  group tickets by theme/topic so they can be tackled by conceptual objective,
   or document that a Jira analysis touched nothing. Read-only on Jira — never
   writes. Part 3 of a 3-skill workflow (follows jira-backlog-scoping and
   jira-ticket-audit).
@@ -65,6 +67,7 @@ Write these into the working folder. Suggested filenames/order (English):
 | `06_DESIGN_FIGMA_REVIEW.md` | Design/Figma coverage across UI tickets + the extrapolable/partial/new-design split. |
 | `07_CODE_REVIEW.md` | Per-UI-ticket: reuse existing code vs. needs new design, with cited paths. |
 | `08_TICKETS_BY_PROJECT.md` | Which repo(s) each ticket touches (matrix + counts) + tickets with un-scopable scope. |
+| `09_THEMATIC_GROUPING.md` | Tickets clustered into logical themes (conceptual objectives) so the backlog can be tackled group-by-group, not just ticket-by-ticket. |
 | `ACTIONS_AUDIT.md` | Enumerates every connector call and confirms all were reads. |
 
 The exact structure of each document is in `references/synthesis-docs.md` — read
@@ -145,6 +148,32 @@ cites the actual component/file paths found, confirmed by the owning team.
 **Tickets-by-project (08).** A matrix (★ leader · ● involved · ○ minor/possible)
 across repos, per-repo ticket counts, and an explicit list of tickets whose scope
 is **not** confidently identifiable (with the open question for each).
+
+**Thematic grouping (09).** Cluster every ticket into a logical theme (e.g.
+"Backups", "Hybrid Cloud lifecycle", "Cluster UI") so the backlog can be
+approached by conceptual objective instead of one ticket at a time. Ground
+rules specific to this doc:
+- **No native Jira field backs this.** Unlike Score or DoR, there is no
+  `Theme`/`Initiative` field to read — this is a synthesis judgment call over
+  each card's title + description + `domain`. Say so explicitly in the doc; it
+  is inference, not a verified fact.
+- **One theme per ticket** — a clean partition, every ticket appears exactly
+  once. If a ticket clearly straddles two themes, put it in the theme its
+  *primary* deliverable belongs to and note the overlap in that theme's
+  rationale (cross-reference the other theme by wikilink) rather than
+  double-counting it.
+- **Evidence per theme**: cite the one-line TL;DR (or a short quote) from each
+  member ticket's card — the same standard as cross-cutting findings. Don't
+  assert a grouping without the evidence that justifies it.
+- **Per theme, report**: member tickets (wikilinks), combined Score, DoR mix
+  (🟢/🟡/🔴 counts), and a one-line rationale for why they belong together.
+- **Flag cross-theme dependencies** the cards already surfaced (e.g. one
+  ticket's Notion doc or comment thread explicitly overlaps another ticket in
+  a different theme) — these are candidates for sequencing, not for merging
+  the themes.
+- This groups **existing** tickets; it is not a proposal to create new Jira
+  epics/initiatives. If the team wants a persistent Theme field, say so as a
+  recommendation, not an action taken.
 
 **Actions audit (`ACTIONS_AUDIT.md`).** Enumerate every Jira/connector call made
 during the audit, mark each as a read, list the write tools that were available
