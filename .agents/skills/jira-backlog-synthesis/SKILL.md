@@ -43,7 +43,7 @@ trace back to a card or a verified count.
 4. **Surgical.** Produce exactly the documents below; don't add speculative
    sections.
 5. **Obsidian-native output.** Every doc opens with YAML frontmatter, links to
-   sibling docs and to tickets with **wikilinks** (`[[02-master-table|…]]`,
+   sibling docs and to tickets with **wikilinks** (`[[02_MASTER_TABLE|…]]`,
    `[[ABC-207-…|ABC-207]]`), and renders the read-only note as a `> [!info]`
    callout. External URLs stay markdown links. See the `obsidian-vault` skill;
    the frontmatter schema is below.
@@ -92,6 +92,15 @@ tags: [backlog-audit, synthesis]
 
 ## Key construction notes
 
+**Resynthesis passes.** If this run re-derives the package from cards that
+were only partially updated since the last synthesis (e.g. a Notion doc that
+was `unreadable` before and is now `read`), state the delta once — in `00`'s
+info callout and `01`'s key findings — and give every other doc a single
+line ("unchanged since the prior pass, see [[01_EXECUTIVE_SUMMARY|01]]")
+instead of re-narrating the same delta in each document's own words. Only a
+doc whose own numbers or verdict actually changed gets to explain *why* in
+its own terms.
+
 **Master table (02).** Order by Score descending. Each issue cell is a **wikilink**
 to its card (`[[ABC-207-export-reports-to-pdf|ABC-207]]`). Include a column
 that shows `Impact × Confidence × Size ✓` (the explicit reconciliation), so a
@@ -132,7 +141,9 @@ values (`jira_design_field`, `jira_remote_link`, `description`, `notion_doc`,
 sources are worth checking first in future audits, and flags any design found
 "one hop away" in a linked ticket (parent ticket itself has no direct link).
 
-Report **external-context coverage** using the four frontmatter fields:
+Report **external-context coverage** using the four frontmatter fields — **06
+is the sole owner of the full breakdown**; every other doc (`02`, `05`)
+gets one line plus a wikilink to `06`, not a repeat of the four bullets below:
 - **Notion** (`notion:`): X/N tickets with `read`, Y/N `unreadable`, Z/N `none`.
   Unreadable docs → methodology limitations.
 - **Slack** (`slack_context:`): X/N tickets had a thread found; Y/N were read.

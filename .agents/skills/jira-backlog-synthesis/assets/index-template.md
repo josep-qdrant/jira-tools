@@ -23,15 +23,15 @@ Confidence / RICE Score).
 
 ## Suggested reading order
 
-1. [[01-resumen-ejecutivo|01 · Executive summary]] — verdict, key findings, critical alerts.
-2. [[02-tabla-maestra|02 · Master table]] — all <N> issues in one table, ordered by Score, with stats.
-3. [[03-hallazgos-transversales|03 · Cross-cutting findings]] — repeating patterns (sizes, scoring, designs, duplicates…).
-4. [[04-plan-recomendacion|04 · Plan & recommendation]] — readiness tiers, shortlist, and Definition of Ready.
-5. [[05-metodologia-y-scoring|05 · Methodology & scoring]] — scope reconstruction, field map, the deduced score model.
-6. [[06-revision-diseno|06 · Design / Figma review]] — design/Figma coverage on UI tickets (result: <x/y>).
-7. [[07-revision-codigo|07 · Code review]] — which UI tickets need new design vs. can reuse code (result: <x/y>).
-8. [[08-tickets-por-proyecto|08 · Tickets by project]] — repo per ticket (matrix + counts) + un-scopable tickets.
-9. [[09-agrupacion-tematica|09 · Thematic grouping]] — tickets clustered into logical themes (conceptual objectives).
+1. [[01_EXECUTIVE_SUMMARY|01 · Executive summary]] — verdict, key findings, critical alerts.
+2. [[02_MASTER_TABLE|02 · Master table]] — all <N> issues in one table, ordered by Score, with stats.
+3. [[03_CROSS_CUTTING_FINDINGS|03 · Cross-cutting findings]] — repeating patterns (sizes, scoring, designs, duplicates…).
+4. [[04_PLAN_RECOMMENDATION|04 · Plan & recommendation]] — readiness tiers, shortlist, and Definition of Ready.
+5. [[05_METHODOLOGY_AND_SCORING|05 · Methodology & scoring]] — scope reconstruction, field map, the deduced score model.
+6. [[06_DESIGN_FIGMA_REVIEW|06 · Design / Figma review]] — design/Figma coverage on UI tickets (result: <x/y>).
+7. [[07_CODE_REVIEW|07 · Code review]] — which UI tickets need new design vs. can reuse code (result: <x/y>).
+8. [[08_TICKETS_BY_PROJECT|08 · Tickets by project]] — repo per ticket (matrix + counts) + un-scopable tickets.
+9. [[09_THEMATIC_GROUPING|09 · Thematic grouping]] — tickets clustered into logical themes (conceptual objectives).
 
 ## Cards by bucket
 
@@ -39,11 +39,16 @@ Confidence / RICE Score).
 |------------|------------|
 | [[ABC-<a>-<slug>\|ABC-<a>]] · [[ABC-<b>-<slug>\|ABC-<b>]] | [[ABC-<c>-<slug>\|ABC-<c>]] · … |
 
+> If every issue shares one literal bucket (e.g. a single quarterly sprint,
+> nothing to split by), replace this table with a split by DoR verdict
+> (🟢/🟡/🔴) instead and rename the heading to match (e.g. "Cards by
+> readiness") — don't force an empty bucket split.
+
 ## How the Score is computed (recap)
 
 `Score = Impact × Confidence × Size factor` — Impact/Confidence: High=9, Medium=6,
 Low=2; Size **inverse to effort**: XS=10, S=8, M=6, L=4, XL=2. Verified on the
-<x>/<N> issues with complete data. Detail in [[05-metodologia-y-scoring|05 · Methodology & scoring]].
+<x>/<N> issues with complete data. Detail in [[05_METHODOLOGY_AND_SCORING|05 · Methodology & scoring]].
 
 > [!note] Canonical definition of the formula and value mappings: the
 > `jira-backlog-scoping` skill (`references/scoring-model.md`). The recap above is

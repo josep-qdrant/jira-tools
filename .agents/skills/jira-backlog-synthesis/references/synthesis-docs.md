@@ -8,7 +8,7 @@ or a re-verified count.
 > Each file opens with the synthesis frontmatter (see the `jira-backlog-synthesis`
 > skill), then a **one-line `**TL;DR:**`** directly under the H1 stating the doc's
 > bottom line — most important on top (see the `writing-style` skill). Links to
-> sibling docs and to ticket cards are **wikilinks** (`[[02-master-table|…]]`,
+> sibling docs and to ticket cards are **wikilinks** (`[[02_MASTER_TABLE|…]]`,
 > `[[ABC-207-…|ABC-207]]`); ticket keys in prose are wikilinks too. The "read-only,
 > nothing modified in Jira" line is a `> [!info]` callout. External URLs
 > (Jira/Figma/Notion) stay markdown links. Keep the prose human and concise — no
@@ -49,12 +49,11 @@ or a re-verified count.
   (X/N complete, Y/N at Score 0); design coverage (design fields, Figma on UI
   tickets, `design_source` breakdown, attachments, AC, draft requirements);
   assignment; cross-quarter carryover.
-- **External-context coverage block:**
-  - Notion: X/N read · Y/N unreadable · Z/N none
-  - Slack: X/N found · Y/N read
-  - GitHub: X/N found · Y/N read
-  - Linked tickets: X/N had subtasks/links · Y/N fully hunted · Z/N partial
-  - Designs found via linked tickets only (parent has no direct link): list keys
+- **External-context coverage — one line + pointer**, e.g. "Notion 4/17 read ·
+  Slack 1/17 read · GitHub 2/17 read · linked tickets 11/17 hunted — full
+  breakdown, including which designs surfaced one hop away, in
+  [[06_DESIGN_FIGMA_REVIEW|06 · Design / Figma review]]." `06` owns the full
+  per-category breakdown; don't reproduce it here.
 
 ## 03_CROSS_CUTTING_FINDINGS.md
 
