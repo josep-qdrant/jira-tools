@@ -38,7 +38,9 @@ TL;DR-first — is the **`writing-style`** skill. Apply both to every file.
 
 ## Schemas and templates
 
-- Ticket cards: `../jira-ticket-audit/assets/audit-card-template.md`
+- Story/Task/Bug cards: `../jira-ticket-audit/assets/audit-card-template.md`
+- Objective cards: `../jira-ticket-audit/assets/objective-card-template.md`
+- Milestone cards: `../jira-ticket-audit/assets/milestone-card-template.md`
 - Synthesis docs: `../jira-backlog-synthesis/references/synthesis-docs.md`
-- Actions audit: `../jira-backlog-synthesis/assets/actions-audit-template.md`
-- DoR block: `../definition-of-ready/assets/dor-block-template.md`
+- DoR block (full): `../definition-of-ready/assets/dor-block-template.md`
+- DoR block (condensed, Milestones): `../definition-of-ready/assets/milestone-sprint-fit-block-template.md`

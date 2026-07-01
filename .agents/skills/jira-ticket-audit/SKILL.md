@@ -7,11 +7,16 @@ description: >-
   by issue-type hierarchy: a leaf ticket (Story/Task/Bug) gets the full four-axis
   audit — goal/scope clarity, UI/design needs, size-estimate coherence
   (recomputing the Score with a realistic size), and prioritization soundness —
-  then a five-place design hunt and code/repo identification. A grouping ticket
-  (Objective/Milestone — Jira type description "to group milestones"/"to group
-  stories") instead gets a lean roll-up: discover its children via the native
-  `parent` field and write one compact sprint-fit verdict per Milestone, skipping
-  the four-axis/code-reuse treatment entirely. Trigger whenever someone wants to
+  then a five-place design hunt and code/repo identification (written to
+  `stories/`). A grouping ticket (`hierarchyLevel >= 1` — Objective/Milestone
+  in this instance, "to group milestones"/"to group stories") instead skips
+  the four-axis/code-reuse treatment and drills ONE LEVEL DOWN via the native
+  `parent` field, whatever that level actually is: a backlog of Objectives
+  gets an index card per Objective (`objectives/`) linking to one detail card
+  per Milestone (`milestones/`); a backlog of Milestones (no Objective in
+  scope) drills straight into each one's Stories/Bugs/Tasks/subtasks for the
+  same detail card — the two card types stay in separate folders so overview
+  and detail never mix. Trigger whenever someone wants to
   audit, refine, or review backlog tickets, check ticket "readiness" or
   "definition of ready" (applying the shared definition-of-ready rubric), judge
   whether estimates and scores hold up, find whether a UI ticket has a design
@@ -48,27 +53,42 @@ minimum establish the field map and scoring model before extracting.
 5. **Work in batches, write before moving on.** Process ~3 issues, write their
    cards, then fetch the next batch. This keeps context from ballooning.
 
-## Step 0 — Detect the audit unit
+## Step 0 — Detect the audit unit, by hierarchy LEVEL not by type NAME
 
-Not every ticket gets the same treatment. Before batching, check each in-scope
-ticket's **issue type** (from the field map / `issuetype` on a representative
-fetch):
+Not every ticket gets the same treatment, and which one it gets is a
+**structural** question — read off `fields.issuetype.hierarchyLevel` (from
+`getJiraIssue(..., expand: "names")` on a representative fetch), not off the
+type's display name. Names vary per project ("Objective", "Initiative",
+"Epic"…); `hierarchyLevel` doesn't. The rule generalizes to any depth:
 
-- **Leaf ticket** (Story, Task, Bug, or whatever the project's base level is —
-  `hierarchyLevel: 0`) → the full treatment below (Steps 1–5, the standard
-  audit-card-template).
-- **Grouping ticket** — its Jira issue-type **description** says "to group
-  milestones" (an Objective, typically `hierarchyLevel: 2`) or "to group
-  stories/mvis" (a Milestone, typically `hierarchyLevel: 1`). These don't get
-  the four-axis audit or the code-reuse hunt at all — skip straight to
-  **Step 3d** below and write the lean Objective/Milestone roll-up
-  (`assets/objective-milestone-card-template.md`) instead of the standard card.
+- **`hierarchyLevel <= 0`** (Story, Task, Bug — whatever this project's base
+  level is called) → **leaf ticket**: the full treatment below (Steps 1–5,
+  the standard `audit-card-template`), written to `stories/`. Its own
+  children (subtasks) are lateral context handled by Step 3c, not a separate
+  drill-down.
+- **`hierarchyLevel >= 1`** → **grouping ticket**: it isn't the plannable
+  unit, its children **one level down** (`hierarchyLevel - 1`) are. Skip the
+  four-axis audit and code-reuse hunt entirely; go to **Step 3d**, which
+  discovers those children via the native `parent` field (never
+  issuelinks/subtasks — those don't surface this hierarchy) and writes the
+  matching card. **This is the same rule at every level, applied recursively
+  by whatever the scope actually contains:**
+  - Auditing a backlog of **Objectives** (`hierarchyLevel: 2` here) → drill
+    into their **Milestones** (`hierarchyLevel: 1`).
+  - Auditing a backlog of **Milestones** directly (`hierarchyLevel: 1`) →
+    drill into their **Stories/Bugs/Tasks** (`hierarchyLevel: 0`) — same Step
+    3d, same `parent =` query, just one level lower. A Milestone-scoped run
+    never needs an "Objective" folder at all.
+  - A **mixed scope** (some Objectives, some Milestones, some leaf tickets in
+    one JQL result) is not a special case — Step 0 checks each ticket
+    individually, so each gets routed to the right treatment and folder on
+    its own.
 
-Read the type off `getJiraIssue(..., expand: "names")`'s `fields.issuetype`
-(`.name`, `.description`, `.hierarchyLevel`) — don't assume from the project;
-the same project can (and here, does) mix Objectives, Milestones, and Stories.
-If a project has no such grouping types, every ticket is a leaf and this step
-is a no-op.
+The type-description strings ("to group milestones" / "to group
+stories/mvis") are this instance's human-readable label for `hierarchyLevel`
+2 and 1 — useful to confirm you read the right level, not the primary signal.
+If a project has no grouping types above the base level, every ticket is a
+leaf and this step is a no-op.
 
 ## Step 1 — Extract in small batches
 
@@ -263,61 +283,81 @@ is already scaffolded in the card template — fill its table.
 - If nothing extra was found in a linked ticket, still record the row with
   "No additional signals" — absence is a finding.
 
-## Step 3d — Objective/Milestone roll-up (grouping tickets only)
+## Step 3d — One-level-down discovery (grouping tickets only)
 
 Skip this step for leaf tickets — go straight to Step 4/5 for those. This step
-**replaces** Steps 2–4 for a grouping ticket (Objective or Milestone caught by
+**replaces** Steps 2–4 for a grouping ticket (`hierarchyLevel >= 1`, caught by
 Step 0): no four-axis audit, no five-place design hunt, no code-reuse hunt at
 the grouping level. The whole point is that this ticket isn't the plannable
-unit — its children are.
+unit — **whatever sits one level below it** is. What "one level below" means
+depends on what's actually in scope — apply the same mechanics whether that's
+Milestones under an Objective, or Stories/Bugs/Tasks under a Milestone:
 
 ### Discover children via the native `parent` field, not issuelinks
 
 Grouping tickets connect to their children through Jira's native **`parent`**
 field (Advanced Roadmaps hierarchy), which `subtasks`/`issuelinks` do **not**
 surface — a ticket can show zero subtasks and only a stray "Relates" link while
-still having real children one level down. Query for them explicitly:
+still having real children one level down. Query for them explicitly with
+`searchJiraIssuesUsingJql`, `parent = <this-ticket-key> ORDER BY Rank ASC` —
+the same query whether `<this-ticket-key>` is an Objective (children:
+Milestones) or a Milestone (children: Stories/Bugs/Tasks).
 
-- Objective's Milestones: `searchJiraIssuesUsingJql` with
-  `parent = <Objective-key> ORDER BY Rank ASC`.
-- A Milestone's own children (Stories/Bugs/Tasks): `parent = <Milestone-key>
-  ORDER BY Rank ASC` — you need this too, one level down, to know whether the
-  Milestone has actually been decomposed (see the sprint-fit call below).
+If the query returns **zero** children, that is itself a finding — record it
+as "No <child-type> found under this <ticket-type>" rather than silently
+skipping the section; a grouping ticket with no plannable children yet is not
+ready by definition.
 
-If an Objective's `parent =` query returns **zero** Milestones, that is itself
-a finding — record it as "No Milestones found under this Objective" rather
-than silently skipping the section; an Objective with no plannable children
-yet is not ready by definition.
+### Fetch each child's own fields — and, if the child is itself leaf-level, its decomposition depth too
 
-### Fetch each Milestone's own fields
-
-For each Milestone found, fetch it (`getJiraIssue`, default/ADF, explicit
-field list) and pull: status, T-Shirt Size, Score/Impact/Confidence (same
-schema as the Objective — Milestones are independently scored), Objective
+For each child found, fetch it (`getJiraIssue`, default/ADF, explicit field
+list) and pull: status, T-Shirt Size, Score/Impact/Confidence (same schema as
+the parent — this hierarchy scores independently at every level), Objective
 Class, Domain, description/AC, start/target dates, and any `issuelinks` of
 type blocks/blocked-by. Do **not** run the five-place design hunt or the
 Notion/Slack/GitHub follow-up here — that level of depth is what made the old
-per-Objective cards too long for what this decision needs; a Milestone that's
+per-Objective cards too long for what this decision needs; a child that's
 genuinely contested on design/Notion grounds gets its own standalone
-`ticket-research` dossier instead (full treatment), not more prose in the
-roll-up.
+`ticket-research` dossier instead (full treatment), not more prose here.
 
-**Use the parent's context when the Milestone's own is thin.** You already
-have the Objective's description from Step 0/1 — no extra fetch. A Milestone
-with an empty description isn't automatically "missing context" if the
-Objective it belongs to already states the goal clearly enough to know what
-this Milestone must deliver; credit that the same way an externalized Notion
-doc is credited (🔎 deduced from parent, never ✅ — see the DoR section
-below). If the Objective is *also* thin, that's a real gap — say so, don't
-paper over two empty descriptions.
+**If the child sits at `hierarchyLevel: 0`** (a Milestone's Story/Bug/Task
+children) — go one level further and check *its* subtasks too
+(`parent = <child-key>`, or the `subtasks` field): a Milestone that "has 3
+Stories" reads very differently depending on whether those Stories are
+already broken into subtasks with real progress, or are still one-liners.
+Fold this into a single rollup, don't open a new section for it: e.g. "3
+Stories (1 Done, 2 In Progress) · 5 subtasks across them (2 Done)." This is
+exactly what a **Milestone-scoped audit** needs to show — when the *scope
+itself* is Milestones (not discovered as an Objective's children), this
+subtask rollup is the primary decomposition signal, since there's no
+Objective layer to lean on. Stop at this depth — don't recurse into the
+subtasks' own children.
 
-### Judge sprint-fit and render the condensed line
+**Use the parent's context when the child's own is thin.** You already have
+the parent's description from Step 0/1 — no extra fetch. A child with an
+empty description isn't automatically "missing context" if its parent
+already states the goal clearly enough to know what the child must deliver;
+credit that the same way an externalized Notion doc is credited (🔎 deduced
+from parent, never ✅ — see the DoR section below). If the parent is *also*
+thin, that's a real gap — say so, don't paper over two empty descriptions.
+
+### Judge sprint-fit and write each Milestone to its own card
+
+**Only the child ONE level below the audited ticket gets its own file** — a
+Milestone (found under an Objective, or audited directly because the scope
+*is* Milestones). Its own Story/Bug/Task children, two levels down, never get
+a separate card here — they're the rollup signal folded into the Milestone's
+card above, not independent deliverables. (A Story genuinely needs its own
+card only when it's itself in scope, i.e. a leaf-ticket audit — Steps 1–5.)
 
 Apply the `definition-of-ready` skill's **"Applying DoR to a Milestone
-(sprint-fit call)"** section — weigh size, decomposition (the Stories you just
-counted), AC/definition, blockers, and dates — then render **only** the
-condensed sprint-fit line (`definition-of-ready/assets/milestone-sprint-fit-line-template.md`),
-never the full seven-row block, inside the roll-up card.
+(sprint-fit call)"** section — weigh size, decomposition (the Stories/subtasks
+you just counted), AC/definition (checking the parent's context per the rule
+above), blockers, and dates — then write the Milestone's **own file**
+(`milestones/<KEY>-slug.md`, skeleton `assets/milestone-card-template.md`):
+the metadata header plus the condensed sprint-fit block
+(`definition-of-ready/assets/milestone-sprint-fit-block-template.md`). Never
+the full seven-row table here — see Step 5.
 
 ## Step 4 — Identify the implicated project(s) and code
 
@@ -349,22 +389,48 @@ level applies, default to Extrapolable/Partial (🔎 deduced), never New design
 — see `references/design-link-hunt.md` for the exact rule and how to log the
 deduction. See `references/code-identification.md` for the code-side method.
 
-## Step 5 — Write the audit card
+## Step 5 — Write the card(s), into a type-scoped folder
 
-**Grouping ticket (Objective)?** Stop here and write the lean roll-up instead —
-skeleton in `assets/objective-milestone-card-template.md`: a short Objective
-header (name, status, domain, target customer, one line of intent — omit
-entirely if the title already says it) followed by one condensed sprint-fit
-line per Milestone (Step 3d). No frontmatter schema below, no four-axis table,
-no DoR block — the per-Milestone sprint-fit line carries the verdict. One file
-per Objective (`<KEY>-<kebab-slug>.md`), same naming convention as any other
-card. A **standalone** Milestone (audited on its own, not nested under its
-Objective — e.g. a `ticket-research` dossier on one Milestone key) gets the
-same condensed treatment written to its own file, or the full audit-card
-treatment below if the request genuinely needs the full rubric shown (state
-which one you're doing and why).
+Output is split into **up to three folders**, by issue type, so the objective
+overview, the milestone detail, and any individually-audited stories don't
+end up mixed in one pile:
 
-**Leaf ticket (Story/Task/Bug)?** Continue with the standard card below.
+- `objectives/<KEY>-slug.md` — Objective cards.
+- `milestones/<KEY>-slug.md` — Milestone cards.
+- `stories/<KEY>-slug.md` — leaf tickets (Story/Task/Bug) that got the full
+  audit-card treatment. Only exists if the scope actually includes leaf
+  tickets audited on their own — a pure Objective- or Milestone-scoped run
+  has no `stories/` folder at all, because Step 3d never gives a discovered
+  child two levels down the full four-axis treatment (it only
+  counts/status-checks it).
+
+A **Milestone-scoped run** (the scope's tickets are Milestones directly, not
+discovered under an Objective) never creates `objectives/` at all — there's
+no Objective in scope to index. Only the folders this particular scope
+actually populates get created; never all three by default.
+
+`mkdir -p` whichever of the three this batch needs before writing — don't
+create folders you have nothing to put in.
+
+**Grouping ticket (Objective)?** Write `objectives/<KEY>-slug.md` — skeleton
+`assets/objective-card-template.md`: a short header (name, status, domain,
+target customer, one line of intent — omit entirely if the title already says
+it) followed by a **Milestones index**: one line per Milestone, verdict emoji
++ wikilink + title only. No four-axis table, no DoR block, and **no
+sprint-fit reasoning here** — that lives in the Milestone's own card, which
+this section only links to.
+
+**Grouping ticket (Milestone)?** Write `milestones/<KEY>-slug.md` separately —
+skeleton `assets/milestone-card-template.md`: the metadata header (status,
+size, children breakdown, dates) plus the condensed sprint-fit block from
+`definition-of-ready/assets/milestone-sprint-fit-block-template.md`. A
+**standalone** Milestone (audited on its own, not as part of an Objective
+scope — e.g. a `ticket-research` dossier on one Milestone key) gets this same
+card, or the full audit-card treatment below if the request genuinely needs
+the full seven-criteria rubric shown (state which one you're doing and why).
+
+**Leaf ticket (Story/Task/Bug)?** Continue with the standard card below,
+written to `stories/<KEY>-slug.md`.
 
 Cards are **Obsidian-native markdown** (see the `obsidian-vault` skill): they
 open with YAML frontmatter, cross-reference other tickets with
@@ -444,9 +510,9 @@ skill. Use the structure in `assets/audit-card-template.md`. Each card is:
   prioritization → criterion 4 ("incomplete scoring" when the Score is 0). This
   keeps every card comparable, and `dor:` in the frontmatter mirrors the verdict.
 
-One file per ticket, named `<KEY>-<kebab-slug>.md` (e.g.
-`ABC-207-export-reports-to-pdf.md`) — a unique basename so wikilinks
-resolve cleanly.
+One file per leaf ticket, in `stories/`, named `<KEY>-<kebab-slug>.md` (e.g.
+`stories/ABC-207-export-reports-to-pdf.md`) — a unique basename so wikilinks
+resolve cleanly regardless of which folder they live in.
 
 ## Gotchas
 
@@ -507,11 +573,14 @@ resolve cleanly.
 - `assets/audit-card-template.md` — the per-ticket card skeleton to copy and
   fill; the DoR block closes a standard card, followed by an **optional appendix**
   (Open questions + Recommendation for ticket-research dossiers; Escalated review
-  for escalation passes). Based on a real, well-formed card. **Leaf tickets only**
-  — see the next asset for grouping tickets.
-- `assets/objective-milestone-card-template.md` — the lean roll-up skeleton for
-  Objective/Milestone-type tickets (Step 3d/5): grouping header + one condensed
-  sprint-fit line per Milestone. No four-axis table, no DoR block.
+  for escalation passes). Based on a real, well-formed card. **Leaf tickets
+  only** (`stories/`) — see the next two assets for grouping tickets.
+- `assets/objective-card-template.md` — the Objective index skeleton
+  (`objectives/`): grouping header + a Milestones index (verdict emoji +
+  wikilink + title only, no reasoning).
+- `assets/milestone-card-template.md` — the Milestone card skeleton
+  (`milestones/`): metadata header + the condensed sprint-fit block from
+  `definition-of-ready`. This is where the real detail lives.
 - `references/design-link-hunt.md` — the five places a design hides, plus the
   Extrapolable / Partial / New-design classification for UI tickets.
 - `references/code-identification.md` — how to characterize repos and run scoped

@@ -7,13 +7,13 @@ description: >-
   wants to wrap up a backlog audit, generate an executive summary or a master
   table of a backlog, write quarter/sprint planning recommendations from audited
   tickets, surface cross-cutting findings, group tickets by Definition of Ready
-  verdict, cluster tickets into logical themes/conceptual objectives, or prove
-  a Jira analysis changed nothing. It produces the executive
+  verdict, cluster tickets into logical themes/conceptual objectives, or work
+  out which Milestones are ready for the next sprint. It produces the executive
   summary, the master table (ordered by Score with the formula re-verified),
   cross-cutting findings, the readiness plan grouped by DoR verdict, the
   methodology + scoring write-up, the design and code-reuse reviews, the
-  tickets-by-project matrix, a thematic grouping of tickets, an index, and a
-  read-only actions-audit report.
+  tickets-by-project matrix, a thematic grouping of tickets, and an index — or,
+  for an Objective-scoped run, one condensed Milestone Plan instead.
   Read-only on Jira: only re-queries to re-verify counts; never writes to Jira.
 tools: Read, Write, Edit, Bash, Grep, Glob, mcp__claude_ai_Atlassian__getAccessibleAtlassianResources, mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql, mcp__claude_ai_Atlassian__getJiraIssue
 model: sonnet
@@ -63,15 +63,16 @@ scope + verified scoring model from part 1.
 
 ## What you return
 
-For a leaf-ticket scope: the synthesis document set (index, executive summary,
-master table, cross-cutting findings, plan/recommendation, methodology +
-scoring, design review, code-reuse review, tickets-by-project, thematic
-grouping) and the **actions-audit report**.
+For a leaf-ticket scope (cards in `stories/`): the synthesis document set
+(index, executive summary, master table, cross-cutting findings,
+plan/recommendation, methodology + scoring, design review, code-reuse review,
+tickets-by-project, thematic grouping).
 
-For an Objective-scoped run: `MILESTONE_PLAN.md` — an overview only, one line
-per Objective with each Milestone shown as verdict-emoji + wikilink, nothing
-else — and the same **actions-audit report**. The reasoning behind each
-verdict stays in the Objective's own roll-up card; don't duplicate it here.
+For an Objective-scoped run (cards in `objectives/`/`milestones/`): exactly
+one file, `MILESTONE_PLAN.md` — an overview only, one line per Objective with
+each Milestone shown as verdict-emoji + wikilink, nothing else. The reasoning
+behind each verdict stays in the Milestone's own card; don't duplicate it
+here.
 
-Either way, the actions-audit lists every connector call and confirms they
-were all reads — proof Jira was untouched.
+No actions-audit report — read-only safety is enforced by each agent's tool
+allowlist and the `doctor` preflight, not by an after-the-fact document.

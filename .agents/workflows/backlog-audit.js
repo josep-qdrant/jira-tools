@@ -8,7 +8,7 @@ export const meta = {
     { title: 'Gather',     detail: 'jira-context-gatherer — fetch + dump raw context per batch, on haiku', model: 'haiku' },
     { title: 'Analyze',    detail: 'jira-ticket-auditor — read the dump, write one Obsidian card per ticket, batched (~3), on sonnet', model: 'sonnet' },
     { title: 'Escalate',   detail: 'jira-backlog-scoper / jira-ticket-auditor — re-resolve only the calls flagged as contested, on opus', model: 'opus' },
-    { title: 'Synthesize', detail: 'jira-backlog-synthesizer — roll the cards into the 9-doc planning package', model: 'sonnet' },
+    { title: 'Synthesize', detail: 'jira-backlog-synthesizer — roll the cards into the 10-doc planning package, or one MILESTONE_PLAN.md for an Objective-scoped run', model: 'sonnet' },
   ],
 }
 
@@ -116,7 +116,6 @@ const SYNTH_SCHEMA = {
   properties: {
     docsWritten: { type: 'array', items: { type: 'string' } },
     readiness: { type: 'string' },
-    actionsAuditConfirmsReadOnly: { type: 'boolean' },
   },
   required: ['docsWritten'],
 }
@@ -136,7 +135,7 @@ ${scopeLines}
 - Output folder: ${outputFolder}
 
 Do, in order:
-1. Create the working folders if missing: run \`mkdir -p ${outputFolder}/tickets\`.
+1. Create the working folders if missing: run \`mkdir -p ${outputFolder}/objectives ${outputFolder}/milestones ${outputFolder}/stories\`. (Harmless if a given scope never uses one of them — e.g. a pure Objective-scoped run never writes to \`stories/\`.)
 2. Build the explicit JQL for this scope. Rebuild it from project + Team[Team] + Sprint/status ordered by Rank — a board customFilter is NOT a JQL filter.
 3. Map every customfield_XXXXX from a representative issue (fields=["*all"], expand=names) and DEDUCE + VERIFY the RICE-style scoring formula by re-checking the arithmetic on several issues. A Score of 0 with a size set means incomplete scoring, not a formula error.
 4. Write the hand-off note to ${scopeNote} as Obsidian-native markdown (YAML frontmatter + wikilinks for ticket refs) containing: the scope JQL, the FULL key list + total count, the field map (score factors highlighted), and the verified scoring model.
@@ -162,9 +161,9 @@ Read-only on Jira. Do, in order:
 2. For EACH of these ${batch.length} ticket(s) — batch ${i + 1} of ${total}: ${batch.join(', ')} — fetch it with getJiraIssue in DEFAULT (ADF) format, fields=["*all"], expand=names (markdown truncates custom fields). Capture summary, description, status, priority, assignee, Sprint, every custom field (Score/Impact/Confidence/Size and any design/AC fields), attachments, issuelinks, subtasks, AND \`fields.issuetype\` (.name/.description/.hierarchyLevel) — this tells the analyze stage whether it's a leaf ticket or a grouping ticket (Objective/Milestone).
 3. Fetch each ticket's remote links with getJiraIssueRemoteIssueLinks — Figma usually hides here. (Grouping tickets: skip this — see step 4b.)
 4. Collect each ticket's linked Jira keys (subtasks + issuelinks + any *.atlassian.net/browse/ remote links), dedupe, skip the parent, cap at 8 per parent. Fetch each (ADF) and list its design/Notion/Slack/GitHub URLs. One hop only — do not recurse further. This step is for LEAF tickets' lateral context only — it does not surface an Objective's/Milestone's children (see 4b).
-4b. For any ticket whose issuetype is a GROUPING type (description "to group milestones" or "to group stories"): run \`searchJiraIssuesUsingJql\` with \`parent = <key> ORDER BY Rank ASC\` to find its children (Objective→Milestones, or Milestone→Stories/Bugs). For each Milestone found, ALSO run \`parent = <milestone-key>\` to get its own children's count+status, then fetch the Milestone's own fields (status, T-Shirt Size, Score/Impact/Confidence, domain, AC/description, dates, blocking issuelinks). Skip the five-place design hunt and Notion/Slack/GitHub follow-up for grouping tickets entirely — that depth doesn't belong at this level.
+4b. For any ticket whose issuetype is a GROUPING type (\`hierarchyLevel >= 1\`): run \`searchJiraIssuesUsingJql\` with \`parent = <key> ORDER BY Rank ASC\` to find its children ONE level down — Objective→Milestones, or, when the ticket itself is a Milestone directly in scope (no Objective involved), Milestone→Stories/Bugs/Tasks. Fetch each child's own fields (status, T-Shirt Size, Score/Impact/Confidence, domain, AC/description, dates, blocking issuelinks). If a child is itself \`hierarchyLevel: 0\` (a Story/Bug/Task under a Milestone), ALSO run \`parent = <child-key>\` for ITS children (subtasks) and record that count+status too — this is the decomposition-depth signal a Milestone-scoped run needs. Skip the five-place design hunt and Notion/Slack/GitHub follow-up for grouping tickets entirely — that depth doesn't belong at this level.
 5. Extract EVERY external URL (figma.com, notion.so, slack.com, github.com) from each LEAF ticket and its linked tickets, and fetch each verbatim: notion.so → notion-fetch (mcp__claude_ai_Notion__ or mcp__notion__ prefix, whichever is on your tool list; quote requirements/AC, decisions, open questions); slack.com → slack_read_thread (mcp__claude_ai_Slack__ or mcp__slack__ prefix; quote relevant messages); github.com → \`gh pr/issue view\` via Bash (quote title/state/body); figma.com → get_metadata (mcp__claude_ai_Figma__ or mcp__figma__ prefix). Mark anything unreachable as "unreadable".
-6. Write ALL of it VERBATIM (no analysis) to one file per ticket: ${contextDir}/<KEY>-context.md. Leaf tickets: sections \`## Jira fields\`, \`## Remote links\`, \`## Linked tickets\`, \`## Notion\`, \`## Slack\`, \`## GitHub\`, \`## Figma\`. Grouping tickets: \`## Jira fields\` (issuetype + hierarchy) then \`## Milestones\` (one sub-block per Milestone with its fields + children breakdown from step 4b). This dump is the only thing the analysis stage reads, so be complete.
+6. Write ALL of it VERBATIM (no analysis) to one file per ticket: ${contextDir}/<KEY>-context.md. Leaf tickets: sections \`## Jira fields\`, \`## Remote links\`, \`## Linked tickets\`, \`## Notion\`, \`## Slack\`, \`## GitHub\`, \`## Figma\`. Grouping tickets: \`## Jira fields\` (issuetype + hierarchy) then \`## Children\` (one sub-block per child found in step 4b, with its fields + its own children/subtask breakdown). This dump is the only thing the analysis stage reads, so be complete.
 
 Return: tickets — one entry per ticket you covered, each {key, contextPath}.`
 
@@ -176,7 +175,7 @@ ${gathered.tickets.map(t => `- ${t.key}: ${t.contextPath}`).join('\n')}
 FIRST read the scope hand-off note at ${scopeNote} for the JQL, field map, and VERIFIED scoring model — reuse them, do NOT re-derive.
 
 Audit EXACTLY these ${batch.length} ticket(s) — batch ${i + 1} of ${total}: ${batch.join(', ')}
-Write one card per ticket to ${outputFolder}/tickets/<KEY>-<kebab-slug>.md. Pick the template by issue type (Step 0 of your skill): a LEAF ticket (Story/Task/Bug) gets the full audit-card template — full frontmatter, the four-axis audit with incoherences in bold, the five-place design hunt, Notion/Slack/GitHub follow-up, code association, and the DoR block at the end. A GROUPING ticket (Objective/Milestone) gets the lean roll-up template instead (Step 3d/5) — a short header plus one condensed sprint-fit line per Milestone (from the gathered context's \`## Milestones\` block), no four-axis table, no code-reuse hunt, no full DoR block.
+Pick the template AND the output folder by \`hierarchyLevel\` (Step 0/5 of your skill), not by type name: a LEAF ticket (\`hierarchyLevel <= 0\`) gets the full audit-card template — full frontmatter, the four-axis audit with incoherences in bold, the five-place design hunt, Notion/Slack/GitHub follow-up, code association, and the DoR block at the end — written to ${outputFolder}/stories/<KEY>-<kebab-slug>.md. An OBJECTIVE gets the lean index card (header + a Milestones list of verdict-emoji + wikilink only, no reasoning) written to ${outputFolder}/objectives/<KEY>-<kebab-slug>.md. Each MILESTONE (from the gathered context's \`## Children\` block — whether discovered under an Objective, or itself directly in scope) gets its OWN card — metadata header + the condensed sprint-fit block informed by its Stories'/subtasks' decomposition, no four-axis table, no code-reuse hunt, no full DoR table — written to ${outputFolder}/milestones/<KEY>-<kebab-slug>.md.
 ${reposRoot ? `Code-association repos root: ${reposRoot} — characterize each repo (README + real language) before searching; prefer codegraph, else scoped rg.` : 'No local repos root provided — record code association as "not available" rather than guessing.'}
 
 Read-only on Jira. Do NOT write synthesis docs.
@@ -185,15 +184,15 @@ You run on Sonnet (see docs/MODEL_POLICY.md). For any ticket whose readiness/Sco
 
 Return: cardsWritten, the keys you wrote, the readiness split (ready / almostReady / notReady), and \`escalate\` (the contested keys, or []).`
 
-const synthPrompt = (missingKeys) => `Every per-ticket audit card now exists in ${outputFolder}/tickets/. Synthesize the full planning package. Follow your skill exactly (.claude/skills/jira-backlog-synthesis/SKILL.md + references/ + assets/).
+const synthPrompt = (missingKeys) => `Every per-ticket audit card now exists in ${outputFolder}/objectives/, ${outputFolder}/milestones/, and/or ${outputFolder}/stories/ (whichever apply to this scope). Synthesize the planning package. Follow your skill exactly (.claude/skills/jira-backlog-synthesis/SKILL.md + references/ + assets/).
 
 Read the scope hand-off note at ${scopeNote} for the scope and verified scoring model. Build everything from the cards on disk; re-verify the Score formula and RECOUNT all frontmatter totals with rg/grep before asserting (dor, design_linked/design_source, notion, slack_context, github_context, child_context).
 ${missingKeys.length ? `\nINCOMPLETE PACKAGE: these scoped tickets have NO audit card (their audit batch failed): ${missingKeys.join(', ')}. State this gap explicitly in the executive summary and master table — do NOT present partial data as complete.\n` : ''}
-Check the cards' frontmatter first: if they're the lean roll-up (\`objective:\`/\`milestones:\` fields, not \`ticket:\`/\`dor:\`), write the condensed Milestone Plan (\`MILESTONE_PLAN.md\`) instead of the 10-doc package — see your skill's "Objective-scoped runs" section. Either way, write the actions-audit report too. Write everything to ${outputFolder}/ as Obsidian-native markdown (frontmatter, sibling + ticket wikilinks, escape \\| inside tables). Read-only on Jira — any re-query only re-verifies counts.
+Check which cards exist: if \`objectives/\`/\`milestones/\` are populated, write the condensed \`MILESTONE_PLAN.md\` (one file) instead of the 10-doc package — see your skill's "Objective-scoped runs" section. If \`stories/\` is populated (a leaf-ticket scope), write the full 10-doc package instead. Write everything to ${outputFolder}/ as Obsidian-native markdown (frontmatter, sibling + ticket wikilinks, escape \\| inside tables). Read-only on Jira — any re-query only re-verifies counts.
 
-Return: docsWritten (the filenames), the headline readiness split, and whether the actions-audit confirms Jira was untouched.`
+Return: docsWritten (the filenames) and the headline readiness split.`
 
-const escalatePrompt = (batch) => `You are the ESCALATION pass (Opus). The Sonnet audit flagged these tickets as having a genuinely contested readiness/Score call: ${batch.join(', ')}. Their cards already exist in ${outputFolder}/tickets/.
+const escalatePrompt = (batch) => `You are the ESCALATION pass (Opus). The Sonnet audit flagged these tickets as having a genuinely contested readiness/Score call: ${batch.join(', ')}. Their cards already exist in ${outputFolder}/stories/ (leaf tickets) or ${outputFolder}/milestones/ (Milestones) — check the ticket's own type to know which.
 
 For EACH, read its existing card, re-read the scope hand-off note at ${scopeNote} (field map + verified scoring model), and re-fetch the ticket from Jira if needed. Resolve the contested call with rigorous reasoning — re-check the Score arithmetic, the scope boundary, or the epic split. Then UPDATE the card in place (Edit): append the \`## Escalated review (Opus)\` section from the audit-card template appendix with your verdict, and if it changes readiness, update the \`dor:\` frontmatter and the DoR verdict callout to match. Read-only on Jira. Follow the jira-ticket-audit + definition-of-ready skills.
 
@@ -328,5 +327,4 @@ return {
   escalatedKeys: escalateKeys,
   readiness,
   synthesisDocs: synth?.docsWritten || [],
-  readOnlyConfirmed: synth?.actionsAuditConfirmsReadOnly ?? null,
 }

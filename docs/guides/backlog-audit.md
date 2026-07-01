@@ -6,10 +6,10 @@ Reads an entire team backlog, audits every ticket, and produces a full planning 
 
 **When to use it:** before a quarterly planning cycle, before sprint planning on an unknown backlog, or any time you want a structured view of what's ready and what isn't.
 
-**Output:** a folder with 9 synthesis documents + one markdown card per ticket, formatted as an Obsidian vault.
+**Output:** for a leaf-ticket scope, a folder with the 10-document synthesis package + one markdown card per ticket in `stories/`. For an Objective/Milestone scope, one condensed `MILESTONE_PLAN.md` + one index card per Objective (`objectives/`) + one detail card per Milestone (`milestones/`). Always formatted as an Obsidian vault.
 
 > [!info] Read-only on Jira
-> Every phase only reads Jira. The only writes are markdown files. The synthesis package includes an actions-audit (`08`) that proves it.
+> Every phase only reads Jira. The only writes are markdown files. This is enforced by each agent's tool allowlist (no write tool is ever granted) and the `doctor` preflight — not by a separate after-the-fact report.
 
 ---
 
@@ -53,7 +53,7 @@ Run the backlog-audit workflow with args:
 
 If `project`/`board`/`team`/`buckets` are omitted, the scoper discovers the scope from the site and **states its assumptions** in the hand-off note. Pass them to be sure.
 
-Watch progress with `/workflows`. The result reports the scoped count, cards written, the readiness split, any failed batches (retried once automatically), and whether the actions-audit confirmed Jira was untouched.
+Watch progress with `/workflows`. The result reports the scoped count, cards written, the readiness split, and any failed batches (retried once automatically).
 
 ---
 
@@ -90,11 +90,11 @@ Gather raw context for the scoped tickets in refinement-PM-2026-Q3 (scope note a
 
 # Phase 2 (after phase 1, or phase 1.5 if you ran it)
 /agent jira-ticket-auditor
-Audit all tickets from the scope in refinement-PM-2026-Q3. If context dumps exist in refinement-PM-2026-Q3/_context/, read them first instead of re-fetching. Save cards to refinement-PM-2026-Q3/tickets/.
+Audit all tickets from the scope in refinement-PM-2026-Q3. If context dumps exist in refinement-PM-2026-Q3/_context/, read them first instead of re-fetching. Save cards to objectives/, milestones/, or stories/ per issue type.
 
 # Phase 3 (after phase 2 completes)
 /agent jira-backlog-synthesizer
-Synthesize the audit cards in refinement-PM-2026-Q3/tickets/ into the full planning package.
+Synthesize the audit cards in refinement-PM-2026-Q3/ into the planning package.
 ```
 
 **In VS Code Copilot agent mode**, select the agent from the picker or name it in the prompt:
@@ -127,7 +127,8 @@ The agent confirms scope with you, builds the JQL, maps `customfield_XXXXX` → 
 
 ```
 Now run jira-ticket-audit on all tickets from the scope we just built.
-Produce one markdown card per ticket. Save them to refinement-PM-2026-Q3/tickets/.
+Produce one markdown card per ticket, saved into objectives/, milestones/, or
+stories/ under refinement-PM-2026-Q3 depending on issue type.
 ```
 
 Per ticket: four axes (goal/scope clarity · UI/design needs · size-estimate coherence with a recomputed Score · prioritization soundness), a design hunt across five places (description, attachments, remote links, Notion links, custom design fields), a ticket → code mapping, and a DoR verdict: 🟢 Ready · 🟡 Almost ready · 🔴 Not ready.
@@ -137,8 +138,9 @@ The agent works in batches of ~3 tickets to stay under token limits — that's e
 ### Step 3 — Synthesize (`jira-backlog-synthesis`)
 
 ```
-Run jira-backlog-synthesis on the audit cards in refinement-PM-2026-Q3/tickets/.
-Produce the full synthesis package.
+Run jira-backlog-synthesis on the audit cards in refinement-PM-2026-Q3/.
+Produce the full synthesis package (or the condensed MILESTONE_PLAN.md if
+the cards are the Objective/Milestone roll-up).
 ```
 
 ---
@@ -147,16 +149,19 @@ Produce the full synthesis package.
 
 | # | Document | Contents |
 |---|---|---|
-| 00 | Executive summary | Key findings, readiness breakdown, top recommendation |
-| 01 | Master table | All tickets ranked by recomputed score |
-| 02 | Scoring model & methodology | Formula derivation and verification |
-| 03 | Cross-cutting findings | Patterns: incomplete scoring, unrealistic estimates, epic candidates |
-| 04 | Readiness plan | Sprint candidates, refinement actions, ADRs to open |
-| 05 | Design review | Which tickets need design, what Figma/Notion was found |
-| 06 | Code review | Ticket → repo mapping, what already exists |
-| 07 | Tickets by project | Grouped by primary repo |
-| 08 | Actions audit | Proof that nothing was written to Jira |
-| 09 | Definition of Ready reference | The DoR rubric used across all cards |
+| 00 | `README_index` | Reading order, 1-line scoring recap, top-3 immediate actions |
+| 01 | `EXECUTIVE_SUMMARY` | One-sentence verdict, key findings, critical alerts |
+| 02 | `MASTER_TABLE` | All tickets ranked by recomputed score, with a formula-check column |
+| 03 | `CROSS_CUTTING_FINDINGS` | Patterns: incomplete scoring, unrealistic estimates, epic candidates |
+| 04 | `PLAN_RECOMMENDATION` | Readiness tiers grouped by DoR verdict, a shortlist, the DoR checklist |
+| 05 | `METHODOLOGY_AND_SCORING` | Scope reconstruction, field map, scoring model, limitations |
+| 06 | `DESIGN_FIGMA_REVIEW` | Which tickets need design, what Figma/Notion was found |
+| 07 | `CODE_REVIEW` | Ticket → repo mapping, what already exists vs. needs new design |
+| 08 | `TICKETS_BY_PROJECT` | Grouped by primary repo, with un-scopable tickets flagged |
+| 09 | `THEMATIC_GROUPING` | Tickets clustered into conceptual themes |
+
+> For an Objective/Milestone scope, this whole table collapses to one
+> `MILESTONE_PLAN.md` — see [getting-started](./getting-started.md#3-what-you-get).
 
 ---
 

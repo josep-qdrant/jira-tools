@@ -2,7 +2,7 @@
 
 AI toolkit to audit, refine, and plan a Jira backlog. You point it at a board; it scopes the backlog, audits every ticket for readiness, and writes a planning-ready package — one markdown card per ticket plus cross-cutting synthesis docs, as an Obsidian vault.
 
-> **Strictly read-only on Jira.** No agent ever creates, edits, transitions, or comments on an issue. The only writes are markdown files on disk. Every backlog audit ships an actions-audit doc that proves it.
+> **Strictly read-only on Jira.** No agent ever creates, edits, transitions, or comments on an issue — every agent's tool list simply excludes those calls, and the `doctor` preflight verifies reachability before a run starts. The only writes are markdown files on disk.
 
 ## What it does
 

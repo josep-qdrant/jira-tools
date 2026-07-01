@@ -188,10 +188,14 @@ Weigh the same seven criteria, reading Milestone-specific signals:
 5. **Design/UI available** — same rule, N/A for backend-only.
 6. **Extrapolable from existing code/contract** — same rule.
 7. **Context sufficient** — plus one Milestone-specific check: **is it broken
-   down?** Query `parent = <Milestone-key>` for its own children (Stories/
-   Bugs/Tasks). Zero children means it hasn't been decomposed yet — that alone
-   blocks 🟢 even if the size field looks small, because "small T-Shirt, no
-   Stories" usually means "not actually scoped," not "actually tiny."
+   down, and how far?** Query `parent = <Milestone-key>` for its own children
+   (Stories/Bugs/Tasks). Zero children means it hasn't been decomposed yet —
+   that alone blocks 🟢 even if the size field looks small, because "small
+   T-Shirt, no Stories" usually means "not actually scoped," not "actually
+   tiny." If children exist, go one level further and check *their* subtasks
+   too — Stories with real subtask progress are a stronger 🟢 signal than
+   Stories that are still one-liners; weigh both counts together, don't stop
+   at the first level just because it's non-zero.
 
 Verdict logic is unchanged (🟢/🟡/🔴, one named blocker for 🟡), but two
 Milestone-specific reasons join the taxonomy:
@@ -200,25 +204,31 @@ Milestone-specific reasons join the taxonomy:
   "incomplete scoring": a Milestone can have a Score and still lack a
   T-Shirt Size, or vice versa).
 
-### Condensed rendering — the sprint-fit line
+### Condensed rendering — the sprint-fit block
 
-A full audit card (Story/Task-level, or a `ticket-research` dossier on a single
-Milestone) still gets the full DoR block above. But when a Milestone is
-rendered as **one entry inside its Objective's roll-up card** (see
-`jira-ticket-audit`'s Objective-mode), the seven-point table is replaced by a
-**single verdict line** — same judgment, terser output, because the reader
-needs the conclusion for a dozen Milestones at a glance, not a dozen tables:
+A full audit card (Story/Task-level, or a `ticket-research` dossier on one
+contested Milestone) still gets the full DoR block above. But a Milestone
+audited as part of a backlog run gets its **own standalone card**
+(`jira-ticket-audit`'s `assets/milestone-card-template.md`, written to
+`milestones/<KEY>-slug.md`) whose body is the seven-point table's conclusion,
+not the table itself — the metadata header (status/size/children/dates)
+already answers most of the seven criteria at a glance; this block only needs
+to add the verdict and, if not 🟢, the one thing missing:
 
 ```markdown
-- 🟡 **[[ABC-118-slug|ABC-118]]** <title> — <status> · size <T-Shirt or "not set"> · <n> children (<status breakdown>)
-  **Sprint fit:** <the one fact that gates it, one line>. <If not 🟢: "Needs: <one concrete next step>.">
+## Sprint fit
+
+> [!success] Sprint fit: 🟢 READY FOR NEXT SPRINT — <the one fact that gates it>
+
+**Needs:** <only if not 🟢 — one concrete next step>.
 ```
 
-Skeleton: `assets/milestone-sprint-fit-line-template.md`. Never expand this
-back into the seven-row table inside a roll-up — if the seven criteria genuinely
-need to be shown in full for one contested Milestone, that's a signal to write
-it as its own standalone card (full DoR block) instead, not to inflate the
-roll-up.
+Skeleton: `assets/milestone-sprint-fit-block-template.md`. The Milestone's
+*parent* Objective card only links to this file (verdict emoji + wikilink) —
+it never repeats this block's content. Never expand this back into the
+seven-row table on a Milestone card — if the seven criteria genuinely need to
+be shown in full because one Milestone's call is contested, that's a signal
+to write it as a `ticket-research` dossier (full DoR block) instead.
 
 ## How the other skills use it
 

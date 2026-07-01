@@ -45,14 +45,24 @@ before extracting.
 
 ## Non-negotiable rules
 
-0. **Detect the audit unit first (Step 0).** Check each ticket's `issuetype`
-   (`.name`, `.description`, `.hierarchyLevel`). A leaf ticket (Story/Task/Bug)
-   gets rules 1–10 below. A grouping ticket (Objective/Milestone — description
-   "to group milestones"/"to group stories") skips straight to **Step 3d**:
-   discover its children via `parent = <key>` (never issuelinks/subtasks —
-   those miss this hierarchy), and write the lean roll-up card
-   (`assets/objective-milestone-card-template.md`) with one condensed
-   sprint-fit line per Milestone instead of the full four-axis card.
+0. **Detect the audit unit by `hierarchyLevel` first (Step 0), and write into
+   the matching folder.** Check each ticket's `issuetype.hierarchyLevel` (not
+   its display name — names vary, levels don't). `hierarchyLevel <= 0` (Story/
+   Task/Bug) gets rules 1–10 below, written to `stories/`. `hierarchyLevel >= 1`
+   (Objective/Milestone in this instance) skips straight to **Step 3d**:
+   discover its children ONE level down via `parent = <key>` (never
+   issuelinks/subtasks — those miss this hierarchy) — an Objective backlog
+   drills into Milestones, a Milestone backlog (no Objective in scope) drills
+   into Stories/Bugs/Tasks and, one level further, their subtasks. An
+   Objective gets a lean index card (`assets/objective-card-template.md`,
+   `objectives/`) with a Milestones list of verdict-emoji + wikilink only — no
+   reasoning. Each Milestone gets its **own** card
+   (`assets/milestone-card-template.md`, `milestones/`) with the metadata
+   header + the condensed sprint-fit block, informed by its Stories'
+   decomposition (and their subtasks). Never combine Objective and Milestone
+   content into one file, and never write a separate card for a
+   two-levels-down child (a Story discovered under a Milestone) — that's a
+   rollup signal, not a deliverable, unless it's independently in scope.
 1. **Read-only on Jira.** Your tools exclude every write — never create, edit,
    transition, or comment. The only writes are the markdown cards on disk.
 2. **Small batches.** Extract ~3 issues at a time with an explicit field list, in
@@ -125,6 +135,6 @@ that one question on Opus.
 ## What you return
 
 One file per ticket (`<KEY>-<kebab-slug>.md`, a unique basename for clean
-wikilinks) in the destination folder, plus a short summary of how many cards you
-wrote and the headline readiness split. Don't
-produce cross-cutting synthesis docs — that is the synthesizer's job.
+wikilinks), in `objectives/`, `milestones/`, or `stories/` per its type, plus a
+short summary of how many cards you wrote and the headline readiness split.
+Don't produce cross-cutting synthesis docs — that is the synthesizer's job.

@@ -8,9 +8,8 @@ description: >-
   findings, the quarter/sprint readiness plan with a Definition of Ready,
   the methodology + scoring-model write-up, the design/Figma coverage review, the
   code-reuse review, the tickets-by-project matrix, a thematic grouping that
-  clusters tickets into logical themes/conceptual objectives, an index, and an
-  actions-audit report demonstrating that nothing in Jira was changed. When the
-  scope is Objective-type tickets (jira-ticket-audit wrote lean Objective/
+  clusters tickets into logical themes/conceptual objectives, and an index.
+  When the scope is Objective-type tickets (jira-ticket-audit wrote lean Objective/
   Milestone roll-up cards, not full audit cards), produces a single condensed
   Milestone Plan instead of the full package — see "Objective-scoped runs"
   below; a real Objective→Milestone hierarchy already exists in Jira, so the
@@ -19,17 +18,17 @@ description: >-
   an executive summary or master table of a backlog, write quarter/sprint
   planning recommendations from audited tickets, surface cross-cutting backlog
   findings, group tickets by theme/topic so they can be tackled by conceptual
-  objective, work out which Milestones are ready for the next sprint, or
-  document that a Jira analysis touched nothing. Read-only on Jira — never
-  writes. Part 3 of a 3-skill workflow (follows jira-backlog-scoping and
-  jira-ticket-audit).
+  objective, or work out which Milestones are ready for the next sprint.
+  Read-only on Jira — never writes. Part 3 of a 3-skill workflow (follows
+  jira-backlog-scoping and jira-ticket-audit).
 ---
 
 # Jira Backlog Synthesis
 
 Turn the per-ticket cards into the documents a planning audience actually reads:
-a verdict, a ranked table, the patterns that repeat, a readiness plan, and the
-proof that the audit changed nothing in Jira.
+a verdict, a ranked table, the patterns that repeat, and a readiness plan.
+(Read-only safety is enforced upstream — each agent's tool allowlist plus the
+`doctor` preflight — not by an after-the-fact report from this skill.)
 
 This is **part 3 of 3**. Inputs: the per-ticket cards from `jira-ticket-audit`
 (part 2) and the scope + verified scoring model from `jira-backlog-scoping`
@@ -74,16 +73,14 @@ Write these into the working folder. Suggested filenames/order (English):
 | `07_CODE_REVIEW.md` | Per-UI-ticket: reuse existing code vs. needs new design, with cited paths. |
 | `08_TICKETS_BY_PROJECT.md` | Which repo(s) each ticket touches (matrix + counts) + tickets with un-scopable scope. |
 | `09_THEMATIC_GROUPING.md` | Tickets clustered into logical themes (conceptual objectives) so the backlog can be tackled group-by-group, not just ticket-by-ticket. |
-| `ACTIONS_AUDIT.md` | Enumerates every connector call and confirms all were reads. |
 
 The exact structure of each document is in `references/synthesis-docs.md` — read
-it before writing. `assets/` holds copyable skeletons for the index and the
-actions-audit report.
+it before writing. `assets/index-template.md` holds a copyable skeleton for
+the index.
 
-**This 10-doc-plus-actions-audit package is for leaf-ticket scopes** (the
-cards are the full Story/Task-level audit-card-template). See the next
-section for the alternate, much shorter package when the scope is
-Objective-type.
+**This 10-doc package is for leaf-ticket scopes** (the cards are the full
+Story/Task-level audit-card-template, in `stories/`). See the next section
+for the alternate, much shorter package when the scope is Objective-type.
 
 ### Objective-scoped runs: the Milestone Plan (condensed mode)
 
@@ -100,43 +97,41 @@ inferring conceptual objectives because no native field backs them — is moot
 here: the Objective/Milestone hierarchy is a real Jira field (`parent`), not
 an inference.**
 
-Write exactly **two** files instead — and keep `MILESTONE_PLAN.md` an
-**overview only**. The full reasoning for each Milestone (the "Sprint fit: …
-Needs: …" line) already lives in its Objective's roll-up card; restating it
-here would be the exact duplication this mode exists to cut. This doc's only
-job is: can I see everything at a glance, and can I click through to the one
-Milestone I care about?
+Write exactly **one** file instead — and keep it an **overview only**. The
+full reasoning for each Milestone (the sprint-fit block) already lives in its
+own card in `milestones/`; the Objective's index card in `objectives/` already
+links to it. Restating that reasoning here would be the exact duplication
+this mode exists to cut. This doc's only job is: can I see everything at a
+glance, and can I click through to the one Milestone I care about?
 
-1. **`MILESTONE_PLAN.md`**:
-   - TL;DR: total Objectives, total Milestones, and the verdict split
-     (🟢/🟡/🔴) across all Milestones in scope. This is the whole "vision
-     general."
-   - **By Objective** — the entire body, **one line per Objective**: a
-     wikilink to its roll-up card, title, status, and then each of its
-     Milestones as `<verdict-emoji> [[Milestone-wikilink]]` — verdict and key
-     only, no reasoning text (that's one click away). Example:
-     `- [[PM-207-slug|PM-207]] Reduce k8s permissions (In Progress) — 🟡 [[ABC-118-slug|ABC-118]]`.
-     An Objective with zero Milestones gets its own line too: `— No Milestones
-     found`. **Nothing else in this document** — no separate sprint-candidates
-     list, no reason-grouped breakdown, no methodology section: the scope
-     JQL and field map already live in frontmatter and the scoping hand-off
-     note; don't restate them here.
-2. **`ACTIONS_AUDIT.md`** — unchanged, same as the leaf-ticket package (cheap,
-   and the read-only proof matters regardless of scope).
+**`MILESTONE_PLAN.md`**:
+- TL;DR: total Objectives, total Milestones, and the verdict split
+  (🟢/🟡/🔴) across all Milestones in scope. This is the whole "vision
+  general."
+- **By Objective** — the entire body, **one line per Objective**: a
+  wikilink to its card in `objectives/`, title, status, and then each of its
+  Milestones as `<verdict-emoji> [[Milestone-wikilink]]` — verdict and key
+  only, no reasoning text (that's one click away in `milestones/`). Example:
+  `- [[PM-207-slug|PM-207]] Reduce k8s permissions (In Progress) — 🟡 [[ABC-118-slug|ABC-118]]`.
+  An Objective with zero Milestones gets its own line too: `— No Milestones
+  found`. **Nothing else in this document** — no separate sprint-candidates
+  list, no reason-grouped breakdown, no methodology section: the scope
+  JQL and field map already live in frontmatter and the scoping hand-off
+  note; don't restate them here.
 
-Still **recount** the verdict split with `grep`/`rg` against the roll-up
-cards' frontmatter before asserting it, and still open with frontmatter +
-wikilinks per the `obsidian-vault` skill. Everything else in this
-skill — the ground rules, the "don't invent" / "verify" discipline, the
-final-verification checklist — applies unchanged; only the deliverable set
-shrinks.
+Still **recount** the verdict split with `grep`/`rg` against the
+`objectives/`/`milestones/` cards' frontmatter before asserting it, and still
+open with frontmatter + wikilinks per the `obsidian-vault` skill. Everything
+else in this skill — the ground rules, the "don't invent" / "verify"
+discipline, the final-verification checklist — applies unchanged; only the
+deliverable set shrinks.
 
 **Frontmatter (open every synthesis doc with it):**
 
 ```yaml
 ---
 title: "Master table"
-doc: master-table          # index | executive-summary | master-table | cross-cutting | plan | methodology | design-review | code-review | tickets-by-project | actions-audit | milestone-plan
+doc: master-table          # index | executive-summary | master-table | cross-cutting | plan | methodology | design-review | code-review | tickets-by-project | milestone-plan
 team: "<team>"
 board: <NNN>
 project: <KEY>
@@ -243,21 +238,15 @@ rules specific to this doc:
   epics/initiatives. If the team wants a persistent Theme field, say so as a
   recommendation, not an action taken.
 
-**Actions audit (`ACTIONS_AUDIT.md`).** Enumerate every Jira/connector call made
-during the audit, mark each as a read, list the write tools that were available
-but **not** used, and record the only writes (local markdown files). This is the
-proof that the board, issues, and fields are exactly as before. See
-`assets/actions-audit-template.md`.
-
 ## Final verification before handing off
 
 - **Recount** every aggregate with `grep`/`rg` against the cards (counts by
   status/size, Figma coverage, scoring-incomplete count). Fix any mismatch.
 - **Re-check** the master-table arithmetic column.
 - **Obsidian check:** every doc opens with frontmatter; internal references are
-  wikilinks (`rg '\]\([0-9].*\.md\)|\]\(tickets/' *.md` should return nothing —
-  those are markdown links to deliverables that should be wikilinks); external
-  URLs remain markdown links.
+  wikilinks (`rg '\]\([0-9].*\.md\)|\]\((tickets|objectives|milestones|stories)/' *.md`
+  should return nothing — those are markdown links to deliverables that should
+  be wikilinks); external URLs remain markdown links.
 - If you worked in a scratchpad, **copy everything into the working folder** and
   confirm it's there. Remember host vs. mount paths: file tools use host paths
   (`/Users/...`), `bash` uses the mount (`/sessions/<id>/mnt/...`); copy with
@@ -270,4 +259,3 @@ proof that the board, issues, and fields are exactly as before. See
 - `references/synthesis-docs.md` — the exact section structure of each of the 10
   documents, with what goes in each. Read before writing the docs.
 - `assets/index-template.md` — skeleton for `00_README_index.md`.
-- `assets/actions-audit-template.md` — skeleton for `ACTIONS_AUDIT.md`.

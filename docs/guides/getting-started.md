@@ -18,7 +18,7 @@ This page gets you from "I cloned the repo" to "I ran my first read-only backlog
 | `QDRANT_REPOS_ROOT` in `AGENTS.local.md` (optional) | Ticket → code association | Local clones of the repos that implement the tickets |
 
 > [!info] Everything is read-only on Jira
-> The whole toolkit only **reads** Jira (and Notion/Slack/Figma/GitHub). The only writes are markdown files on disk. No agent ever creates, edits, transitions, or comments on an issue. See the actions-audit doc (`08`) that every backlog audit produces as proof.
+> The whole toolkit only **reads** Jira (and Notion/Slack/Figma/GitHub). The only writes are markdown files on disk. No agent ever creates, edits, transitions, or comments on an issue — each agent's tool list simply excludes those calls, and the `doctor` preflight verifies reachability before a run starts.
 
 ---
 
@@ -65,30 +65,41 @@ Watch live progress with `/workflows`.
 3. **Gather** (Haiku, batches of ~3) — fetches each ticket, its remote links, one hop of linked tickets, and any Notion/Slack/GitHub/Figma links, dumping it verbatim to `_context/`. No judgment — just retrieval, on the cheap tier.
 4. **Analyze** (Sonnet, batches of ~3) — reads the dump, writes one Obsidian card per ticket: four-axis audit, five-place design hunt, code association, and a Definition-of-Ready verdict. Each batch flows Gather→Analyze independently — a slow batch doesn't hold up a fast one.
 5. **Escalate** (Opus, conditional) — only a genuinely contested ticket call, or a genuinely ambiguous scope, gets re-judged on Opus. If nothing is flagged, Opus never runs. See [model policy](../MODEL_POLICY.md).
-6. **Synthesize** (Sonnet) — rolls the cards into the 9-document planning package.
+6. **Synthesize** (Sonnet) — rolls the cards into the planning package: the full
+   10-doc set for a leaf-ticket scope, or one condensed `MILESTONE_PLAN.md` for
+   an Objective-scoped run (see [backlog-audit](./backlog-audit.md)).
 
 ### What you get
+
+For a leaf-ticket scope (Story/Task/Bug):
 
 ```
 refinement-PM-2026-Q3/
   _scope-handoff.md          ← scope JQL, field map, verified scoring model
-  00-executive-summary.md
-  01-master-table.md         ← every ticket ranked by recomputed Score
-  02-scoring-methodology.md
-  03-cross-cutting-findings.md
-  04-readiness-plan.md
-  05-design-review.md
-  06-code-review.md
-  07-tickets-by-project.md
-  08-actions-audit.md         ← proof nothing was written to Jira
-  09-definition-of-ready.md
-  tickets/
+  00_README_index.md .. 09_THEMATIC_GROUPING.md   ← the 10-doc synthesis package
+  stories/
     PM-313-allow-force-deletion.md
     PM-345-support-bundle-creation.md
     ...                        ← one card per ticket
 ```
 
-The run's final result reports the scoped count, cards written, the readiness split (🟢 / 🟡 / 🔴), any failed batches, and whether the actions-audit confirmed Jira was untouched.
+For an Objective-scoped run (Objective/Milestone hierarchy):
+
+```
+refinement-PM-2026-Q3/
+  _scope-handoff.md
+  MILESTONE_PLAN.md          ← overview only: one line per Objective, linking out
+  objectives/
+    PM-313-reduce-permissions.md   ← index card: header + Milestones list
+  milestones/
+    ABC-118-agent-rbac-scope.md    ← the real detail: status, size, sprint-fit verdict
+```
+
+Read-only safety isn't a separate deliverable — it's enforced by each agent's
+tool allowlist (no write tool is ever granted) and the `doctor` preflight, so
+there's no `actions-audit` file to check.
+
+The run's final result reports the scoped count, cards written, the readiness split (🟢 / 🟡 / 🔴), and any failed batches.
 
 > [!tip] It's an Obsidian vault
 > All docs use YAML frontmatter, wikilinks (`[[PM-313]]`), and callouts. Open the output folder in Obsidian for backlinks and Dataview queries over ticket metadata.

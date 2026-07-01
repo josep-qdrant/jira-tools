@@ -30,16 +30,20 @@ Read `.claude/skills/jira-ticket-audit/SKILL.md` Step 0, and then:
   and the one-hop linked-ticket recursion. Skip Step 2 (four-axis audit),
   Step 4 (code association), and Step 5 (card writing) — those belong to the
   auditor.
-- **Grouping tickets (Objective/Milestone):** Step 3d's *discovery* portion
-  only — run `parent = <key>` to find an Objective's Milestones, and
-  `parent = <Milestone-key>` for each Milestone's own children, then fetch
-  each Milestone's fields (status, T-Shirt Size, Score/Impact/Confidence,
-  domain, AC/description, dates, blocking issuelinks). Skip the five-place
-  design hunt and Notion/Slack/GitHub follow-up for grouping tickets — Step 3d
-  says that depth doesn't belong at this level. The sprint-fit *judgment* is
-  the auditor's job, not yours; just dump what you found per Milestone
-  (including the children-count/status breakdown) under its own `## Jira
-  fields` block in the dump.
+- **Grouping tickets (`hierarchyLevel >= 1`):** Step 3d's *discovery* portion
+  only — run `parent = <key>` to find its children ONE level down (an
+  Objective's Milestones, or — when the scope itself is Milestones, no
+  Objective involved — a Milestone's Story/Bug/Task children). Fetch each
+  child's fields (status, T-Shirt Size, Score/Impact/Confidence, domain,
+  AC/description, dates, blocking issuelinks). If a child is itself
+  `hierarchyLevel: 0`, ALSO run `parent = <child-key>` for its subtasks and
+  include that count/status breakdown — this is the decomposition-depth
+  signal a Milestone-scoped run needs. Skip the five-place design hunt and
+  Notion/Slack/GitHub follow-up for grouping tickets — Step 3d says that
+  depth doesn't belong at this level. The sprint-fit *judgment* is the
+  auditor's job, not yours; just dump what you found per child (including
+  the children-count/status breakdown, and subtask counts where applicable)
+  under its own `## Jira fields` block in the dump.
 
 For URL mechanics (leaf tickets only) use:
 - `.claude/skills/jira-notion-context/SKILL.md` for `notion.so` links

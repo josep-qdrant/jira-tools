@@ -5,14 +5,14 @@ The pipeline explained conceptually: what it does, what it reads, and the rules 
 ## Short summary
 
 - **Purpose:** scope a backlog, audit each ticket for readiness, and synthesize cross-cutting planning artifacts (master table, executive summary, readiness plan).
-- **Read-only:** the pipeline only reads Jira, Notion, Slack, Figma, and GitHub. It never writes to Jira or any external system — the only writes are markdown files on disk.
-- **Output:** an Obsidian-style folder with one markdown card per ticket plus 9 synthesis documents.
+- **Read-only:** the pipeline only reads Jira, Notion, Slack, Figma, and GitHub. It never writes to Jira or any external system — the only writes are markdown files on disk, and no agent is even granted a write tool (verified live by the `doctor` preflight, not by an after-the-fact report).
+- **Output:** an Obsidian-style folder, split by issue type — `objectives/`, `milestones/`, `stories/` — plus either the 10-document synthesis package (leaf-ticket scope) or one condensed `MILESTONE_PLAN.md` (Objective-scoped run).
 
 ## Pipeline (three phases)
 
 1. **Scope** (`jira-backlog-scoping`) — build an explicit JQL scope, map `customfield_XXXXX` → readable labels, and deduce & verify the multiplicative RICE-style model: `Score = Impact × Confidence × Size factor`. Output: scope JQL, key list, field map, verified scoring model. If the scope boundary itself is genuinely contested, this phase self-flags for an Opus re-resolve rather than guessing.
-2. **Audit** (`jira-ticket-audit`) — process tickets in small batches (~3). When run via the `backlog-audit` workflow this splits into two model tiers: a **Gather** sub-stage (`jira-context-gatherer`, Haiku) fetches each ticket, its remote links, one hop of linked tickets, and any Notion/Slack/GitHub/Figma links, dumping it verbatim; then an **Analyze** sub-stage (`jira-ticket-auditor`, Sonnet) reads that dump and evaluates the four axes (goal/scope clarity; UI/design need; size coherence with a recomputed Score; prioritization soundness), runs the five-place design hunt, associates tickets to repos/code, and writes one Obsidian card per ticket ending in a Definition-of-Ready block. Run standalone (not via the workflow), the auditor does both retrieval and judgment itself.
-3. **Synthesize** (`jira-backlog-synthesis`) — roll the cards into the planning package: master table (Score re-verified), executive summary, cross-cutting findings, readiness plan grouped by DoR verdict, design & code reviews, tickets-by-project, and the actions audit proving read-only activity.
+2. **Audit** (`jira-ticket-audit`) — process tickets in small batches (~3), first branching on issue type (Step 0). **Leaf tickets** (Story/Task/Bug) get the full treatment: a **Gather** sub-stage (`jira-context-gatherer`, Haiku) fetches each ticket, its remote links, one hop of linked tickets, and any Notion/Slack/GitHub/Figma links, dumping it verbatim; then an **Analyze** sub-stage (`jira-ticket-auditor`, Sonnet) reads that dump and evaluates the four axes (goal/scope clarity; UI/design need; size coherence with a recomputed Score; prioritization soundness), runs the five-place design hunt, associates tickets to repos/code, and writes one Obsidian card per ticket (`stories/`) ending in a Definition-of-Ready block. **Grouping tickets** (Objective/Milestone) skip all of that: their children are discovered via the native `parent` field, an Objective gets a short index card (`objectives/`), and each Milestone gets its own card (`milestones/`) with a condensed sprint-fit verdict. Run standalone (not via the workflow), the auditor does both retrieval and judgment itself.
+3. **Synthesize** (`jira-backlog-synthesis`) — for a leaf-ticket scope, roll the cards into the 10-doc planning package: master table (Score re-verified), executive summary, cross-cutting findings, readiness plan grouped by DoR verdict, design & code reviews, tickets-by-project, thematic grouping. For an Objective-scoped run, write one condensed `MILESTONE_PLAN.md` instead.
 
 You can run the full chain end-to-end or invoke a subagent per phase — see [backlog-audit](guides/backlog-audit.md) for the run modes.
 
@@ -54,9 +54,9 @@ flowchart LR
 
 ## Inputs / outputs & file conventions
 
-- **Output folder** is an Obsidian vault. Each ticket card is `<KEY>-<kebab-slug>.md` and opens with YAML frontmatter (ticket, aliases, title, type, status, size, impact, confidence, score, dor, repos…).
-- **Synthesis documents** are ordered and frontmattered (index, executive summary, master table, scoring/methodology, design/code reviews, readiness plan, tickets-by-project, actions audit, DoR reference).
-- **Actions audit** enumerates every connector call (all reads) to prove nothing was written to Jira.
+- **Output folder** is an Obsidian vault, split by issue type: `objectives/`, `milestones/`, `stories/`. Each card is `<KEY>-<kebab-slug>.md` and opens with YAML frontmatter — leaf cards use `ticket`/`dor`/`score`/…; Objective/Milestone cards use `objective`/`milestones`/`sprint_fit` instead.
+- **Synthesis documents** are ordered and frontmattered (index, executive summary, master table, cross-cutting findings, plan/recommendation, methodology & scoring, design/code reviews, tickets-by-project, thematic grouping) — or, for an Objective-scoped run, a single `MILESTONE_PLAN.md`.
+- **No actions-audit document.** Read-only safety is enforced by each agent's tool allowlist and the `doctor` preflight, not by a separate proof file.
 
 ---
 

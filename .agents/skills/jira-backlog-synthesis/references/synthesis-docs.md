@@ -181,7 +181,3 @@ or a re-verified count.
   conceptual objective" (highest combined readiness), and whether the team
   would benefit from a persistent Jira field (Theme/Initiative) instead of
   re-deriving this every audit — framed as a suggestion, not an action taken.
-
-## ACTIONS_AUDIT.md
-
-See `assets/actions-audit-template.md`.

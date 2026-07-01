@@ -116,13 +116,24 @@ field if the project has one, and Sprint. See `references/scoping-example.md`
 for a worked field map you can use as a template.
 
 **Also read `fields.issuetype` on that same representative issue** (`.name`,
-`.description`, `.hierarchyLevel`) — the same call, no extra fetch. If the
-description reads "to group milestones" or "to group stories" (a custom
-hierarchy above the base level: Objective/Milestone-style, `hierarchyLevel` ≥
-1), say so in the hand-off note. This determines which mode `jira-ticket-audit`
-uses downstream (full four-axis card vs. lean Objective/Milestone roll-up) —
-it doesn't change anything you do in this skill, but recording it here means
-the auditor doesn't have to re-derive it from scratch.
+`.description`, `.hierarchyLevel`) — the same call, no extra fetch. Record the
+**`hierarchyLevel`** in the hand-off note, not just a yes/no on whether it's a
+custom hierarchy: it's what tells `jira-ticket-audit` which level to drill
+into. The rule is the same at any depth — **children live one level below**,
+via the native `parent` field:
+
+- Scope is `hierarchyLevel: 0` (Story/Task/Bug) → no drill-down; full
+  four-axis audit per ticket.
+- Scope is `hierarchyLevel: 1` (this instance calls it Milestone) → the
+  auditor drills into each one's Story/Bug/Task children.
+- Scope is `hierarchyLevel: 2` (this instance calls it Objective) → the
+  auditor drills into each one's Milestone children.
+
+Say which one applies (or that the project has no grouping types above the
+base level) in the hand-off note — it doesn't change anything you do in this
+skill, but recording the level means the auditor doesn't have to re-derive it
+from scratch, and a **mixed scope** (several levels represented at once) is
+not a special case: the auditor checks each ticket's own level individually.
 
 ## Step 4 — Deduce and VERIFY the scoring model
 

@@ -6,12 +6,16 @@ skills — this file is only the always-loaded safety net + map.
 ## Non-negotiables
 
 - **Jira read only.** Search, get issue, remote links, metadata — never create,
-  edit, transition, comment, or otherwise write to Jira.
+  edit, transition, comment, or otherwise write to Jira. Enforced by each
+  agent's tool allowlist + the `doctor` preflight, not by an after-the-fact
+  report — there is no `ACTIONS_AUDIT.md` deliverable.
 - **No invention.** Missing data is `Not recorded` / `Uncertain`, never guessed.
 - **Verify.** Re-check score arithmetic and aggregate counts with `rg` / `grep`.
 - **Ask scope first.** Confirm team/board, project, backlog definition, and
   destination folder before querying.
-- **Disk = markdown deliverables only.** Work in small batches.
+- **Disk = markdown deliverables only.** Work in small batches, split into
+  type-scoped folders (`objectives/` / `milestones/` / `stories/`) — never one
+  flat `tickets/` pile.
 
 ## Two entry points
 
@@ -34,12 +38,15 @@ Both read-only, at `.agents/workflows/*.js`. Flagship details in `WORKFLOW.md`.
 Each skill carries its own steps and gotchas — invoke it for the detail.
 
 - `jira-backlog-scoping` — scope, JQL, field map, scoring formula.
-- `jira-ticket-audit` — per-ticket card, four-axis audit, design hunt, code link, DoR.
-  Auto-detects grouping tickets (Objective/Milestone, native `parent` hierarchy)
-  and switches to a lean roll-up instead — see its Step 0.
-- `jira-backlog-synthesis` — roll-up docs, master table, actions audit. For an
-  Objective-scoped run: one condensed `MILESTONE_PLAN.md` instead of the 10-doc
-  package.
+- `jira-ticket-audit` — per-ticket card, four-axis audit, design hunt, code link,
+  DoR. Auto-detects by `hierarchyLevel`, drills ONE level down via native
+  `parent` (Objective backlog → Milestones; Milestone backlog → Stories/Bugs/
+  Tasks/subtasks) — Objective → index card in `objectives/`; Milestone → its
+  own card in `milestones/`; leaf tickets → `stories/`. Mixed scopes route
+  each ticket individually. See its Step 0.
+- `jira-backlog-synthesis` — roll-up docs, master table. For an Objective-scoped
+  run: one condensed `MILESTONE_PLAN.md` (overview only) instead of the
+  10-doc package.
 - `definition-of-ready` — readiness verdict + 7-point checklist; also the
   Milestone sprint-fit call ("Applying DoR to a Milestone").
 - `obsidian-vault` — output format conventions for every deliverable on disk.
