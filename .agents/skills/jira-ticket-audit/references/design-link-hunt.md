@@ -41,10 +41,10 @@ at "link exists" — follow it:
 
 | URL type | Action | Tool / method |
 |----------|--------|---------------|
-| `slack.com/archives/…` | Read the thread; extract decisions, design links, open questions. Note channel and date. | `mcp__slack__slack_read_thread` — see `slack-mcp` skill for URL parsing |
+| `slack.com/archives/…` | Read the thread; extract decisions, design links, open questions. Note channel and date. | `slack_read_thread` (`mcp__slack__` or `mcp__claude_ai_Slack__` prefix) — see `slack-mcp` skill for URL parsing |
 | `github.com/…/pull/N` | Fetch PR title, state, body; look for Figma/Notion links inside the body. | `gh pr view N --repo owner/repo --json title,state,body,url` via Bash — see `gh-cli` skill |
 | `github.com/…/issues/N` | Fetch issue title, state, body. | `gh issue view N --repo owner/repo --json title,state,body,url` via Bash — see `gh-cli` skill |
-| `figma.com/…` found inside a Slack thread, PR body, or Notion doc | Confirm it resolves and credit it as a found design — same as a Figma link found directly on the ticket. | `mcp__figma__get_metadata` — see `figma-mcp` skill |
+| `figma.com/…` found inside a Slack thread, PR body, or Notion doc | Confirm it resolves and credit it as a found design — same as a Figma link found directly on the ticket. | `get_metadata` (`mcp__figma__` or `mcp__claude_ai_Figma__` prefix) — see `figma-mcp` skill |
 | Any Jira key (`ABC-NNN`) | Collect for Step 3c recursion — don't follow inline. | — |
 
 ## A missing Figma is not automatically a blocker

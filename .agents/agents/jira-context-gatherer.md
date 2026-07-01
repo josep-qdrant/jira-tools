@@ -10,7 +10,7 @@ description: >-
   so the bulk, mechanical I/O of an audit runs on the cheap retrieval tier
   (Haiku) instead of the reasoning tier. Read-only on Jira: never creates,
   edits, transitions, or comments. Feeds jira-ticket-auditor.
-tools: Read, Write, Bash, mcp__claude_ai_Atlassian__getAccessibleAtlassianResources, mcp__claude_ai_Atlassian__getJiraIssue, mcp__claude_ai_Atlassian__getJiraIssueRemoteIssueLinks, mcp__notion__notion-fetch, mcp__slack__slack_read_thread, mcp__figma__get_metadata
+tools: Read, Write, Bash, mcp__claude_ai_Atlassian__getAccessibleAtlassianResources, mcp__claude_ai_Atlassian__getJiraIssue, mcp__claude_ai_Atlassian__getJiraIssueRemoteIssueLinks, mcp__claude_ai_Notion__notion-fetch, mcp__claude_ai_Slack__slack_read_thread, mcp__claude_ai_Figma__get_metadata
 model: haiku
 ---
 
@@ -39,7 +39,10 @@ those belong to the auditor. For URL mechanics use:
 
 1. **Read-only on Jira.** Your tools exclude every write — you only have
    `getJiraIssue` and `getJiraIssueRemoteIssueLinks`. The only writes you make
-   are the raw context dump file(s) on disk.
+   are the raw context dump file(s) on disk. Your Notion/Slack/Figma tools are
+   granted under the `mcp__claude_ai_<Server>__` prefix in this environment; if
+   your tool list instead shows the short `mcp__<server>__` prefix, use that
+   one instead — same tools, different connector naming.
 2. **No judgment.** Don't assess UI need, readiness, Score correctness, or
    design sufficiency. Record what you found; the auditor decides what it
    means.

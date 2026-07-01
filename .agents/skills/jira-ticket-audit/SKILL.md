@@ -109,20 +109,22 @@ found), and the missing-asset checklist. See `references/design-link-hunt.md`.
   after fetching with `gh`). `none` if no GitHub links appear.
 
 When the hunt surfaces a `slack.com` URL (thread or channel link), fetch the
-thread with `mcp__slack__slack_read_thread` and note the relevant content (see
-`slack-mcp` skill). When it surfaces a `github.com` URL, fetch the PR or issue
+thread with `slack_read_thread` (`mcp__slack__` or `mcp__claude_ai_Slack__`
+prefix, whichever is on your tool list — see `slack-mcp` skill) and note the
+relevant content. When it surfaces a `github.com` URL, fetch the PR or issue
 with the `gh` CLI via Bash (see `gh-cli` skill). When it surfaces a
-`figma.com` URL, confirm it resolves with `mcp__figma__get_metadata` (see
-`figma-mcp` skill); only pull the screenshot/design-context when the
-Extrapolable/Partial/New-design call is genuinely close, not as a default
-step.
+`figma.com` URL, confirm it resolves with `get_metadata` (`mcp__figma__` or
+`mcp__claude_ai_Figma__` prefix — see `figma-mcp` skill); only pull the
+screenshot/design-context when the Extrapolable/Partial/New-design call is
+genuinely close, not as a default step.
 
 ## Step 3b — Open & extract the linked Notion context
 
 Whenever the hunt surfaces a `notion.so` URL (the **Acceptance Criteria field is
 frequently just a Notion link**), don't stop at "link exists" — follow the
 **`jira-notion-context`** skill: register the link in the Notion coverage
-registry, fetch the page read-only (`mcp__notion__notion-fetch`), extract
+registry, fetch the page read-only (`notion-fetch`, prefix `mcp__notion__` or
+`mcp__claude_ai_Notion__` depending on your tool list), extract
 requirements/AC, recorded decisions, open questions, embedded Figma links, scope
 boundaries and freshness, and add the **`## Notion context`** section to the card
 (skeleton in that skill's `assets/notion-context-block.md`). The result drives
@@ -186,8 +188,9 @@ Apply the same external-link rules as for the parent:
 
 - **`notion.so` link** → run Step 3b (jira-notion-context skill) on it.
 - **`slack.com` link** (direct message or thread URL, e.g.
-  `https://<workspace>.slack.com/archives/…`) → fetch the thread with the Slack MCP:
-  `mcp__slack__slack_read_thread`. Extract the relevant decision, question, or
+  `https://<workspace>.slack.com/archives/…`) → fetch the thread with the Slack
+  MCP's `slack_read_thread` (prefix `mcp__slack__` or `mcp__claude_ai_Slack__`
+  depending on your tool list). Extract the relevant decision, question, or
   design reference and summarise it. Note date and channel. See the
   `slack-mcp` skill for URL parsing and tool usage.
 - **`github.com` link** (PR or issue URL) → fetch with the **`gh` CLI** via
@@ -195,7 +198,8 @@ Apply the same external-link rules as for the parent:
   - PR URL → `gh pr view <number> --repo <owner>/<repo> --json title,state,body,url`
   - Issue URL → `gh issue view <number> --repo <owner>/<repo> --json title,state,body,url`
   - Record title, state, and any Figma/Notion links found in the body.
-- **`figma.com` link** → fetch metadata with `mcp__figma__get_metadata`. A
+- **`figma.com` link** → fetch metadata with `get_metadata` (prefix
+  `mcp__figma__` or `mcp__claude_ai_Figma__` depending on your tool list). A
   design found one hop away in a linked ticket is a **found design** — credit it
   to the parent card.
 

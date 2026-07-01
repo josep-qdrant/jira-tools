@@ -20,8 +20,11 @@ design data — you never create or edit a file, frame, or comment.
 ## MCP server key
 
 The Figma MCP server is connected in your AI client (see
-[docs/SETUP.md](../../../docs/SETUP.md#mcp-servers)); its tools appear as
-`mcp__figma__<tool_name>` in the agent context.
+[docs/SETUP.md](../../../docs/SETUP.md#mcp-servers)). Depending on how it's
+connected, its tools appear either as `mcp__figma__<tool_name>` or as
+`mcp__claude_ai_Figma__<tool_name>` (the claude.ai account-connector naming) —
+use whichever prefix is actually present on your tool list; the examples below
+use the short form, substitute your actual prefix.
 
 ## Step 1 — Existence check (every figma.com link)
 

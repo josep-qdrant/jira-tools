@@ -29,6 +29,7 @@ register → read → extract → feed the card and the DoR**.
    `notion` MCP server: `notion-fetch` (page/database by URL or ID),
    `notion-search` (when you only have a title), `notion-get-comments` (open
    questions / discussion). **Never** call create/update/move/duplicate tools.
+   (See the namespacing gotcha below for the actual tool prefix.)
 2. **Don't invent.** If a page can't be fetched (no access, not found), record
    it as *"linked but not readable"* — never guess its content.
 3. **Cite the source.** Everything extracted from Notion goes into the card
@@ -116,9 +117,11 @@ extracted takeaways, and any discrepancies. Then adjust the audit:
   and don't upgrade to ✅ (you couldn't verify it).
 - **Notion pages drift from tickets.** Always capture last-edited vs ticket
   updated; a stale doc is a finding, not background noise.
-- **Tool namespacing:** under Claude Code the server key is `notion`, so tools
-  appear as `mcp__notion__notion-fetch`, `mcp__notion__notion-search`,
-  `mcp__notion__notion-get-comments`.
+- **Tool namespacing:** depending on how the server is connected, tools appear
+  either as `mcp__notion__notion-fetch` / `notion-search` / `notion-get-comments`
+  or as `mcp__claude_ai_Notion__notion-fetch` / `notion-search` /
+  `notion-get-comments` (the claude.ai account-connector naming) — use whichever
+  prefix is actually present on your tool list.
 - **Don't paste whole pages into the card.** Extract the six items from Step 3;
   link the rest.
 

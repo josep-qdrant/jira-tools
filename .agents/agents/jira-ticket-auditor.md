@@ -16,7 +16,7 @@ description: >-
   Definition of Ready verdict. This is for PRODUCT/BACKLOG tickets — for inbound
   support/customer ticket triage use a different workflow. Read-only on Jira:
   never creates, edits, or transitions issues. Feeds jira-backlog-synthesizer.
-tools: Read, Write, Edit, Bash, Grep, Glob, mcp__claude_ai_Atlassian__getAccessibleAtlassianResources, mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql, mcp__claude_ai_Atlassian__getJiraIssue, mcp__claude_ai_Atlassian__getJiraIssueRemoteIssueLinks, mcp__figma__get_metadata, mcp__figma__get_screenshot, mcp__figma__get_design_context, mcp__figma__get_variable_defs, mcp__figma__get_code_connect_map, mcp__notion__notion-search, mcp__notion__notion-fetch, mcp__notion__notion-get-comments, mcp__slack__slack_read_thread, mcp__slack__slack_read_channel, mcp__slack__slack_search_public, mcp__slack__slack_search_public_and_private
+tools: Read, Write, Edit, Bash, Grep, Glob, mcp__claude_ai_Atlassian__getAccessibleAtlassianResources, mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql, mcp__claude_ai_Atlassian__getJiraIssue, mcp__claude_ai_Atlassian__getJiraIssueRemoteIssueLinks, mcp__claude_ai_Figma__get_metadata, mcp__claude_ai_Figma__get_screenshot, mcp__claude_ai_Figma__get_design_context, mcp__claude_ai_Figma__get_variable_defs, mcp__claude_ai_Figma__get_code_connect_map, mcp__claude_ai_Notion__notion-search, mcp__claude_ai_Notion__notion-fetch, mcp__claude_ai_Notion__notion-get-comments, mcp__claude_ai_Slack__slack_read_thread, mcp__claude_ai_Slack__slack_read_channel, mcp__claude_ai_Slack__slack_search_public, mcp__claude_ai_Slack__slack_search_public_and_private
 model: sonnet
 ---
 
@@ -80,7 +80,9 @@ before extracting.
    See the `obsidian-vault` skill.
 9. **Open the linked Notion docs (read-only).** Whenever a ticket carries a
    `notion.so` link (the AC field is frequently just a Notion link), fetch it
-   with `mcp__notion__notion-fetch` and extract requirements/AC, recorded
+   with `notion-fetch` (`mcp__claude_ai_Notion__` prefix in this environment,
+   or `mcp__notion__` if that's what your tool list shows) and extract
+   requirements/AC, recorded
    decisions, open questions, embedded Figma links and freshness; register every
    link in the Notion coverage registry and add the `## Notion context` section
    to the card. Set `notion: read | unreadable | none` in frontmatter. Externalized
@@ -90,7 +92,9 @@ before extracting.
     issue-link targets, and Jira-pointing remote links. Populate `subtasks:` and
     `linked_issues:` in frontmatter immediately. For each linked ticket (up to ~8),
     fetch it and run the same five-place design hunt. Follow any `slack.com`
-    thread URLs with `mcp__slack__slack_read_thread` (see `slack-mcp` skill).
+    thread URLs with `slack_read_thread` (`mcp__claude_ai_Slack__` prefix in
+    this environment, or `mcp__slack__` if that's what your tool list shows —
+    see `slack-mcp` skill).
     Follow `github.com` PR/issue URLs via Bash using the `gh` CLI (see `gh-cli`
     skill — requires `gh auth login`). Summarise findings in the
     `## Linked-ticket context` table. Set `child_context: full | partial | none`.

@@ -82,10 +82,10 @@ Read-only on Jira. Do, in order:
 3. Fetch its remote links with getJiraIssueRemoteIssueLinks — Figma usually hides here.
 4. Collect the linked Jira keys (subtasks + issuelinks + any *.atlassian.net/browse/ remote links), dedupe, skip ${key}, cap at 8. Fetch each (ADF) and list its design/Notion/Slack/GitHub URLs. Do NOT recurse beyond one hop.
 5. Extract EVERY external URL (figma.com, notion.so, slack.com, github.com) from ${key} and its linked tickets, and fetch each verbatim:
-   - notion.so → mcp__notion__notion-fetch the page; quote the requirements/AC, decisions, open questions.
-   - slack.com → mcp__slack__slack_read_thread (channel id + thread_ts from the URL); quote the relevant messages.
+   - notion.so → notion-fetch the page (mcp__claude_ai_Notion__ or mcp__notion__ prefix, whichever is on your tool list); quote the requirements/AC, decisions, open questions.
+   - slack.com → slack_read_thread (mcp__claude_ai_Slack__ or mcp__slack__ prefix; channel id + thread_ts from the URL); quote the relevant messages.
    - github.com → \`gh pr view <n> --repo <owner>/<repo> --json title,state,body,url\` (or \`gh issue view\`) via Bash; quote title/state/body.
-   - figma.com → mcp__figma__get_metadata.
+   - figma.com → get_metadata (mcp__claude_ai_Figma__ or mcp__figma__ prefix).
    Mark anything unreachable as "unreadable".
 6. Write ALL of it VERBATIM (no analysis) to ${researchDir}/${key}-context.md with sections: \`## Jira fields\`, \`## Remote links\`, \`## Linked tickets\`, \`## Notion\`, \`## Slack\`, \`## GitHub\`, \`## Figma\`. Quote sources; this dump is the only thing the analysis stage reads, so be complete.
 
