@@ -78,7 +78,10 @@ well-captured risks. Note missing formal AC.>
 ## 2. UI / Design needs
 
 **Design reuse (code `<ui-repo>`):** <FULL / PARTIAL / NONE> — <what already
-exists vs. what's new>.
+exists vs. what's new>. <If FULL/PARTIAL without a found Figma — including
+when you're not fully certain the pattern covers it — say "deduced from
+`<cited pattern/component>`, no Figma found" and add a matching 🔎 row +
+Deductions-to-verify line in the DoR block; don't mark it ✅.>
 
 **Design / Figma:** <Yes/No> — <where you looked across the five places; what
 was found. If "No": design fields empty, no design attachments, 0 remote links.>

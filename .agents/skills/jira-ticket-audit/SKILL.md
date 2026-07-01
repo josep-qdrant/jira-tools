@@ -248,8 +248,11 @@ identification confidence. To do this well:
 For UI tickets, also classify design effort by what the code already supports —
 **Extrapolable** (a pattern/component already exists; reuse it, no new Figma),
 **Partial** (reuses most; only one new sub-part needs a design decision), or
-**New design** (no analogous pattern). This is what tells you a missing Figma
-isn't actually a blocker. See `references/code-identification.md`.
+**New design** (no analogous pattern, confidently). This is what tells you a
+missing Figma isn't actually a blocker. When you're genuinely unsure which
+level applies, default to Extrapolable/Partial (🔎 deduced), never New design
+— see `references/design-link-hunt.md` for the exact rule and how to log the
+deduction. See `references/code-identification.md` for the code-side method.
 
 ## Step 5 — Write the audit card
 

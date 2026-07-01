@@ -66,3 +66,9 @@ While you're in the UI repo, classify each UI ticket as Extrapolable / Partial /
 New design (see `design-link-hunt.md`). Concretely, for an extrapolable ticket
 cite the existing component/pattern (e.g. a confirm-by-name dialog component) so
 the card can say "reuse this, no new Figma" instead of "design missing".
+
+If the match is close but you're not certain it's the same, still call it
+Extrapolable/Partial (🔎 deduced) rather than New design — cite the closest
+pattern you found even though you're not 100% sure, and let the DoR
+"Deductions to verify" line carry the uncertainty. Only call it New design
+when you've checked and confidently found nothing analogous.

@@ -57,11 +57,44 @@ ticket into one of three levels by inspecting the UI repo:
 |-------|---------|--------|
 | **Extrapolable** | The pattern/component already exists; reuse or extend it. | No new Figma. Link the component/pattern to reuse in the ticket. |
 | **Partial** | Reuses most existing patterns; only one new sub-part needs a design decision. | Light, targeted design for just the new sub-part. |
-| **New design** | No analogous pattern exists. | Reserve real design/Figma effort here. |
+| **New design** | No analogous pattern exists, **confidently** (see below for the unsure case). | Reserve real design/Figma effort here. |
 
 This turns "0/11 have Figma" (alarming) into "only 3/11 actually need new
 design" (actionable). Do the classification in Step 4 of the skill (code
 identification) and carry it into both the card and the synthesis design review.
+
+### When you're not sure which level applies — default to deducible
+
+The classification is itself a judgment call, and the call matters: labeling
+something "New design" when it's actually a small variation of an existing
+pattern overstates the gap and makes a ready-ish ticket look blocked on
+design when it isn't. The default runs toward "has design", not toward
+"missing":
+
+- **Confidently deducible** — a clear analogous pattern exists → **Extrapolable**
+  (or **Partial** if only part of it matches).
+- **Genuinely unsure** — something similar exists but you can't tell if it's
+  close enough to actually cover the ask → **still Extrapolable/Partial, not
+  New design.** Doubt resolves toward "deducible", never toward "missing".
+- **Confidently NOT deducible** — you checked the UI repo and no analogous
+  pattern exists anywhere → **New design.** This is the only case that counts
+  as a real design gap.
+
+Either way it's a **deduction**, never a confirmed ✅ — see the
+`definition-of-ready` skill's Deduction rules (🔎, never ✅; log it; keep the
+verdict conditional). Its "confirm by" must name what would actually close
+the deduction, and for a design deduction that's always one of these two:
+
+- **More implementation detail** on what the ticket is really asking for —
+  the real scope might turn out bigger than the pattern covers.
+- **An explicit confirmation that it's "similar to" `<the cited existing
+  pattern or ticket>`** — someone (PM, designer, eng) saying so, not you
+  inferring it from the code alone.
+
+This changes the failure mode from "a small ask gets flagged as a big design
+gap" to "a real gap gets marked provisionally fine, but visibly unconfirmed
+and cited" — the second is cheaper to be wrong about, because the card still
+says so and names exactly what would confirm or overturn it.
 
 When a Figma link **was** found but the classification is genuinely close
 (does it cover the whole flow, or just part of it?), don't guess from the

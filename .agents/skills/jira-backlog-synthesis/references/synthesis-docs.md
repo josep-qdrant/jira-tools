@@ -118,15 +118,22 @@ or a re-verified count.
   ticket itself had no direct design link. These are candidates for having the
   design link added to the parent.
 - **Per UI ticket** table: Issue · Score · `design_linked` · `design_source` ·
-  `design_reuse` (Extrapolable / Partial / New design).
+  `design_reuse` (Extrapolable / Partial / New design) · deduced or confirmed
+  (from the card's DoR criterion 5: 🔎 = deduced, ✅ = confirmed).
 - **Non-UI tickets** (`requires_ui: false`) — brief list confirming N/A.
 - **External-context coverage:**
   - Notion: X/N read (list unreadable) · Slack: X/N read · GitHub: X/N read.
   - Linked tickets: X/N hunted; signals found via linked tickets only.
   - Notion↔Jira discrepancies (from cards' `## Notion context`) — list any bold alerts.
-- **Design-effort summary** — the Extrapolable/Partial/New-design split.
+- **Design-effort summary** — the Extrapolable/Partial/New-design split, AND
+  within Extrapolable/Partial, how many are 🔎 deduced (no Figma found, judged
+  from code — possibly under some doubt) vs. ✅ confirmed. A quarter leaning
+  heavily on 🔎 deductions is lower-risk than one with real New-design gaps,
+  but it's still an open list, not a closed one — say so, don't round it up to
+  "ready".
 - **Recommendation** — don't block extrapolable ones; reserve design effort for
-  new-design tickets; the UI Definition of Ready rule.
+  new-design tickets; list the 🔎 deductions that most need a human
+  confirmation pass; the UI Definition of Ready rule.
 
 ## 07_CODE_REVIEW.md
 
@@ -135,7 +142,10 @@ or a re-verified count.
 - One-sentence result (the 5/3/3 split).
 - **Classification table** (Extrapolable / Partial / New design → issues).
 - **Per-issue detail**, grouped by level, **citing real file/component paths**
-  found in the repo.
+  found in the repo, and flagging whether the match is a confident citation
+  or a deduction made under some doubt (see `design-link-hunt.md`'s
+  default-to-deducible rule) — the doubtful ones are exactly what "confirm
+  the paths" below should prioritize.
 - **Recommendations** + a note that the owning team should confirm the paths.
 
 ## 08_TICKETS_BY_PROJECT.md
