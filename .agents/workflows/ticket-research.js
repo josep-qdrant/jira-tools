@@ -10,7 +10,12 @@ export const meta = {
 }
 
 // ─── args — the human picks the tickets; the run cannot pause to ask ─────────
-const a = args || {}
+// args sometimes arrives as a JSON-encoded string instead of an object (seen
+// in practice) — tolerate that instead of silently reading .outputFolder off a string.
+let a = args || {}
+if (typeof a === 'string') {
+  try { a = JSON.parse(a) } catch (e) { a = {} }
+}
 const keys = (Array.isArray(a.keys) ? a.keys : (a.key ? [a.key] : []))
   .map(k => String(k).trim().toUpperCase()).filter(Boolean)
 const outputFolder = a.outputFolder
@@ -18,12 +23,12 @@ const reposRoot = a.reposRoot || null
 const escalateEnabled = a.escalate !== false // default on
 
 if (!outputFolder) {
-  log('ERROR: args.outputFolder is required. Aborting before touching Jira.')
-  return { error: 'missing-output-folder', hint: 'Invoke with args: { keys: ["ABC-1","ABC-2"], outputFolder, reposRoot?, escalate? }' }
+  log(`ERROR: args.outputFolder is required. Aborting before touching Jira. Received args: ${JSON.stringify(args)}`)
+  return { error: 'missing-output-folder', hint: 'Invoke with args: { keys: ["ABC-1","ABC-2"], outputFolder, reposRoot?, escalate? }', argsReceived: args }
 }
 if (!keys.length) {
-  log('ERROR: args.keys (or args.key) is required — this workflow researches SPECIFIC tickets, not a whole backlog.')
-  return { error: 'missing-keys', hint: 'Pass keys: ["ABC-123", ...]. For a whole backlog use the backlog-audit workflow.' }
+  log(`ERROR: args.keys (or args.key) is required — this workflow researches SPECIFIC tickets, not a whole backlog. Received args: ${JSON.stringify(args)}`)
+  return { error: 'missing-keys', hint: 'Pass keys: ["ABC-123", ...]. For a whole backlog use the backlog-audit workflow.', argsReceived: args }
 }
 
 const researchDir = `${outputFolder}/_research`

@@ -13,16 +13,22 @@ export const meta = {
 
 // ─── args (the human launching this provides the scope; the pipeline cannot
 //     pause to ask mid-run, so unconfirmed scope must come in here) ──────────
-const a = args || {}
+// args sometimes arrives as a JSON-encoded string instead of an object (seen
+// in practice) — tolerate that instead of silently reading .outputFolder off a string.
+let a = args || {}
+if (typeof a === 'string') {
+  try { a = JSON.parse(a) } catch (e) { a = {} }
+}
 const outputFolder = a.outputFolder
 const batchSize = Math.max(1, Math.floor(Number(a.batchSize) || 3)) // clamp: chunk() infinite-loops on 0/negative
 const reposRoot = a.reposRoot || null
 
 if (!outputFolder) {
-  log('ERROR: args.outputFolder is required. Aborting before touching Jira.')
+  log(`ERROR: args.outputFolder is required. Aborting before touching Jira. Received args: ${JSON.stringify(args)}`)
   return {
     error: 'missing-output-folder',
     hint: 'Invoke with args: { outputFolder, project?, board?, team?, buckets?, reposRoot?, batchSize? }',
+    argsReceived: args,
   }
 }
 

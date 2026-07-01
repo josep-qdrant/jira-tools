@@ -11,7 +11,7 @@ description: >-
   counts), the field map, and the verified scoring model — the foundation the
   auditor and synthesizer depend on. Strictly read-only on Jira: it never creates,
   edits, or transitions issues. Hand off its output to jira-ticket-auditor.
-tools: Read, Write, Bash, Grep, Glob, mcp__atlassian__getAccessibleAtlassianResources, mcp__atlassian__getVisibleJiraProjects, mcp__atlassian__getJiraProjectIssueTypesMetadata, mcp__atlassian__searchJiraIssuesUsingJql, mcp__atlassian__getJiraIssue, mcp__atlassian__lookupJiraAccountId
+tools: Read, Write, Bash, Grep, Glob, mcp__claude_ai_Atlassian__getAccessibleAtlassianResources, mcp__claude_ai_Atlassian__getVisibleJiraProjects, mcp__claude_ai_Atlassian__getJiraProjectIssueTypesMetadata, mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql, mcp__claude_ai_Atlassian__getJiraIssue, mcp__claude_ai_Atlassian__lookupJiraAccountId
 model: sonnet
 ---
 

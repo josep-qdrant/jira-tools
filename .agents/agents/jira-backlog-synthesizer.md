@@ -13,7 +13,7 @@ description: >-
   methodology + scoring write-up, the design and code-reuse reviews, the
   tickets-by-project matrix, an index, and a read-only actions-audit report.
   Read-only on Jira: only re-queries to re-verify counts; never writes to Jira.
-tools: Read, Write, Edit, Bash, Grep, Glob, mcp__atlassian__searchJiraIssuesUsingJql, mcp__atlassian__getJiraIssue
+tools: Read, Write, Edit, Bash, Grep, Glob, mcp__claude_ai_Atlassian__getAccessibleAtlassianResources, mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql, mcp__claude_ai_Atlassian__getJiraIssue
 model: sonnet
 ---
 

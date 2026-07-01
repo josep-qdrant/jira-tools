@@ -10,7 +10,7 @@ description: >-
   so the bulk, mechanical I/O of an audit runs on the cheap retrieval tier
   (Haiku) instead of the reasoning tier. Read-only on Jira: never creates,
   edits, transitions, or comments. Feeds jira-ticket-auditor.
-tools: Read, Write, Bash, mcp__atlassian__getJiraIssue, mcp__atlassian__getJiraIssueRemoteIssueLinks, mcp__notion__notion-fetch, mcp__slack__slack_read_thread, mcp__figma__get_metadata
+tools: Read, Write, Bash, mcp__claude_ai_Atlassian__getAccessibleAtlassianResources, mcp__claude_ai_Atlassian__getJiraIssue, mcp__claude_ai_Atlassian__getJiraIssueRemoteIssueLinks, mcp__notion__notion-fetch, mcp__slack__slack_read_thread, mcp__figma__get_metadata
 model: haiku
 ---
 

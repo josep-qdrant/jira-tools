@@ -15,9 +15,12 @@ description: >-
 
 The backlog audit talks to Jira (and occasionally Confluence) through the
 **official Atlassian MCP server**, connected in your AI client (see
-[docs/SETUP.md](../../../docs/SETUP.md#mcp-servers)). Its tools appear as
-`mcp__atlassian__<tool>` in the agent context. This file is the reference for
-*how* to call them; for *what* to query and why, see **jira-backlog-scoping**.
+[docs/SETUP.md](../../../docs/SETUP.md#mcp-servers)). Depending on how it's
+connected, its tools appear either as `mcp__atlassian__<tool>` or as
+`mcp__claude_ai_Atlassian__<tool>` (the claude.ai account-connector naming) —
+use whichever prefix is actually present on your tool list; the operations
+below are identical either way. This file is the reference for *how* to call
+them; for *what* to query and why, see **jira-backlog-scoping**.
 
 ## Read-only ground rule
 
@@ -27,18 +30,25 @@ only the read tools below. Never call `createJiraIssue`, `editJiraIssue`,
 `updateConfluencePage`, or any other write — the only writes the session makes
 are markdown files on disk.
 
+## cloudId first
+
+Every other call below requires a `cloudId`. Call
+`getAccessibleAtlassianResources` once at the start of a session/run, grab the
+Jira site's cloud ID from the result, and pass it to every subsequent call.
+
 ## The read tools you actually use
 
 **Jira:**
 
 | Tool | Use for |
 |------|---------|
-| `mcp__atlassian__searchJiraIssuesUsingJql` | Build the scope; pull a key+summary list. |
-| `mcp__atlassian__getJiraIssue` | Full field values for one issue (custom fields, ADF). |
-| `mcp__atlassian__getJiraIssueRemoteIssueLinks` | Remote/web links — **where Figma usually hides**. |
-| `mcp__atlassian__getJiraProjectIssueTypesMetadata` | Issue types in a project. |
-| `mcp__atlassian__getVisibleJiraProjects` | Confirm project key/access. |
-| `mcp__atlassian__lookupJiraAccountId` | Resolve a display name to an account ID. |
+| `getAccessibleAtlassianResources` | Resolve the `cloudId` — call first, once. |
+| `searchJiraIssuesUsingJql` | Build the scope; pull a key+summary list. |
+| `getJiraIssue` | Full field values for one issue (custom fields, ADF). |
+| `getJiraIssueRemoteIssueLinks` | Remote/web links — **where Figma usually hides**. |
+| `getJiraProjectIssueTypesMetadata` | Issue types in a project. |
+| `getVisibleJiraProjects` | Confirm project key/access. |
+| `lookupJiraAccountId` | Resolve a display name to an account ID. |
 
 **Confluence (rarely needed):** `getConfluencePage`, `searchConfluenceUsingCql`,
 `getPagesInConfluenceSpace`, `getConfluencePageFooterComments`.

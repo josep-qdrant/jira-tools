@@ -16,7 +16,7 @@ description: >-
   Definition of Ready verdict. This is for PRODUCT/BACKLOG tickets — for inbound
   support/customer ticket triage use a different workflow. Read-only on Jira:
   never creates, edits, or transitions issues. Feeds jira-backlog-synthesizer.
-tools: Read, Write, Edit, Bash, Grep, Glob, mcp__atlassian__searchJiraIssuesUsingJql, mcp__atlassian__getJiraIssue, mcp__atlassian__getJiraIssueRemoteIssueLinks, mcp__figma__get_metadata, mcp__figma__get_screenshot, mcp__figma__get_design_context, mcp__figma__get_variable_defs, mcp__figma__get_code_connect_map, mcp__notion__notion-search, mcp__notion__notion-fetch, mcp__notion__notion-get-comments, mcp__slack__slack_read_thread, mcp__slack__slack_read_channel, mcp__slack__slack_search_public, mcp__slack__slack_search_public_and_private
+tools: Read, Write, Edit, Bash, Grep, Glob, mcp__claude_ai_Atlassian__getAccessibleAtlassianResources, mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql, mcp__claude_ai_Atlassian__getJiraIssue, mcp__claude_ai_Atlassian__getJiraIssueRemoteIssueLinks, mcp__figma__get_metadata, mcp__figma__get_screenshot, mcp__figma__get_design_context, mcp__figma__get_variable_defs, mcp__figma__get_code_connect_map, mcp__notion__notion-search, mcp__notion__notion-fetch, mcp__notion__notion-get-comments, mcp__slack__slack_read_thread, mcp__slack__slack_read_channel, mcp__slack__slack_search_public, mcp__slack__slack_search_public_and_private
 model: sonnet
 ---
 
