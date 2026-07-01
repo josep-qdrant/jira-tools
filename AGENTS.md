@@ -36,8 +36,10 @@ Each skill carries its own steps and gotchas — invoke it for the detail.
 - `writing-style` — how output reads: human, concise, TL;DR-first, no repetition.
 - `jira-notion-context` — read Notion docs linked from tickets (Step 3b).
 - `atlassian-mcp` — read-only Jira / Confluence MCP plumbing.
-- `slack-mcp` / `gh-cli` — read Slack threads / GitHub PRs linked from tickets.
-- `sprint-planning` — sprint plan after an audit. `ticket-triage` — inbound support.
+- `slack-mcp` / `gh-cli` / `figma-mcp` — read Slack threads / GitHub PRs / Figma
+  designs linked from tickets.
+- `sprint-planning` — sprint plan after an audit. `ticket-triage` — inbound support
+  (both draft-only — see their skills' read-only/draft-only note).
 
 ## Models
 

@@ -14,6 +14,18 @@ Examples:
 - `/ticket-triage User can't connect their SSO — getting a 403 error on the callback URL`
 - `/ticket-triage Feature request: they want to export reports as PDF`
 
+## Read-only / draft-only
+
+This skill never creates, links, comments on, or sends anything by itself.
+Everything it produces — the category/priority call, the routing
+recommendation, the duplicate link, the suggested initial response — is a
+**draft for a human to review and execute**, not an automatic action. "Link
+the new ticket to the existing one" (Duplicate Detection) and "Notify the
+customer" (auto-response templates) describe what the human reviewer does
+next, not a tool call this skill makes on its own. If you only have
+write-capable tools connected (no read-only-scoped agent), treat this as a
+hard boundary, not an assumption the tooling will catch for you.
+
 ## Workflow
 
 ### 1. Parse the Issue

@@ -44,6 +44,7 @@ at "link exists" — follow it:
 | `slack.com/archives/…` | Read the thread; extract decisions, design links, open questions. Note channel and date. | `mcp__slack__slack_read_thread` — see `slack-mcp` skill for URL parsing |
 | `github.com/…/pull/N` | Fetch PR title, state, body; look for Figma/Notion links inside the body. | `gh pr view N --repo owner/repo --json title,state,body,url` via Bash — see `gh-cli` skill |
 | `github.com/…/issues/N` | Fetch issue title, state, body. | `gh issue view N --repo owner/repo --json title,state,body,url` via Bash — see `gh-cli` skill |
+| `figma.com/…` found inside a Slack thread, PR body, or Notion doc | Confirm it resolves and credit it as a found design — same as a Figma link found directly on the ticket. | `mcp__figma__get_metadata` — see `figma-mcp` skill |
 | Any Jira key (`ABC-NNN`) | Collect for Step 3c recursion — don't follow inline. | — |
 
 ## A missing Figma is not automatically a blocker
@@ -61,6 +62,13 @@ ticket into one of three levels by inspecting the UI repo:
 This turns "0/11 have Figma" (alarming) into "only 3/11 actually need new
 design" (actionable). Do the classification in Step 4 of the skill (code
 identification) and carry it into both the card and the synthesis design review.
+
+When a Figma link **was** found but the classification is genuinely close
+(does it cover the whole flow, or just part of it?), don't guess from the
+ticket text alone — pull the design itself via the `figma-mcp` skill's
+verification step (`get_screenshot` / `get_design_context`) and check it
+against the code-side reuse assessment. Reserve this for close calls; the
+existence check alone is enough for most tickets.
 
 ## Definition-of-Ready implication
 

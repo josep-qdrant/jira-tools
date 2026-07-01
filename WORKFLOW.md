@@ -43,7 +43,8 @@ See **[USAGE.md](USAGE.md)** — the full list of what you can ask this repo to 
 
 | Agent | Model | Pipeline step | Writes to Jira? |
 |---|---|---|---|
-| `jira-backlog-scoper` | Sonnet | Step 1 of 3 | Never |
+| `jira-backlog-scoper` | Sonnet (Opus on escalation) | Step 1 of 3 | Never |
+| `jira-context-gatherer` | Haiku | Retrieval ahead of Step 2 (both workflows) | Never |
 | `jira-ticket-auditor` | Sonnet (Opus on escalation) | Step 2 of 3 | Never |
 | `jira-backlog-synthesizer` | Sonnet | Step 3 of 3 | Never |
 
@@ -60,8 +61,9 @@ Model tiering (Haiku retrieval · Sonnet reasoning · Opus escalation-only) is d
 | `jira-notion-context` | `jira-ticket-auditor`, `jira-backlog-synthesizer` | Never |
 | `obsidian-vault` | all output-writing skills (format) | Never |
 | `writing-style` | all output-writing skills (voice / TL;DR) | Never |
-| `slack-mcp` | `jira-ticket-auditor` (design hunt) | Never |
-| `gh-cli` | `jira-ticket-auditor` (design hunt) | Never |
-| `sprint-planning` | Main agent (standalone) | Never |
-| `ticket-triage` | Main agent (standalone) | Never |
+| `slack-mcp` | `jira-ticket-auditor`, `jira-context-gatherer` (design hunt) | Never |
+| `gh-cli` | `jira-ticket-auditor`, `jira-context-gatherer` (design hunt) | Never |
+| `figma-mcp` | `jira-ticket-auditor`, `jira-context-gatherer` (design hunt) | Never |
+| `sprint-planning` | Main agent (standalone, draft-only) | Never |
+| `ticket-triage` | Main agent (standalone, draft-only) | Never |
 | `atlassian-mcp` | `jira-backlog-scoper` (read-only plumbing) | Never |

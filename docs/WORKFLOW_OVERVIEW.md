@@ -10,8 +10,8 @@ The pipeline explained conceptually: what it does, what it reads, and the rules 
 
 ## Pipeline (three phases)
 
-1. **Scope** (`jira-backlog-scoping`) — build an explicit JQL scope, map `customfield_XXXXX` → readable labels, and deduce & verify the multiplicative RICE-style model: `Score = Impact × Confidence × Size factor`. Output: scope JQL, key list, field map, verified scoring model.
-2. **Audit** (`jira-ticket-audit`) — process tickets in small batches (~3): evaluate four axes (goal/scope clarity; UI/design need; size coherence with a recomputed Score; prioritization soundness), run the five-place design hunt, follow Notion/Slack/GitHub links (one hop for linked tickets), associate tickets to repos/code, and write one Obsidian card per ticket ending in a Definition-of-Ready block.
+1. **Scope** (`jira-backlog-scoping`) — build an explicit JQL scope, map `customfield_XXXXX` → readable labels, and deduce & verify the multiplicative RICE-style model: `Score = Impact × Confidence × Size factor`. Output: scope JQL, key list, field map, verified scoring model. If the scope boundary itself is genuinely contested, this phase self-flags for an Opus re-resolve rather than guessing.
+2. **Audit** (`jira-ticket-audit`) — process tickets in small batches (~3). When run via the `backlog-audit` workflow this splits into two model tiers: a **Gather** sub-stage (`jira-context-gatherer`, Haiku) fetches each ticket, its remote links, one hop of linked tickets, and any Notion/Slack/GitHub/Figma links, dumping it verbatim; then an **Analyze** sub-stage (`jira-ticket-auditor`, Sonnet) reads that dump and evaluates the four axes (goal/scope clarity; UI/design need; size coherence with a recomputed Score; prioritization soundness), runs the five-place design hunt, associates tickets to repos/code, and writes one Obsidian card per ticket ending in a Definition-of-Ready block. Run standalone (not via the workflow), the auditor does both retrieval and judgment itself.
 3. **Synthesize** (`jira-backlog-synthesis`) — roll the cards into the planning package: master table (Score re-verified), executive summary, cross-cutting findings, readiness plan grouped by DoR verdict, design & code reviews, tickets-by-project, and the actions audit proving read-only activity.
 
 You can run the full chain end-to-end or invoke a subagent per phase — see [backlog-audit](guides/backlog-audit.md) for the run modes.
@@ -21,12 +21,14 @@ You can run the full chain end-to-end or invoke a subagent per phase — see [ba
 ```mermaid
 flowchart LR
   Jira["Jira backlog (issues)"] --> Scoper["jira-backlog-scoping\n(build JQL, map fields)"]
-  Scoper --> Auditor["jira-ticket-audit\n(per-ticket cards, design hunt)"]
+  Scoper --> Gatherer["jira-context-gatherer\n(haiku: fetch + dump raw context)"]
+  Gatherer --> Auditor["jira-ticket-audit\n(sonnet: per-ticket cards, design hunt)"]
   Auditor --> Synth["jira-backlog-synthesis\n(synthesize cards)"]
   Scoper -->|"scope file"| Output["Output folder\n(Obsidian vault)"]
   Auditor -->|"ticket cards"| Output
   Synth -->|"synthesis docs"| Output
-  Auditor --> Integrations["Notion / Figma / Slack / GitHub (reads)"]
+  Gatherer --> Integrations["Notion / Figma / Slack / GitHub (reads)"]
+  Auditor --> Integrations
   Scoper --> Codegraph["codegraph / local repos (optional)"]
 ```
 

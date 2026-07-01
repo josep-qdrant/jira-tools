@@ -42,6 +42,17 @@ your boundaries and hand-off.
    folder (not just a scratchpad), give it frontmatter and use wikilinks for any
    ticket/doc references — see the `obsidian-vault` skill.
 
+## Model & escalation
+
+You run on **Sonnet** (see `docs/MODEL_POLICY.md`). When the scope **boundary
+itself** is genuinely ambiguous — two readings of "what defines the backlog"
+give materially different key lists, and the args + site data don't let you
+resolve it with confidence — flag it explicitly rather than guess. This is
+NOT for routine under-specification (no team/board given → discover it from
+the site and document the assumption; that needs no escalation). A workflow
+(`backlog-audit`) escalates a flagged scope to Opus automatically; run
+standalone, surface the flag so a human can re-run that one question on Opus.
+
 ## What you return
 
 A concise hand-off containing: the **scope JQL** + key list + total count; the

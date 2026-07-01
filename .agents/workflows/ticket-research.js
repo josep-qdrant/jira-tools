@@ -3,7 +3,7 @@ export const meta = {
   description: 'Read-only deep research on specific Jira tickets (1–N keys): gather all context, analyse, write one dossier per ticket — model-tiered Haiku→Sonnet→Opus',
   whenToUse: 'Use when you want a deep dive on a few SPECIFIC tickets (not a whole backlog). Pass the keys in args. Cheaper and deeper than running the backlog-audit pipeline on a 1-ticket scope: Haiku gathers the context, Sonnet writes the dossier, Opus only re-judges a contested call.',
   phases: [
-    { title: 'Gather',   detail: 'haiku — fetch ticket + remote links + one-hop linked tickets + Notion/Slack/GitHub/Figma, dump raw context', model: 'haiku' },
+    { title: 'Gather',   detail: 'jira-context-gatherer, haiku — fetch ticket + remote links + one-hop linked tickets + Notion/Slack/GitHub/Figma, dump raw context', model: 'haiku' },
     { title: 'Analyze',  detail: 'sonnet — four-axis audit, design hunt, code association, DoR; write the research dossier', model: 'sonnet' },
     { title: 'Escalate', detail: 'opus — only the tickets Sonnet flagged as contested (low confidence / contested Score / epic)', model: 'opus' },
   ],
@@ -111,7 +111,7 @@ log(`Researching ${keys.length} ticket(s): ${keys.join(', ')} → ${outputFolder
 const results = await pipeline(
   keys,
   // Stage 1 — Gather (Haiku): cheap, parallel retrieval into a context dump.
-  (key) => agent(gatherPrompt(key), { agentType: 'jira-ticket-auditor', model: 'haiku', schema: GATHER_SCHEMA, phase: 'Gather', label: `gather:${key}` }),
+  (key) => agent(gatherPrompt(key), { agentType: 'jira-context-gatherer', model: 'haiku', schema: GATHER_SCHEMA, phase: 'Gather', label: `gather:${key}` }),
   // Stage 2 — Analyze (Sonnet): the dossier. Skip if gather died (no context).
   (g, key) => g
     ? agent(analyzePrompt(g, key), { agentType: 'jira-ticket-auditor', model: 'sonnet', schema: ANALYZE_SCHEMA, phase: 'Analyze', label: `analyze:${key}` })

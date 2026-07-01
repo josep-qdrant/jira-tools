@@ -26,7 +26,7 @@ Reads an entire team backlog, audits every ticket, and produces a full planning 
 
 ## A — One-command workflow (recommended)
 
-A single deterministic run of the whole pipeline — no manual chaining. Saved at [.agents/workflows/backlog-audit.js](../../.agents/workflows/backlog-audit.js) (exposed to Claude Code as `.claude/workflows/backlog-audit.js`). It runs scoper → auditor → synthesizer, fans the audit out over batches of ~3 tickets in parallel (all on Sonnet; only contested tickets get re-audited on Opus — see [model policy](../MODEL_POLICY.md)), and the phases hand off through files in the output folder.
+A single deterministic run of the whole pipeline — no manual chaining. Saved at [.agents/workflows/backlog-audit.js](../../.agents/workflows/backlog-audit.js) (exposed to Claude Code as `.claude/workflows/backlog-audit.js`). It runs scoper → gatherer → auditor → synthesizer: tickets are chunked into batches of ~3, and each batch flows Gather (Haiku — fetch + dump raw context) → Analyze (Sonnet — read the dump, judge, write the card) independently, so a slow batch doesn't hold up a fast one. Only genuinely contested tickets (or a genuinely ambiguous scope) get escalated to Opus — see [model policy](../MODEL_POLICY.md). The phases hand off through files in the output folder.
 
 ```
 Run the backlog-audit workflow with args:
@@ -80,9 +80,13 @@ Invoke each subagent directly. They run independently, each with a model tuned f
 /agent jira-backlog-scoper
 Scope the backlog for board 267, team "Cloud Regions & Clusters". Save to refinement-PM-2026-Q3.
 
-# Phase 2 (after phase 1 completes)
+# Phase 1.5 (optional, after phase 1 completes) — cheap retrieval before judgment
+/agent jira-context-gatherer
+Gather raw context for the scoped tickets in refinement-PM-2026-Q3 (scope note at refinement-PM-2026-Q3/_scope-handoff.md). Dump one file per ticket to refinement-PM-2026-Q3/_context/.
+
+# Phase 2 (after phase 1, or phase 1.5 if you ran it)
 /agent jira-ticket-auditor
-Audit all tickets from the scope in refinement-PM-2026-Q3. Save cards to refinement-PM-2026-Q3/tickets/.
+Audit all tickets from the scope in refinement-PM-2026-Q3. If context dumps exist in refinement-PM-2026-Q3/_context/, read them first instead of re-fetching. Save cards to refinement-PM-2026-Q3/tickets/.
 
 # Phase 3 (after phase 2 completes)
 /agent jira-backlog-synthesizer
@@ -95,7 +99,7 @@ Synthesize the audit cards in refinement-PM-2026-Q3/tickets/ into the full plann
 @jira-backlog-scoper Scope board 267 for team "Cloud Regions & Clusters"
 ```
 
-All three default to **Sonnet**. Run standalone, an agent can't self-escalate — it flags a contested call so you can re-run that one question on Opus. (Inside the workflow, escalation is automatic.)
+Scoper, auditor, and synthesizer default to **Sonnet**; the gatherer defaults to **Haiku** (it has no judgment to escalate, so it never moves off Haiku). Run standalone, scoper/auditor can't self-escalate — they flag a contested call so you can re-run that one question on Opus. (Inside the workflow, escalation is automatic.) Phase 1.5 is optional here — skip it and the auditor just fetches everything itself, same as before.
 
 ---
 
@@ -154,7 +158,7 @@ Produce the full synthesis package.
 
 ## Tips
 
-- **Batching is expected.** The auditor processes ~3 tickets at a time to avoid token limits.
+- **Batching is expected.** Each batch of ~3 tickets is fetched (Haiku) then judged (Sonnet) to avoid token limits and keep the bulk of the I/O on the cheap tier.
 - **No design link → the card says so.** The agent never invents a Figma/Notion link. `Not recorded` is a refinement signal.
 - **Code association needs `reposRoot`** (workflow) or `QDRANT_REPOS_ROOT` in `AGENTS.local.md` (conversational). Without it, cards record code association as "not available".
 - **Re-verify counts.** Synthesis recounts every frontmatter total with `rg`/`grep` before asserting — so should you if you edit cards by hand.

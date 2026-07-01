@@ -98,12 +98,17 @@ One subagent per phase, each hands off via files. See [backlog-audit → mode C]
 /agent jira-backlog-scoper
 Scope the backlog for board [BOARD ID], team "[TEAM NAME]". Save to [OUTPUT FOLDER].
 
+/agent jira-context-gatherer
+Gather raw context for the scoped tickets in [OUTPUT FOLDER] (scope note at [OUTPUT FOLDER]/_scope-handoff.md). Dump one file per ticket to [OUTPUT FOLDER]/_context/.
+
 /agent jira-ticket-auditor
-Audit all tickets from the scope in [OUTPUT FOLDER]. Save cards to [OUTPUT FOLDER]/tickets/.
+Audit all tickets from the scope in [OUTPUT FOLDER]. If context dumps exist in [OUTPUT FOLDER]/_context/, read them first instead of re-fetching. Save cards to [OUTPUT FOLDER]/tickets/.
 
 /agent jira-backlog-synthesizer
 Synthesize the audit cards in [OUTPUT FOLDER]/tickets/ into the full planning package.
 ```
+
+The gatherer step is optional — skip it and the auditor fetches everything itself, same as before.
 
 VS Code Copilot variant: `@jira-backlog-scoper Scope board [BOARD ID] for team "[TEAM NAME]"`
 

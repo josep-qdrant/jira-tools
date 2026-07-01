@@ -111,7 +111,11 @@ found), and the missing-asset checklist. See `references/design-link-hunt.md`.
 When the hunt surfaces a `slack.com` URL (thread or channel link), fetch the
 thread with `mcp__slack__slack_read_thread` and note the relevant content (see
 `slack-mcp` skill). When it surfaces a `github.com` URL, fetch the PR or issue
-with the `gh` CLI via Bash (see `gh-cli` skill).
+with the `gh` CLI via Bash (see `gh-cli` skill). When it surfaces a
+`figma.com` URL, confirm it resolves with `mcp__figma__get_metadata` (see
+`figma-mcp` skill); only pull the screenshot/design-context when the
+Extrapolable/Partial/New-design call is genuinely close, not as a default
+step.
 
 ## Step 3b — Open & extract the linked Notion context
 
@@ -370,6 +374,13 @@ resolve cleanly.
   link before judging DoR criterion 2.
 - **`writing-style`** — how the card *reads*: human, brief, concise, no
   repetition, TL;DR-first. `obsidian-vault` owns the format; this owns the voice.
+- **`figma-mcp`** — owns Figma MCP usage during the design hunt (Step 3/3c):
+  the existence check every Figma link gets, and the screenshot/design-context
+  verification reserved for close design-effort classification calls.
+- **`jira-context-gatherer`** (agent) — when run inside a workflow, this agent
+  does the retrieval portions of Steps 1, 3, 3b, 3c on the cheap tier and
+  hands you a context dump to read first; you do the judgment (Steps 2, 4, 5).
+  Standalone, you do both yourself.
 
 ## Reference files
 

@@ -8,6 +8,15 @@ argument-hint: "[sprint name or date range]"
 
 Plan a sprint by scoping work, estimating capacity, and setting clear goals.
 
+## Read-only / draft-only
+
+This skill never writes to a connected tracker, calendar, or chat tool by
+itself. Pulling the backlog, capacity, or PTO is a read. The output — the
+sprint plan, any "share the finished plan" step — is a **draft for a human to
+review and post/commit themselves**, not an automatic write. If you only have
+write-capable tools connected (no read-only-scoped agent), treat this as a
+hard boundary, not an assumption the tooling will catch for you.
+
 ## What it does
 
 Works standalone from what you paste or describe:

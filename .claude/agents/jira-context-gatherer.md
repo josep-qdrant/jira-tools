@@ -1,0 +1,1 @@
+../../.agents/agents/jira-context-gatherer.md
