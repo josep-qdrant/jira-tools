@@ -45,12 +45,20 @@ before extracting.
 
 ## Non-negotiable rules
 
+0. **Detect the audit unit first (Step 0).** Check each ticket's `issuetype`
+   (`.name`, `.description`, `.hierarchyLevel`). A leaf ticket (Story/Task/Bug)
+   gets rules 1–10 below. A grouping ticket (Objective/Milestone — description
+   "to group milestones"/"to group stories") skips straight to **Step 3d**:
+   discover its children via `parent = <key>` (never issuelinks/subtasks —
+   those miss this hierarchy), and write the lean roll-up card
+   (`assets/objective-milestone-card-template.md`) with one condensed
+   sprint-fit line per Milestone instead of the full four-axis card.
 1. **Read-only on Jira.** Your tools exclude every write — never create, edit,
    transition, or comment. The only writes are the markdown cards on disk.
 2. **Small batches.** Extract ~3 issues at a time with an explicit field list, in
    ADF (default) format — the markdown format truncates custom fields. Write each
    batch's cards before fetching the next; never accumulate raw issue data.
-3. **Audit on the four axes**, recompute the Score with a realistic size, and put
+3. **Leaf tickets: audit on the four axes**, recompute the Score with a realistic size, and put
    incoherences in **bold**. Hunt the design/Figma in all five places
    (design fields, attachments, description/AC, issue links, and especially
    **remote links** — use `getJiraIssueRemoteIssueLinks`). Set `design_linked`,

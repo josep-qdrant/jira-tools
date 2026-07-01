@@ -115,6 +115,15 @@ requirements / business-context field, the project's design-related fields
 field if the project has one, and Sprint. See `references/scoping-example.md`
 for a worked field map you can use as a template.
 
+**Also read `fields.issuetype` on that same representative issue** (`.name`,
+`.description`, `.hierarchyLevel`) — the same call, no extra fetch. If the
+description reads "to group milestones" or "to group stories" (a custom
+hierarchy above the base level: Objective/Milestone-style, `hierarchyLevel` ≥
+1), say so in the hand-off note. This determines which mode `jira-ticket-audit`
+uses downstream (full four-axis card vs. lean Objective/Milestone roll-up) —
+it doesn't change anything you do in this skill, but recording it here means
+the auditor doesn't have to re-derive it from scratch.
+
 ## Step 4 — Deduce and VERIFY the scoring model
 
 Most product backlogs use a **multiplicative RICE-style** Score:
@@ -146,6 +155,9 @@ Write a short working note (in the working folder or a scratchpad) capturing:
 2. The **field map** (customfield_XXXXX → label).
 3. The **verified scoring model**: the formula, the value mappings you
    confirmed, which issues reconcile, and which are "scoring incomplete".
+4. The **issue-type hierarchy** of the scoped tickets — leaf (Story/Task/Bug,
+   `hierarchyLevel: 0`) or grouping (Objective/Milestone, `hierarchyLevel` ≥ 1,
+   type description "to group milestones"/"to group stories"). One line.
 
 This note is the input to `jira-ticket-audit`. It also becomes the raw material
 for the methodology document that `jira-backlog-synthesis` produces — so be

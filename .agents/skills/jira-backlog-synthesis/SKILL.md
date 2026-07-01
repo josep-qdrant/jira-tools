@@ -9,12 +9,18 @@ description: >-
   the methodology + scoring-model write-up, the design/Figma coverage review, the
   code-reuse review, the tickets-by-project matrix, a thematic grouping that
   clusters tickets into logical themes/conceptual objectives, an index, and an
-  actions-audit report demonstrating that nothing in Jira was changed. Trigger
-  whenever someone wants to wrap up a backlog audit, generate an executive
-  summary or master table of a backlog, write quarter/sprint planning
-  recommendations from audited tickets, surface cross-cutting backlog findings,
-  group tickets by theme/topic so they can be tackled by conceptual objective,
-  or document that a Jira analysis touched nothing. Read-only on Jira — never
+  actions-audit report demonstrating that nothing in Jira was changed. When the
+  scope is Objective-type tickets (jira-ticket-audit wrote lean Objective/
+  Milestone roll-up cards, not full audit cards), produces a single condensed
+  Milestone Plan instead of the full package — see "Objective-scoped runs"
+  below; a real Objective→Milestone hierarchy already exists in Jira, so the
+  thematic-grouping inference and the other 9 docs would be redundant weight for
+  that scope. Trigger whenever someone wants to wrap up a backlog audit, generate
+  an executive summary or master table of a backlog, write quarter/sprint
+  planning recommendations from audited tickets, surface cross-cutting backlog
+  findings, group tickets by theme/topic so they can be tackled by conceptual
+  objective, work out which Milestones are ready for the next sprint, or
+  document that a Jira analysis touched nothing. Read-only on Jira — never
   writes. Part 3 of a 3-skill workflow (follows jira-backlog-scoping and
   jira-ticket-audit).
 ---
@@ -74,12 +80,63 @@ The exact structure of each document is in `references/synthesis-docs.md` — re
 it before writing. `assets/` holds copyable skeletons for the index and the
 actions-audit report.
 
+**This 10-doc-plus-actions-audit package is for leaf-ticket scopes** (the
+cards are the full Story/Task-level audit-card-template). See the next
+section for the alternate, much shorter package when the scope is
+Objective-type.
+
+### Objective-scoped runs: the Milestone Plan (condensed mode)
+
+When `jira-ticket-audit` wrote **lean roll-up cards** (Step 0 detected
+Objective/Milestone-type tickets — check a card's frontmatter: `objective:`
++ `milestones:` instead of `ticket:` + `dor:`), don't produce the 10-doc
+package above. It was sized for auditing individual Stories; running it over
+Objectives repeats content the roll-up cards already state concisely, and
+adds output (executive summary, cross-cutting findings, code review,
+tickets-by-project, thematic grouping…) that doesn't help the one decision
+this scope needs: **which Milestone is small/clear/unblocked enough to plan
+into the next 2-week sprint.** Notably, **09_THEMATIC_GROUPING's whole job —
+inferring conceptual objectives because no native field backs them — is moot
+here: the Objective/Milestone hierarchy is a real Jira field (`parent`), not
+an inference.**
+
+Write exactly **two** files instead — and keep `MILESTONE_PLAN.md` an
+**overview only**. The full reasoning for each Milestone (the "Sprint fit: …
+Needs: …" line) already lives in its Objective's roll-up card; restating it
+here would be the exact duplication this mode exists to cut. This doc's only
+job is: can I see everything at a glance, and can I click through to the one
+Milestone I care about?
+
+1. **`MILESTONE_PLAN.md`**:
+   - TL;DR: total Objectives, total Milestones, and the verdict split
+     (🟢/🟡/🔴) across all Milestones in scope. This is the whole "vision
+     general."
+   - **By Objective** — the entire body, **one line per Objective**: a
+     wikilink to its roll-up card, title, status, and then each of its
+     Milestones as `<verdict-emoji> [[Milestone-wikilink]]` — verdict and key
+     only, no reasoning text (that's one click away). Example:
+     `- [[PM-207-slug|PM-207]] Reduce k8s permissions (In Progress) — 🟡 [[ABC-118-slug|ABC-118]]`.
+     An Objective with zero Milestones gets its own line too: `— No Milestones
+     found`. **Nothing else in this document** — no separate sprint-candidates
+     list, no reason-grouped breakdown, no methodology section: the scope
+     JQL and field map already live in frontmatter and the scoping hand-off
+     note; don't restate them here.
+2. **`ACTIONS_AUDIT.md`** — unchanged, same as the leaf-ticket package (cheap,
+   and the read-only proof matters regardless of scope).
+
+Still **recount** the verdict split with `grep`/`rg` against the roll-up
+cards' frontmatter before asserting it, and still open with frontmatter +
+wikilinks per the `obsidian-vault` skill. Everything else in this
+skill — the ground rules, the "don't invent" / "verify" discipline, the
+final-verification checklist — applies unchanged; only the deliverable set
+shrinks.
+
 **Frontmatter (open every synthesis doc with it):**
 
 ```yaml
 ---
 title: "Master table"
-doc: master-table          # index | executive-summary | master-table | cross-cutting | plan | methodology | design-review | code-review | tickets-by-project | actions-audit
+doc: master-table          # index | executive-summary | master-table | cross-cutting | plan | methodology | design-review | code-review | tickets-by-project | actions-audit | milestone-plan
 team: "<team>"
 board: <NNN>
 project: <KEY>

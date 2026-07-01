@@ -35,8 +35,13 @@ Each skill carries its own steps and gotchas — invoke it for the detail.
 
 - `jira-backlog-scoping` — scope, JQL, field map, scoring formula.
 - `jira-ticket-audit` — per-ticket card, four-axis audit, design hunt, code link, DoR.
-- `jira-backlog-synthesis` — roll-up docs, master table, actions audit.
-- `definition-of-ready` — readiness verdict + 7-point checklist.
+  Auto-detects grouping tickets (Objective/Milestone, native `parent` hierarchy)
+  and switches to a lean roll-up instead — see its Step 0.
+- `jira-backlog-synthesis` — roll-up docs, master table, actions audit. For an
+  Objective-scoped run: one condensed `MILESTONE_PLAN.md` instead of the 10-doc
+  package.
+- `definition-of-ready` — readiness verdict + 7-point checklist; also the
+  Milestone sprint-fit call ("Applying DoR to a Milestone").
 - `obsidian-vault` — output format conventions for every deliverable on disk.
 - `writing-style` — how output reads: human, concise, TL;DR-first, no repetition.
 - `jira-notion-context` — read Notion docs linked from tickets (Step 3b).

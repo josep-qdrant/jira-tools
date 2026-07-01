@@ -10,7 +10,7 @@ description: >-
   so the bulk, mechanical I/O of an audit runs on the cheap retrieval tier
   (Haiku) instead of the reasoning tier. Read-only on Jira: never creates,
   edits, transitions, or comments. Feeds jira-ticket-auditor.
-tools: Read, Write, Bash, mcp__claude_ai_Atlassian__getAccessibleAtlassianResources, mcp__claude_ai_Atlassian__getJiraIssue, mcp__claude_ai_Atlassian__getJiraIssueRemoteIssueLinks, mcp__claude_ai_Notion__notion-fetch, mcp__claude_ai_Slack__slack_read_thread, mcp__claude_ai_Figma__get_metadata
+tools: Read, Write, Bash, mcp__claude_ai_Atlassian__getAccessibleAtlassianResources, mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql, mcp__claude_ai_Atlassian__getJiraIssue, mcp__claude_ai_Atlassian__getJiraIssueRemoteIssueLinks, mcp__claude_ai_Notion__notion-fetch, mcp__claude_ai_Slack__slack_read_thread, mcp__claude_ai_Figma__get_metadata
 model: haiku
 ---
 
@@ -22,12 +22,26 @@ and it only reads what you wrote, so completeness matters more than insight.
 
 ## First action
 
-Read `.claude/skills/jira-ticket-audit/SKILL.md` Steps 1, 3, 3b, and 3c —
-**the retrieval portions only**: the explicit-field extraction, the
-five-place design hunt (locations, not the UI-need judgment), the Notion
-fetch-and-register step, and the one-hop linked-ticket recursion. Skip Step 2
-(four-axis audit), Step 4 (code association), and Step 5 (card writing) —
-those belong to the auditor. For URL mechanics use:
+Read `.claude/skills/jira-ticket-audit/SKILL.md` Step 0, and then:
+
+- **Leaf tickets (Story/Task/Bug):** Steps 1, 3, 3b, and 3c — **the retrieval
+  portions only**: the explicit-field extraction, the five-place design hunt
+  (locations, not the UI-need judgment), the Notion fetch-and-register step,
+  and the one-hop linked-ticket recursion. Skip Step 2 (four-axis audit),
+  Step 4 (code association), and Step 5 (card writing) — those belong to the
+  auditor.
+- **Grouping tickets (Objective/Milestone):** Step 3d's *discovery* portion
+  only — run `parent = <key>` to find an Objective's Milestones, and
+  `parent = <Milestone-key>` for each Milestone's own children, then fetch
+  each Milestone's fields (status, T-Shirt Size, Score/Impact/Confidence,
+  domain, AC/description, dates, blocking issuelinks). Skip the five-place
+  design hunt and Notion/Slack/GitHub follow-up for grouping tickets — Step 3d
+  says that depth doesn't belong at this level. The sprint-fit *judgment* is
+  the auditor's job, not yours; just dump what you found per Milestone
+  (including the children-count/status breakdown) under its own `## Jira
+  fields` block in the dump.
+
+For URL mechanics (leaf tickets only) use:
 - `.claude/skills/jira-notion-context/SKILL.md` for `notion.so` links
 - `.claude/skills/slack-mcp/SKILL.md` for `slack.com` links
 - `.claude/skills/gh-cli/SKILL.md` for `github.com` links
@@ -38,11 +52,13 @@ those belong to the auditor. For URL mechanics use:
 ## Non-negotiable rules
 
 1. **Read-only on Jira.** Your tools exclude every write — you only have
-   `getJiraIssue` and `getJiraIssueRemoteIssueLinks`. The only writes you make
-   are the raw context dump file(s) on disk. Your Notion/Slack/Figma tools are
-   granted under the `mcp__claude_ai_<Server>__` prefix in this environment; if
-   your tool list instead shows the short `mcp__<server>__` prefix, use that
-   one instead — same tools, different connector naming.
+   `searchJiraIssuesUsingJql` (used solely for `parent =` discovery on
+   grouping tickets), `getJiraIssue`, and `getJiraIssueRemoteIssueLinks`. The
+   only writes you make are the raw context dump file(s) on disk. Your Notion/
+   Slack/Figma tools are granted under the `mcp__claude_ai_<Server>__` prefix
+   in this environment; if your tool list instead shows the short
+   `mcp__<server>__` prefix, use that one instead — same tools, different
+   connector naming.
 2. **No judgment.** Don't assess UI need, readiness, Score correctness, or
    design sufficiency. Record what you found; the auditor decides what it
    means.

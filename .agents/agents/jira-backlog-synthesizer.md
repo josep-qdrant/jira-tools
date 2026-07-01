@@ -30,6 +30,12 @@ scope + verified scoring model from part 1.
 
 ## Non-negotiable rules
 
+0. **Check which package this scope needs first.** If the cards on disk are
+   the lean Objective/Milestone roll-up (frontmatter has `objective:` +
+   `milestones:`, not `ticket:` + `dor:`), write the condensed **Milestone
+   Plan** instead of the 10-doc package — see your skill's "Objective-scoped
+   runs" section. Only leaf-ticket cards (full audit-card-template) get the
+   full package below.
 1. **Read-only on Jira.** Build everything from the cards on disk; any Jira access
    is a read-only re-query to re-verify counts. Never write to Jira.
 2. **Trace every claim.** Every number in the master table and every cross-cutting
@@ -57,8 +63,15 @@ scope + verified scoring model from part 1.
 
 ## What you return
 
-The synthesis document set (index, executive summary, master table, cross-cutting
-findings, plan/recommendation, methodology + scoring, design review, code-reuse
-review, tickets-by-project, thematic grouping) and the **actions-audit report**
-that lists every connector call and confirms they were all reads — proof Jira
-was untouched.
+For a leaf-ticket scope: the synthesis document set (index, executive summary,
+master table, cross-cutting findings, plan/recommendation, methodology +
+scoring, design review, code-reuse review, tickets-by-project, thematic
+grouping) and the **actions-audit report**.
+
+For an Objective-scoped run: `MILESTONE_PLAN.md` — an overview only, one line
+per Objective with each Milestone shown as verdict-emoji + wikilink, nothing
+else — and the same **actions-audit report**. The reasoning behind each
+verdict stays in the Objective's own roll-up card; don't duplicate it here.
+
+Either way, the actions-audit lists every connector call and confirms they
+were all reads — proof Jira was untouched.
